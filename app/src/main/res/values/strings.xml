@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">땅버날씨</string>
     <string name="initializing">날씨 자료를 준비합니다.</string>
+    <string name="location_permission_title">대략적 위치로 날씨 찾기</string>
+    <string name="location_permission_body">내 주변의 날씨와 가까운 관측소를 찾는 데 대략적 위치를 사용합니다. 원본 좌표는 저장하거나 외부로 전송하지 않습니다. 위치 허용 없이 지역 검색도 가능합니다.</string>
+    <string name="location_permission_request">위치 허용하기</string>
+    <string name="location_search_instead">지역 검색하기</string>
 </resources>
