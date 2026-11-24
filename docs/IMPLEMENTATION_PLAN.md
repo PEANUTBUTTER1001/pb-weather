@@ -21,7 +21,7 @@
 | --- | --- | --- | --- | --- |
 | TASK-001 | 프로젝트 골격·테마·빌드 설정 | BIZ-001, SEC-002, NFR-A11Y-001 | — | DONE |
 | TASK-002 | 내장 자산과 좌표 변환 유틸 | FR-007, FR-008, FR-005 | TASK-001 | PARTIAL (ASSET-001) |
-| TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | TODO |
+| TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | DONE |
 | TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
 | TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
 | TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | TODO |
@@ -139,7 +139,7 @@
 
 - 단계: 승인 명세에 따라 TASK-001 구현 중.
 - 다음 작업: TASK-001 빌드·테마 검증 → TASK-002·003. API 승인 전 픽스처 기반 개발 진행.
-- 완료 TASK: 1 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
+- 완료 TASK: 2 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
 
 ## 14. 인수인계
 
@@ -152,3 +152,5 @@
 - TASK-001 검증: ktlintCheck·lintDebug·testDebugUnitTest·assembleDebug PASS. 증거 `docs/evidence/TASK-001.json`. 기본 에뮬레이터 Pixel_9_Pro 검증 진행, S25 Ultra 수동 검증은 사용자 담당(후속 지시).
 
 - TASK-002: 공식 격자 3,839·활성 지원 ASOS 95·중기 코드 221개 생성. 자동 검사 PASS, TEST-008은 백령면 원본 불일치로 10/10 PASS 아님. 증거 docs/evidence/TASK-002.json, ASSET_SOURCES.md. 유틸은 후속 개발에 사용 가능.
+
+- TASK-003 PASS: Room v1 스키마 자동 생성, 캐시·LRU·설정·연속 Undo 단위 검증 및 Pixel_9_Pro Android 15 Room 보존/삭제·DataStore 재시작 복원 계측 2개 PASS. docs/evidence/TASK-003.json.
