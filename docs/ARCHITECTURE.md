@@ -83,7 +83,7 @@
 `app/schemas/`(Room 자동 생성), `app/src/test/resources/fixtures/`,
 `app/src/main/res/values/`, `app/src/main/res/drawable/`,
 `app/src/main/res/xml/`, 패키지 `di/`, `ui/components/`,
-`data/remote/ServiceKeyInterceptor.kt`, `assets/air_stations.csv`.
+`data/remote/ServiceKeyInterceptor.kt`, `data/local/AirStationEntity`(공식 공개 측정소 목록).
 자산 CSV는 공식 출처로부터 생성하며 수기 관측값·지역 좌표 작성 금지.
 
 ```text
@@ -117,7 +117,7 @@ weather/                                         # [KEEP] 저장소 루트
 ├── app/src/main/AndroidManifest.xml             # [NEW] COARSE 위치·INTERNET 권한, 위젯 receiver
 ├── app/src/main/assets/region_grid.csv          # [NEW] 기상청 행정구역별 격자표(+중기 regId)
 ├── app/src/main/assets/asos_stations.csv        # [NEW] ASOS 지점 목록·좌표
-├── app/src/main/java/com/example/weather/       # [NEW] 패키지 루트(applicationId 확정 시 변경, OPEN-003)
+├── app/src/main/java/com/pbweather/weather/       # [NEW] 패키지 루트(사용자 정정: com.pbweather.weather)
 │   ├── WeatherApp.kt                            # [NEW] Hilt Application
 │   ├── MainActivity.kt                          # [NEW] Compose 진입점
 │   ├── core/geo/                                # [NEW] 격자·TM 변환, 하버사인 최근접 탐색
@@ -272,3 +272,5 @@ weather/                                         # [KEEP] 저장소 루트
 - 구현 기준 브랜치: origin/develop. 원본 위치는 기기 내 격자·지점 선택에만 사용, 대기 측정소는 공식 목록으로 로컬 최근접 탐색. TmConverter를 이유로 사용자 TM 좌표 외부 전송 금지.
 
 - TASK-002 경로: `tools/build_assets.py`, `app/src/main/assets/mid_regions.csv`, `app/src/test/resources/fixtures/grid_samples.csv`. 공식 XLSX/DOCX/CSV 변환 결과만 자산에 기록.
+
+- TASK-004 경로: `data/remote/{PublicDataApi,ApiClient,NetworkMonitor,ServiceKeyInterceptor}.kt`, `data/repository/RequestCoordinator.kt`, `di/{NetworkModule,DataEntryPoint}.kt`, `domain/{ForecastSource,ForecastMerger}.kt`, `docs/API_CONTRACT.md`.
