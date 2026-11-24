@@ -26,7 +26,7 @@
 | TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
 | TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | TODO |
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
-| TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | TODO |
+| TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | PARTIAL (사용자 위치 계측 보류) |
 | TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | TODO |
 | TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | TODO |
 | TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | TODO |
@@ -154,3 +154,7 @@
 - TASK-002: 공식 격자 3,839·활성 지원 ASOS 95·중기 코드 221개 생성. 자동 검사 PASS, TEST-008은 백령면 원본 불일치로 10/10 PASS 아님. 증거 docs/evidence/TASK-002.json, ASSET_SOURCES.md. 유틸은 후속 개발에 사용 가능.
 
 - TASK-003 PASS: Room v1 스키마 자동 생성, 캐시·LRU·설정·연속 Undo 단위 검증 및 Pixel_9_Pro Android 15 Room 보존/삭제·DataStore 재시작 복원 계측 2개 PASS. docs/evidence/TASK-003.json.
+
+- TASK-008 보류: 로컬 매핑·검색·거부/사전 안내 PASS. 전경/공개 서울 모의 좌표에서도 COARSE 결과 OUTSIDE_COVERAGE. 5회 검증 상한 도달, 커밋·푸시 보류. docs/evidence/TASK-008.json. 원본 좌표는 출력·저장 없음.
+
+- 2026-11-25 사용자 후속 결정: 위치 계측 보류 유지. 해당 수용 기준을 미검증 예외로 명시하고 위치 호출 테스트 @Ignore 처리(마지막 실패 기록 보존, 추가 진단 없음). 검색·매핑·거부 안내와 구현 코드는 화면 통합에 사용, 전체 TASK-008 DONE 판정은 보류.
