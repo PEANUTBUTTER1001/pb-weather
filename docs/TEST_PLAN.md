@@ -174,3 +174,4 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - TASK-004: TEST-001 발표 경계, TEST-002 실황, TEST-003 단기/초단기 실제 48시간, TEST-016 캐시 추가 전송 0·동시 실패 공유 하위 기준 PASS. 전체 성능 p90·UI·오프라인 화면은 미실행. 증거 docs/evidence/TASK-004.json.
 
 - TEST-004 PASS(실제 제공 범위 기준): 중기육상/기온 실제 응답·11개 날짜·자정 기준 발표일 유지·종일 자료 복제 금지. docs/evidence/TASK-005.json. 새벽 +10일은 미제공 슬롯으로 명시.
+- TASK-006: TEST-005 API/캐시/파싱 하위 기준 PASS, ENH-005 정규화·공백·PM별 플래그 단위 기준 PASS. 추이 UI 조작·200%·시트는 TASK-009에서 검증 예정. docs/evidence/TASK-006.json.
