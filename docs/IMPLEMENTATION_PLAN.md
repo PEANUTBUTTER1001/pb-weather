@@ -24,7 +24,7 @@
 | TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | DONE |
 | TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
 | TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
-| TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | TODO |
+| TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | DONE |
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
 | TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | TODO |
 | TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | TODO |
@@ -156,3 +156,5 @@
 - TASK-003 PASS: Room v1 스키마 자동 생성, 캐시·LRU·설정·연속 Undo 단위 검증 및 Pixel_9_Pro Android 15 Room 보존/삭제·DataStore 재시작 복원 계측 2개 PASS. docs/evidence/TASK-003.json.
 
 - TASK-004 PASS: ktlintCheck·lintDebug·JVM 14개·에뮬레이터 계측 5개·assembleDebug 통과. 실황/단기/초단기 실제 응답 및 미래 48개 이상·캐시 재사용 추가 전송 0 확인. 성공·실패 동시 요청 공유와 실패 시 자료/시각 보존 확인. docs/evidence/TASK-004.json.
+
+- TASK-006 PASS: JVM 18개·에뮬레이터 계측 6개·ktlintCheck·lintDebug·assembleDebug 통과. ver1.1 공개 측정소 목록과 ver1.5 최근 측정 실 API·재조회 전송 0 확인. PM별 결측/플래그/1h 등급, 24:00 정규화·중복·공백 분리 검증. docs/evidence/TASK-006.json. 독립 브랜치 기반 TASK-004이며 TASK-005·008은 별도 브랜치.

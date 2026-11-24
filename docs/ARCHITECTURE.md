@@ -274,3 +274,5 @@ weather/                                         # [KEEP] 저장소 루트
 - TASK-002 경로: `tools/build_assets.py`, `app/src/main/assets/mid_regions.csv`, `app/src/test/resources/fixtures/grid_samples.csv`. 공식 XLSX/DOCX/CSV 변환 결과만 자산에 기록.
 
 - TASK-004 경로: `data/remote/{PublicDataApi,ApiClient,NetworkMonitor,ServiceKeyInterceptor}.kt`, `data/repository/RequestCoordinator.kt`, `di/{NetworkModule,DataEntryPoint}.kt`, `domain/{ForecastSource,ForecastMerger}.kt`, `docs/API_CONTRACT.md`.
+
+- TASK-006 경로: `data/remote/airkorea/AirParser.kt`, `data/repository/{AirStationCatalog,AirQualityRepository}.kt`, `domain/AirQualitySource.kt`, `di/AirModule.kt`. 공개 측정소 좌표는 로컬 최근접 탐색 전용, AIR 원본은 측정소별 캐시.
