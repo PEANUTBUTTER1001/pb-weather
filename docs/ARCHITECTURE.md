@@ -270,3 +270,5 @@ weather/                                         # [KEEP] 저장소 루트
 - [ ] 14절 오류 표 항목별 테스트 존재(TEST-005, TEST-012, TEST-016).
 
 - 구현 기준 브랜치: origin/develop. 원본 위치는 기기 내 격자·지점 선택에만 사용, 대기 측정소는 공식 목록으로 로컬 최근접 탐색. TmConverter를 이유로 사용자 TM 좌표 외부 전송 금지.
+
+- TASK-002 경로: `tools/build_assets.py`, `app/src/main/assets/mid_regions.csv`, `app/src/test/resources/fixtures/grid_samples.csv`. 공식 XLSX/DOCX/CSV 변환 결과만 자산에 기록.
