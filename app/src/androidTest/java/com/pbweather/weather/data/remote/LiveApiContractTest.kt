@@ -80,7 +80,7 @@ class LiveApiContractTest {
     fun realShortUltraAndCacheContract() = runBlocking {
         assumeTrue(BuildConfig.KMA_SERVICE_KEY.isNotBlank() && !BuildConfig.KMA_SERVICE_KEY.startsWith("<"))
         val entry = EntryPointAccessors.fromApplication(context, DataEntryPoint::class.java)
-        val region = Region("test_seoul", "서울", 60, 127, 37.57142, 126.9658, "108", "서울", 0.0)
+        val region = Region("test_seoul", "서울", 60, 127, 37.57142, 126.9658, "108", "서울", 0.0, "11B00000", "11B10101")
         entry.forecasts().refresh(region)
         val short = requireNotNull(entry.cache().read(region.key, DataKind.SHORT))
         val ultra = requireNotNull(entry.cache().read(region.key, DataKind.ULTRA))

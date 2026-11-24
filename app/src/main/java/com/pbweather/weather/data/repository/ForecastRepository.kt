@@ -7,6 +7,7 @@ import com.pbweather.weather.data.local.WeatherSnapshotEntity
 import com.pbweather.weather.data.remote.ApiClient
 import com.pbweather.weather.data.remote.NetworkMonitor
 import com.pbweather.weather.data.remote.kma.KmaParser
+import com.pbweather.weather.domain.DailyForecast
 import com.pbweather.weather.domain.DataException
 import com.pbweather.weather.domain.DataKind
 import com.pbweather.weather.domain.DomainError
@@ -18,7 +19,9 @@ import com.pbweather.weather.domain.ObservedWeather
 import com.pbweather.weather.domain.Region
 import com.pbweather.weather.domain.Resource
 import com.pbweather.weather.domain.SourceMeta
+import com.pbweather.weather.domain.WeeklyForecast
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,7 +44,8 @@ class ForecastRepository @Inject constructor(
     private val releases: ReleaseTimeCalculator,
     private val coordinator: RequestCoordinator,
     private val network: NetworkMonitor,
-    private val clock: Clock
+    private val clock: Clock,
+    private val mid: MidForecastRepository
 ) : ForecastSource {
     private val ticks = flow {
         while (currentCoroutineContext().isActive) {
@@ -50,7 +54,7 @@ class ForecastRepository @Inject constructor(
         }
     }
     override fun observe(region: Region): Flow<ForecastState> = combine(
-        cache.dao.observeSnapshots(region.key),
+        combine(cache.dao.observeSnapshots(region.key), mid.snapshots(region)) { a, b -> a + b },
         coordinator.states,
         network.connected,
         ticks
@@ -60,9 +64,26 @@ class ForecastRepository @Inject constructor(
         val short = resource<ForecastData>(rows[DataKind.SHORT.name], statuses[RequestKey(region.key, DataKind.SHORT)], online)
         val ultra = resource<ForecastData>(rows[DataKind.ULTRA.name], statuses[RequestKey(region.key, DataKind.ULTRA)], online)
         val extremes = resource<ForecastData>(rows[DataKind.EXTREMES.name], statuses[RequestKey(region.key, DataKind.EXTREMES)], online)
+        val land = resource<List<DailyForecast>>(
+            rows[DataKind.MID_LAND.name],
+            statuses[RequestKey(mid.key(region, DataKind.MID_LAND), DataKind.MID_LAND)],
+            online
+        )
+        val temperature = resource<List<DailyForecast>>(
+            rows[DataKind.MID_TA.name],
+            statuses[RequestKey(mid.key(region, DataKind.MID_TA), DataKind.MID_TA)],
+            online
+        )
         val hours = ForecastMerger.hours(short.data?.hours.orEmpty(), ultra.data?.hours.orEmpty(), now)
-        val days = ForecastMerger.days(short.data?.days.orEmpty(), extremes.data?.days.orEmpty())
-        val combined = if (hours.isEmpty() && days.isEmpty()) null else ForecastData(hours, days)
+        val nearDays = ForecastMerger.days(short.data?.days.orEmpty(), extremes.data?.days.orEmpty())
+        val days = WeeklyForecast.merge(
+            nearDays,
+            emptyList(),
+            land.data.orEmpty(),
+            temperature.data.orEmpty(),
+            Instant.ofEpochMilli(now).atZone(ReleaseTimeCalculator.KST).toLocalDate()
+        )
+        val combined = if (short.data == null && ultra.data == null) null else ForecastData(hours, nearDays)
         val hourly = Resource(
             combined,
             short.meta ?: ultra.meta,
@@ -75,12 +96,12 @@ class ForecastRepository @Inject constructor(
             observed,
             hourly,
             Resource(
-                days.takeIf { it.isNotEmpty() },
-                short.meta ?: extremes.meta,
-                isStale = short.isStale,
+                days.takeIf { short.data != null || extremes.data != null || land.data != null || temperature.data != null },
+                short.meta ?: extremes.meta ?: land.meta ?: temperature.meta,
+                isStale = short.isStale || land.isStale || temperature.isStale,
                 isOffline = !online,
-                isRefreshing = short.isRefreshing || extremes.isRefreshing,
-                error = short.error
+                isRefreshing = short.isRefreshing || extremes.isRefreshing || land.isRefreshing || temperature.isRefreshing,
+                error = land.error ?: temperature.error ?: short.error
             )
         )
     }
@@ -96,13 +117,16 @@ class ForecastRepository @Inject constructor(
             state?.error ?: if (row != null && data == null) DomainError.INVALID_RESPONSE else null
         )
     }
-    override suspend fun refresh(region: Region) {
+    override suspend fun refresh(region: Region) = supervisorScope {
+        val middle = async { mid.refresh(region) }
         supervisorScope {
             listOf(DataKind.NOWCAST, DataKind.SHORT, DataKind.ULTRA).map { kind ->
                 async { refreshKind(region, kind) }
             }.awaitAll()
         }
         refreshExtremes(region)
+        middle.await()
+        Unit
     }
     private suspend fun refreshKind(region: Region, kind: DataKind) = coordinator.refresh(region.key, kind) {
         val (items, release) = fetch(region, kind, releases.latest(kind))
