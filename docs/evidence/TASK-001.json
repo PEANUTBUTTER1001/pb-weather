@@ -1,0 +1,39 @@
+{
+  "task": "TASK-001",
+  "timestamp": "2026-11-24T13:09:17.836280+00:00",
+  "branch": "feat/task-001-foundation",
+  "base": "origin/develop",
+  "namespace": "com.pbweather.weather",
+  "commands": [
+    "ktlintFormat",
+    "ktlintCheck lintDebug testDebugUnitTest assembleDebug"
+  ],
+  "result": "PASS",
+  "unit_suites": [
+    {
+      "suite": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0"
+    }
+  ],
+  "merged_permissions": [
+    "android.permission.INTERNET",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.WAKE_LOCK",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "com.pbweather.weather.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "apk": "app/build/outputs/apk/debug/app-debug.apk",
+  "limitations": [
+    "Application feature flows pending later TASKs",
+    "S25 Ultra manual verification owned by user"
+  ],
+  "repair_history": [
+    "Formatting and checking separated",
+    "AGP 9 Kotlin source coverage explicitly added",
+    "Complete ktlint CLI classpath added",
+    "140-character source wrapping fixed"
+  ]
+}

@@ -1,0 +1,30 @@
+# Local configuration and secrets (never stage or inspect)
+/local.properties
+**/local.properties
+/keystore.properties
+**/keystore.properties
+*.jks
+*.keystore
+.env
+.env.*
+!.env.example
+
+# Android / Gradle generated state
+.gradle/
+.kotlin/
+**/build/
+.gradle-user-home/
+.android-user-home/
+.tools/
+captures/
+.cxx/
+.externalNativeBuild/
+
+# IDE / machine-local state
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+
+# Keep Room schemas and curated verification evidence tracked.

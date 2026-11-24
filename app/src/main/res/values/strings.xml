@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">땅버날씨</string>
+    <string name="initializing">날씨 자료를 준비합니다.</string>
+</resources>
