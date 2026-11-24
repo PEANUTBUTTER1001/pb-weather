@@ -31,3 +31,5 @@ No key values or complete request URLs are recorded.
 ## Live validation state
 
 Initial Pixel_9_Pro live nowcast smoke returned an HTTP 401/403-category access/configuration failure. Exact key values and response bodies were not inspected or recorded. Live test stays a separately labelled LargeTest and is NOT treated as PASS. Local fixture/coordinator tests run independently while the user checks service approval/key configuration. After supporting raw and percent-encoded general key input, a separate real nowcast smoke passed on Pixel_9_Pro (no skip). Initial failure cause is not conclusively isolated; no claim that a separately issued Decoding key is required. Short/ultra and zero-additional-traffic cache checks are validated separately.
+
+- TASK-007 live PASS: ASOS daily nine published dates, zero extra traffic on unchanged cached range. Actual daily records carry validFrom/validTo (KST day) and receivedAt; no invented instantaneous observedAt. Unpublished dates have no completion marker, valid rows preserve null indicators, and retries request missing contiguous gaps only. Cache completion markers never bypass checks for evicted observation rows.

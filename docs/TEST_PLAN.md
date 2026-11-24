@@ -172,3 +172,5 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - 성능 측정은 본인 기기 1대 기준, 기기 편차 미반영.
 
 - TASK-004: TEST-001 발표 경계, TEST-002 실황, TEST-003 단기/초단기 실제 48시간, TEST-016 캐시 추가 전송 0·동시 실패 공유 하위 기준 PASS. 전체 성능 p90·UI·오프라인 화면은 미실행. 증거 docs/evidence/TASK-004.json.
+
+- TASK-007: TEST-006 비교 도메인·TEST-007 최근 창/검증/파싱/ASOS 실 API·TEST-016 누락 날짜 및 LRU 복구 하위 기준 PASS. 화면·차트·200% 조작은 TASK-010에서 검증 예정. docs/evidence/TASK-007.json.

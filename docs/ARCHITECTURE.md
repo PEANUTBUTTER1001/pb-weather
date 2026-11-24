@@ -274,3 +274,5 @@ weather/                                         # [KEEP] 저장소 루트
 - TASK-002 경로: `tools/build_assets.py`, `app/src/main/assets/mid_regions.csv`, `app/src/test/resources/fixtures/grid_samples.csv`. 공식 XLSX/DOCX/CSV 변환 결과만 자산에 기록.
 
 - TASK-004 경로: `data/remote/{PublicDataApi,ApiClient,NetworkMonitor,ServiceKeyInterceptor}.kt`, `data/repository/RequestCoordinator.kt`, `di/{NetworkModule,DataEntryPoint}.kt`, `domain/{ForecastSource,ForecastMerger}.kt`, `docs/API_CONTRACT.md`.
+
+- TASK-007 경로: `data/remote/kma/AsosParser.kt`, `data/repository/HistoryRepository.kt`, `domain/{HistorySource,HistoryRules}.kt`, `di/HistoryModule.kt`. 일자료는 observations SSOT, snapshots HISTORY는 완료 날짜 표식만 보관. 실제 행 유무를 검사하여 LRU 후 누락 날짜만 재조회.

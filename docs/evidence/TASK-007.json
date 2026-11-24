@@ -1,0 +1,92 @@
+{
+  "task": "TASK-007",
+  "result": "PASS",
+  "clientDate": "2026-11-25",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+  "unit": [
+    {
+      "name": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T16:02:24.109Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T16:02:24.196Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T16:02:24.285Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T16:02:24.842Z"
+    },
+    {
+      "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T16:02:24.864Z"
+    }
+  ],
+  "instrumentation": [
+    {
+      "tests": "7",
+      "failures": "0",
+      "skipped": "0",
+      "cases": [
+        {
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.396"
+        },
+        {
+          "name": "cacheDeletionPreservesPublicAssets",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "1.068"
+        },
+        {
+          "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+          "classname": "com.pbweather.weather.data.remote.ForecastIntegrationTest",
+          "time": "0.112"
+        },
+        {
+          "name": "partialPublicationRetriesOnlyMissingDateAndRecoversAfterLru",
+          "classname": "com.pbweather.weather.data.remote.HistoryCacheTest",
+          "time": "0.358"
+        },
+        {
+          "name": "realNowcastContractSmoke",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "1.057"
+        },
+        {
+          "name": "realShortUltraAndCacheContract",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "1.616"
+        },
+        {
+          "name": "realAsosDailyHistoryAndImmutableCacheContract",
+          "classname": "com.pbweather.weather.data.remote.LiveHistoryContractTest",
+          "time": "0.212"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Real API test covers nine already published dates; yesterday can remain unpublished after midnight",
+    "Partial publication/missing-only retry/LRU recovery tested using fake PublicDataApi on Room",
+    "TASK-008 location instrumentation remains user-deferred; S25 Ultra manual testing is user-owned"
+  ]
+}
