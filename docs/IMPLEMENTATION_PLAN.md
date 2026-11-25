@@ -28,7 +28,7 @@
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
 | TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | PARTIAL (사용자 위치 계측 보류) |
 | TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | IN_PROGRESS |
-| TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | TODO |
+| TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | IMPLEMENTED (에뮬레이터 검증, 실기기 사용자 담당) |
 | TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | TODO |
 | TASK-012 | 홈 화면 위젯·백그라운드 갱신 | FR-009, NFR-PERF-002 | TASK-003, TASK-004 | TODO |
 | TASK-013 | 정보·설정 화면 | DATA-002, SEC-001, DATA-001 | TASK-003 | TODO |
@@ -172,3 +172,5 @@
 - TASK-009 화면 후속 확인: 200% 시간 칸 폭 보정 후 assembleDebug PASS 및 실제 화면 확인. 증거 docs/evidence/TASK-009/*.png. 에뮬레이터 font_scale=1.0·wm size 기본값 복원. 홈 최종 QA·커밋/푸시와 TASK-010~013는 미완료 상태 유지.
 
 - 2026-11-25 /git 체크포인트: 홈 200% 폭 보정 포함 빌드·단위 30개·린트 PASS. 저장 지역명 중복으로 발생한 UI 테스트 선택자 실패를 고유 접근성 설명으로 수정, 해당 검사 재실행 PASS. 위치 호출 1개 보류 유지. 사용자 지시로 현재 작업 Draft PR 제출, TASK-009 IN_PROGRESS·TASK-010~013 미완료 유지. 증거 docs/evidence/GIT_REVIEW.json.
+
+- TASK-010: 최근 10일·1주·직접 입력, 입력별 오류, 오늘 예보/어제 관측 비교, 결측 단절 복합 그래프·유효일수/극값/누적강수, 날짜 6지표 상세 구현. 전체 최근 10일 Room 관측 공유로 기간 전환 후 홈 어제 비교 보존. 실기기 검증은 사용자 담당.

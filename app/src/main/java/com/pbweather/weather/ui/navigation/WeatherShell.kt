@@ -98,7 +98,8 @@ data class WeatherActions(
     val undo: () -> Unit = {},
     val theme: (ThemeMode) -> Unit = {},
     val palette: (Palette) -> Unit = {},
-    val font: (FontSize) -> Unit = {}
+    val font: (FontSize) -> Unit = {},
+    val range: (com.pbweather.weather.domain.DateRange) -> Unit = {}
 )
 
 @Composable
@@ -316,7 +317,10 @@ fun WeatherShell(
                         )
                     }
                     WeatherTab.LOCATIONS -> RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
-                    WeatherTab.HISTORY -> HistoryLanding(state, { details = it }, { tab = WeatherTab.LOCATIONS })
+                    WeatherTab.HISTORY -> com.pbweather.weather.ui.history.HistoryScreen(state, actions.range, actions.refresh) {
+                        tab =
+                            WeatherTab.LOCATIONS
+                    }
                     WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
                 }
             }
@@ -403,23 +407,6 @@ fun WeatherShell(
                 SectionTitle(stringResource(R.string.favorites))
                 state.preferences.favorites.forEach { region ->
                     TextButton(onClick = { onSelect(region) }) { Text(region.name) }
-                }
-            }
-        }
-    }
-}
-
-@Composable private fun HistoryLanding(state: WeatherUiState, onDetails: (String) -> Unit, onSelect: () -> Unit) {
-    LazyColumn(Modifier.padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-        item { SectionTitle(stringResource(R.string.yesterday_compare)) }
-        if (state.preferences.selected == null) {
-            item { TextButton(onClick = onSelect) { Text(stringResource(R.string.select_region)) } }
-        } else {
-            item { com.pbweather.weather.ui.components.StatusBlock(state.data.history) }
-            items(state.data.history.data.orEmpty(), key = { it.date }) { day ->
-                SectionCard {
-                    Text(com.pbweather.weather.ui.components.dateLabel(day.date), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.today_extrema, temperature(day.maximum), temperature(day.minimum)))
                 }
             }
         }
