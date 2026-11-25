@@ -108,6 +108,9 @@ interface WeatherDao {
     @Query("SELECT * FROM mid_regions")
     suspend fun midRegions(): List<MidRegionEntity>
 
+    @Query("DELETE FROM air_stations")
+    suspend fun clearAirStations()
+
     @Upsert suspend fun saveAirStations(rows: List<AirStationEntity>)
 
     @Query("SELECT * FROM air_stations")
