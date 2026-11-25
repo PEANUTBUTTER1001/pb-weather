@@ -23,7 +23,7 @@
 | TASK-002 | 내장 자산과 좌표 변환 유틸 | FR-007, FR-008, FR-005 | TASK-001 | PARTIAL (ASSET-001) |
 | TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | DONE |
 | TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
-| TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
+| TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | DONE |
 | TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | DONE |
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
 | TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | TODO |
@@ -40,7 +40,7 @@
 - **TASK-002**: 격자 변환이 기상청 격자표 샘플 10개와 일치 / 최근접 ASOS·중기 regId 매핑 단위 테스트 통과 / TM 좌표 변환 구현(좌표계는 API 명세 확인).
 - **TASK-003**: WeatherSnapshot·DailyObservation·RegionGrid·AsosStation 엔티티·DAO / 만료(30분·3시간·12시간·1시간)·50MB LRU 테스트 통과 / 즐겨찾기·대표 위치 DataStore.
 - **TASK-004**: base_time 경계 테스트 통과 / 실황·초단기·단기 파싱·병합(6시간 이내 초단기 우선) / resultCode 03·22·30·XML 오류 → 도메인 오류 / 캐시 유효 시 호출 0회.
-- **TASK-005**: tmFc 06/18시 계산 / 오늘~+10일 빈칸 없는 병합 테스트 통과.
+- **TASK-005**: tmFc 06/18시 계산 / 오늘~+10일 11개 날짜 병합 테스트 통과(실제 미제공은 null 유지, 새벽 +10일 포함).
 - **TASK-006**: 근접 측정소 → 실시간 측정 2단계 / '-' 결측 시 2순위 대체 / 등급 1~4 매핑.
 - **TASK-007**: 누락 날짜 구간만 조회 / 어제 비교·KST 최근 10일 창 계산 / 결측 null 보존.
 - **TASK-008**: COARSE만 선언·요청 / 요청 전 목적 안내, 거부 시 지역 검색 / 원본 좌표 로깅·저장 0건.
@@ -139,7 +139,7 @@
 
 - 단계: TASK-001·003·004 완료, TASK-002 공식 원본 불일치만 PARTIAL.
 - 다음 작업: TASK-008 위치·오프라인 검색 → 나머지 데이터·화면·위젯.
-- 완료 TASK: 3 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
+- 완료 TASK: 4 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
 
 ## 14. 인수인계
 
@@ -158,3 +158,5 @@
 - TASK-004 PASS: ktlintCheck·lintDebug·JVM 14개·에뮬레이터 계측 5개·assembleDebug 통과. 실황/단기/초단기 실제 응답 및 미래 48개 이상·캐시 재사용 추가 전송 0 확인. 성공·실패 동시 요청 공유와 실패 시 자료/시각 보존 확인. docs/evidence/TASK-004.json.
 
 - TASK-006 PASS: JVM 18개·에뮬레이터 계측 6개·ktlintCheck·lintDebug·assembleDebug 통과. ver1.1 공개 측정소 목록과 ver1.5 최근 측정 실 API·재조회 전송 0 확인. PM별 결측/플래그/1h 등급, 24:00 정규화·중복·공백 분리 검증. docs/evidence/TASK-006.json. 독립 브랜치 기반 TASK-004이며 TASK-005·008은 별도 브랜치.
+- TASK-005 PASS: 17 JVM·6 에뮬레이터 계측·ktlintCheck·lintDebug·assembleDebug 통과. 중기육상/기온 실응답, 오늘~+10일 11개 슬롯, 실제 발표일 기준 범위, 종일 해상도 유지 확인. 새벽 +10일 미제공은 오류/누락 위조 없이 보존. docs/evidence/TASK-005.json.
+- TASK-008은 별도 feat/task-008-location의 Git stash 보존 상태. 2026-11-25 사용자 지시: 위치 계측 보류 유지. 나머지 기능 작업 계속 진행.

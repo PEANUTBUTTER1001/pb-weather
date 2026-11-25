@@ -37,7 +37,11 @@ object ForecastMerger {
                     afternoonProbability = day.afternoonProbability ?: old.afternoonProbability,
                     wholeDayProbability = day.wholeDayProbability ?: old.wholeDayProbability,
                     origins = old.origins + day.origins,
-                    periodMaximum = day.periodMaximum
+                    periodMaximum = if (day.morningProbability != null || day.afternoonProbability != null) {
+                        day.periodMaximum
+                    } else {
+                        old.periodMaximum
+                    }
                 )
             }
         }
