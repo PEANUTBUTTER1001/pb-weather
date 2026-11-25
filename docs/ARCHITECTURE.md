@@ -274,3 +274,5 @@ weather/                                         # [KEEP] 저장소 루트
 - TASK-002 경로: `tools/build_assets.py`, `app/src/main/assets/mid_regions.csv`, `app/src/test/resources/fixtures/grid_samples.csv`. 공식 XLSX/DOCX/CSV 변환 결과만 자산에 기록.
 
 - TASK-004 경로: `data/remote/{PublicDataApi,ApiClient,NetworkMonitor,ServiceKeyInterceptor}.kt`, `data/repository/RequestCoordinator.kt`, `di/{NetworkModule,DataEntryPoint}.kt`, `domain/{ForecastSource,ForecastMerger}.kt`, `docs/API_CONTRACT.md`.
+
+- TASK-005 경로: `data/remote/kma/MidParser.kt`, `data/repository/MidForecastRepository.kt`, `domain/WeeklyForecast.kt`, `app/src/test/.../MidForecastTest.kt`, `app/src/androidTest/.../LiveMidContractTest.kt`. 중기는 regId별 공유 캐시, 화면은 오늘~+10일 11개 날짜에 실제 제공값만 병합.

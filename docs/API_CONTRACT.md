@@ -31,3 +31,7 @@ No key values or complete request URLs are recorded.
 ## Live validation state
 
 Initial Pixel_9_Pro live nowcast smoke returned an HTTP 401/403-category access/configuration failure. Exact key values and response bodies were not inspected or recorded. Live test stays a separately labelled LargeTest and is NOT treated as PASS. Local fixture/coordinator tests run independently while the user checks service approval/key configuration. After supporting raw and percent-encoded general key input, a separate real nowcast smoke passed on Pixel_9_Pro (no skip). Initial failure cause is not conclusively isolated; no claim that a separately issued Decoding key is required. Short/ultra and zero-additional-traffic cache checks are validated separately.
+
+## Midnight mid horizon
+
+The selected mid endpoint anchors day offsets to the actual 06/18 release date. Between midnight and the new 06 release, previous-day 18 forecasts end at today's +9. Today's +10 slot must therefore say unprovided until a successful new release supplies it. Eleven calendar slots do not justify fabricated extrema, AM/PM copies, or shifting the previous release by one day. This resolves IMPLEMENTATION_PLAN TASK-005's older "no empty values" wording in favor of ENH-003's missing-data and actual-resolution rules. Real land/temperature responses succeeded; the first live assertion incorrectly required values in all eleven slots and was corrected to the actual release horizon.
