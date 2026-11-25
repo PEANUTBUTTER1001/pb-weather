@@ -21,7 +21,8 @@ data class AppPreferences(
     val palette: String = "INDIGO",
     val font: String = "NORMAL",
     val permissionExplained: Boolean = false,
-    val widgetError: Boolean = false
+    val widgetError: Boolean = false,
+    val quotaDates: Map<String, String> = emptyMap()
 )
 data class DeletedFavorite(val region: Region, val index: Int, val wasPrimary: Boolean)
 object FavoriteRules {

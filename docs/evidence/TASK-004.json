@@ -1,0 +1,76 @@
+{
+  "task": "TASK-004",
+  "result": "PASS",
+  "clientDate": "2026-11-25",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+  "emulator": "Pixel_9_Pro Android 15",
+  "unit": [
+    {
+      "name": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:31:32.562Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:31:32.620Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:31:32.700Z"
+    },
+    {
+      "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:31:33.223Z"
+    }
+  ],
+  "instrumentation": [
+    {
+      "tests": "5",
+      "failures": "0",
+      "skipped": "0",
+      "cases": [
+        {
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.47"
+        },
+        {
+          "name": "cacheDeletionPreservesPublicAssets",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "1.24"
+        },
+        {
+          "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+          "classname": "com.pbweather.weather.data.remote.ForecastIntegrationTest",
+          "time": "0.147"
+        },
+        {
+          "name": "realNowcastContractSmoke",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "3.02"
+        },
+        {
+          "name": "realShortUltraAndCacheContract",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "1.704"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "S25 Ultra manual verification is user-owned and NOT_RUN by agent",
+    "Initial HTTP 401/403 category failure preceded successful normalized-key implementation; exact original cause unconfirmed",
+    "ASSET-001 remains independent"
+  ]
+}
