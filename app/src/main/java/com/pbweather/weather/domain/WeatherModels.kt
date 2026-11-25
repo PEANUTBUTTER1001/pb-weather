@@ -8,7 +8,7 @@ enum class DataKind { NOWCAST, ULTRA, SHORT, MID_LAND, MID_TA, AIR, HISTORY, EXT
 @Serializable
 enum class Provider { KMA, AIRKOREA }
 enum class DomainError { OFFLINE, TIMEOUT, NO_DATA, QUOTA, KEY_CONFIGURATION, INVALID_RESPONSE, REGION_MAPPING, UNKNOWN }
-class DataException(val reason: DomainError) : Exception(reason.name)
+class DataException(val reason: DomainError, val httpStatus: Int? = null, val gatewayCode: String? = null) : Exception(reason.name)
 
 @Serializable
 data class SourceMeta(

@@ -6,7 +6,7 @@
 | --- | --- |
 | 문서 역할 | TASK·순서·상태·인수인계 관리(살아 있는 문서) |
 | 작성일 | 2026-11-16 |
-| 현재 단계 | TASK-001 기반 구현 중 — 검증 완료 전 DONE 처리 금지 |
+| 현재 단계 | TASK-004 검증 완료, TASK-008 위치·최소 지역 검색 착수 |
 | 근거 | [ENHANCEMENT_GUIDELINE.md](ENHANCEMENT_GUIDELINE.md), [REQUIREMENTS.md](REQUIREMENTS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [TEST_PLAN.md](TEST_PLAN.md) |
 
 ## 2. 구현 목표
@@ -22,7 +22,7 @@
 | TASK-001 | 프로젝트 골격·테마·빌드 설정 | BIZ-001, SEC-002, NFR-A11Y-001 | — | DONE |
 | TASK-002 | 내장 자산과 좌표 변환 유틸 | FR-007, FR-008, FR-005 | TASK-001 | PARTIAL (ASSET-001) |
 | TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | DONE |
-| TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
+| TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
 | TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
 | TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | TODO |
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
@@ -137,9 +137,9 @@
 
 ## 13. 현재 상태
 
-- 단계: 승인 명세에 따라 TASK-001 구현 중.
-- 다음 작업: TASK-001 빌드·테마 검증 → TASK-002·003. API 승인 전 픽스처 기반 개발 진행.
-- 완료 TASK: 2 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
+- 단계: TASK-001·003·004 완료, TASK-002 공식 원본 불일치만 PARTIAL.
+- 다음 작업: TASK-008 위치·오프라인 검색 → 나머지 데이터·화면·위젯.
+- 완료 TASK: 3 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
 
 ## 14. 인수인계
 
@@ -154,3 +154,5 @@
 - TASK-002: 공식 격자 3,839·활성 지원 ASOS 95·중기 코드 221개 생성. 자동 검사 PASS, TEST-008은 백령면 원본 불일치로 10/10 PASS 아님. 증거 docs/evidence/TASK-002.json, ASSET_SOURCES.md. 유틸은 후속 개발에 사용 가능.
 
 - TASK-003 PASS: Room v1 스키마 자동 생성, 캐시·LRU·설정·연속 Undo 단위 검증 및 Pixel_9_Pro Android 15 Room 보존/삭제·DataStore 재시작 복원 계측 2개 PASS. docs/evidence/TASK-003.json.
+
+- TASK-004 PASS: ktlintCheck·lintDebug·JVM 14개·에뮬레이터 계측 5개·assembleDebug 통과. 실황/단기/초단기 실제 응답 및 미래 48개 이상·캐시 재사용 추가 전송 0 확인. 성공·실패 동시 요청 공유와 실패 시 자료/시각 보존 확인. docs/evidence/TASK-004.json.
