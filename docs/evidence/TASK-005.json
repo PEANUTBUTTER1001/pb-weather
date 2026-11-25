@@ -1,0 +1,87 @@
+{
+  "task": "TASK-005",
+  "result": "PASS",
+  "clientDate": "2026-11-25",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+  "unit": [
+    {
+      "name": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:50:39.766Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:50:39.837Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:50:39.910Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.MidForecastTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:50:40.367Z"
+    },
+    {
+      "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:50:40.384Z"
+    }
+  ],
+  "instrumentation": [
+    {
+      "tests": "6",
+      "failures": "0",
+      "skipped": "0",
+      "cases": [
+        {
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.291"
+        },
+        {
+          "name": "cacheDeletionPreservesPublicAssets",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.869"
+        },
+        {
+          "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+          "classname": "com.pbweather.weather.data.remote.ForecastIntegrationTest",
+          "time": "0.117"
+        },
+        {
+          "name": "realNowcastContractSmoke",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "0.867"
+        },
+        {
+          "name": "realShortUltraAndCacheContract",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "1.767"
+        },
+        {
+          "name": "realLandTemperatureAndElevenDateContract",
+          "classname": "com.pbweather.weather.data.remote.LiveMidContractTest",
+          "time": "0.082"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Before 06 KST, previous-day 18 mid release ends at today+9; +10 slot correctly unprovided",
+    "TASK-008 location instrumentation remains separately deferred by user",
+    "S25 Ultra manual testing is user-owned"
+  ]
+}

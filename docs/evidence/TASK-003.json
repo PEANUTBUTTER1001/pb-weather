@@ -1,0 +1,42 @@
+{
+  "task": "TASK-003",
+  "result": "PASS",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+  "unit": [
+    {
+      "suite": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0"
+    },
+    {
+      "suite": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0"
+    },
+    {
+      "suite": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0"
+    }
+  ],
+  "instrumentation": [
+    {
+      "suite": null,
+      "tests": "2",
+      "failures": "0",
+      "errors": "0"
+    }
+  ],
+  "emulator": "Pixel_9_Pro Android 15",
+  "schemas": [
+    "app/schemas/com.pbweather.weather.data.local.WeatherDatabase/1.json"
+  ],
+  "timestamp": "2026-11-24T13:27:40.282362+00:00",
+  "limits": [
+    "TEST-008 retains independent ASSET-001 source discrepancy",
+    "50 MiB LRU is measured on cached serialized weather payload and metadata, not public static assets"
+  ]
+}

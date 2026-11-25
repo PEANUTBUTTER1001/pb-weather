@@ -1,0 +1,51 @@
+{
+  "task": "TASK-008",
+  "result": "PARTIAL_USER_DEFERRED",
+  "clientDate": "2026-11-25",
+  "reason": "Emulator coarse provider returned OUTSIDE_COVERAGE even after foreground launch and public Seoul fused mock. Verification cap reached; no commit/push. No raw coordinates logged.",
+  "passed": [
+    "ktlintCheck",
+    "lintDebug",
+    "JVM 11 tests",
+    "offline literal search including first initialized search <300 ms",
+    "official mid/ASOS mapping",
+    "purpose explanation and search fallback"
+  ],
+  "failed": [
+    "deniedThenForegroundSimulatedCoarseFix"
+  ],
+  "instrumentation": [
+    {
+      "tests": "5",
+      "failures": "1",
+      "cases": [
+        {
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "result": "PASS"
+        },
+        {
+          "name": "cacheDeletionPreservesPublicAssets",
+          "result": "PASS"
+        },
+        {
+          "name": "offlineSearchUsesLiteralQueryAndResolvesOfficialMetadata",
+          "result": "PASS"
+        },
+        {
+          "name": "deniedThenForegroundSimulatedCoarseFix",
+          "result": "FAIL"
+        },
+        {
+          "name": "explanationOffersSearchBeforeRequestingPermission",
+          "result": "PASS"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Actual S25 Ultra location validation belongs to user",
+    "No sixth verification attempt on this unit"
+  ],
+  "userDecision": "2026-11-25: 위치 계측 보류 유지. No additional runtime location diagnosis. Known failed instrumentation is explicitly ignored, never converted to PASS.",
+  "integration": "Non-location code and reviewed implementation remain usable in UI integration; physical/coarse-position acceptance stays deferred."
+}

@@ -28,3 +28,7 @@ Thumbs.db
 *.log
 
 # Keep Room schemas and curated verification evidence tracked.
+
+# Asset conversion tool state
+__pycache__/
+*.pyc

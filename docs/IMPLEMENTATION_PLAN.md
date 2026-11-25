@@ -6,28 +6,28 @@
 | --- | --- |
 | 문서 역할 | TASK·순서·상태·인수인계 관리(살아 있는 문서) |
 | 작성일 | 2026-11-16 |
-| 현재 단계 | TASK-001 기반 구현 중 — 검증 완료 전 DONE 처리 금지 |
+| 현재 단계 | TASK-004~007 데이터 완료, TASK-009 화면 통합 중 |
 | 근거 | [ENHANCEMENT_GUIDELINE.md](ENHANCEMENT_GUIDELINE.md), [REQUIREMENTS.md](REQUIREMENTS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [TEST_PLAN.md](TEST_PLAN.md) |
 
 ## 2. 구현 목표
 
 - v1 범위 FR-001~FR-010 전부 구현(사용자 결정: 10개 전부 v1).
 - 구현 순서는 위험·의존성 기준 5단계로 분할, 각 단계 종료 시 실기기 본인 사용 가능 상태 유지.
-- 완료 조건: 개발 대상 수용 기준·ENH-001~006 검증 및 S25 Ultra 실 API 확인. TASK-014·TEST-015 출시는 별도.
+- 완료 조건: 개발 대상 수용 기준·ENH-001~006 및 기본 에뮬레이터 검증. S25 Ultra 수동 테스트는 사용자 담당, 위치 계측은 사용자 지시로 보류 유지. TASK-014·TEST-015 출시는 별도.
 
 ## 3. 작업 목록
 
 | TASK | 제목 | 요구사항 | 의존 | 상태 |
 | --- | --- | --- | --- | --- |
 | TASK-001 | 프로젝트 골격·테마·빌드 설정 | BIZ-001, SEC-002, NFR-A11Y-001 | — | DONE |
-| TASK-002 | 내장 자산과 좌표 변환 유틸 | FR-007, FR-008, FR-005 | TASK-001 | TODO |
-| TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | TODO |
-| TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
-| TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | TODO |
-| TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | TODO |
-| TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | TODO |
-| TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | TODO |
-| TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | TODO |
+| TASK-002 | 내장 자산과 좌표 변환 유틸 | FR-007, FR-008, FR-005 | TASK-001 | PARTIAL (ASSET-001) |
+| TASK-003 | Room·DataStore 로컬 저장소와 캐시 수명 | DATA-001, FR-010 | TASK-001 | DONE |
+| TASK-004 | 기상청 단기예보 클라이언트·현재/시간별 Repository | FR-001, FR-002, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
+| TASK-005 | 중기예보 클라이언트와 주간 예보 병합 | FR-003 | TASK-004 | DONE |
+| TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | DONE |
+| TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
+| TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | PARTIAL (사용자 위치 계측 보류) |
+| TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | IN_PROGRESS |
 | TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | TODO |
 | TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | TODO |
 | TASK-012 | 홈 화면 위젯·백그라운드 갱신 | FR-009, NFR-PERF-002 | TASK-003, TASK-004 | TODO |
@@ -40,7 +40,7 @@
 - **TASK-002**: 격자 변환이 기상청 격자표 샘플 10개와 일치 / 최근접 ASOS·중기 regId 매핑 단위 테스트 통과 / TM 좌표 변환 구현(좌표계는 API 명세 확인).
 - **TASK-003**: WeatherSnapshot·DailyObservation·RegionGrid·AsosStation 엔티티·DAO / 만료(30분·3시간·12시간·1시간)·50MB LRU 테스트 통과 / 즐겨찾기·대표 위치 DataStore.
 - **TASK-004**: base_time 경계 테스트 통과 / 실황·초단기·단기 파싱·병합(6시간 이내 초단기 우선) / resultCode 03·22·30·XML 오류 → 도메인 오류 / 캐시 유효 시 호출 0회.
-- **TASK-005**: tmFc 06/18시 계산 / 오늘~+10일 빈칸 없는 병합 테스트 통과.
+- **TASK-005**: tmFc 06/18시 계산 / 오늘~+10일 11개 날짜 병합 테스트 통과(실제 미제공은 null 유지, 새벽 +10일 포함).
 - **TASK-006**: 근접 측정소 → 실시간 측정 2단계 / '-' 결측 시 2순위 대체 / 등급 1~4 매핑.
 - **TASK-007**: 누락 날짜 구간만 조회 / 어제 비교·KST 최근 10일 창 계산 / 결측 null 보존.
 - **TASK-008**: COARSE만 선언·요청 / 요청 전 목적 안내, 거부 시 지역 검색 / 원본 좌표 로깅·저장 0건.
@@ -122,7 +122,7 @@
 
 | ID | 내용 | 차단 대상 | 상태 |
 | --- | --- | --- | --- |
-| BLK-01 | 공공데이터포털 API 5종 활용신청 승인 | TASK-004~007 실연동 | 미착수 |
+| BLK-01 | 공공데이터포털 API 5종 활용신청 승인 | TASK-004~007 실연동 | 실 API 5종 PASS(증거 TASK-004~007) |
 | OPEN-001 | 공개 배포 시 직접 호출 vs 프록시 | 공개 배포 | UNRESOLVED |
 | OPEN-002 | 위치정보법 신고 필요 여부 | 공개 배포 | UNRESOLVED |
 | OPEN-003 | applicationId·앱 이름 | TASK-014 | UNRESOLVED |
@@ -137,9 +137,9 @@
 
 ## 13. 현재 상태
 
-- 단계: 승인 명세에 따라 TASK-001 구현 중.
-- 다음 작업: TASK-001 빌드·테마 검증 → TASK-002·003. API 승인 전 픽스처 기반 개발 진행.
-- 완료 TASK: 1 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
+- 단계: TASK-001·003~007 완료. TASK-002 공식 원본 불일치, TASK-008 사용자 위치 계측 보류로 PARTIAL.
+- 다음 작업: 홈·과거·지역·설정 화면 → 위젯 → 통합·접근성 검증.
+- 완료 TASK: 6 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
 
 ## 14. 인수인계
 
@@ -150,3 +150,25 @@
 - 2026-11-24 실행 기준: 원격 기본 `origin/develop`, 작업 `feat/task-001-foundation`. 사용자 /execute 승인, namespace/applicationId `com.pbweather.weather`. 기존 초기 파일 보존.
 
 - TASK-001 검증: ktlintCheck·lintDebug·testDebugUnitTest·assembleDebug PASS. 증거 `docs/evidence/TASK-001.json`. 기본 에뮬레이터 Pixel_9_Pro 검증 진행, S25 Ultra 수동 검증은 사용자 담당(후속 지시).
+
+- TASK-002: 공식 격자 3,839·활성 지원 ASOS 95·중기 코드 221개 생성. 자동 검사 PASS, TEST-008은 백령면 원본 불일치로 10/10 PASS 아님. 증거 docs/evidence/TASK-002.json, ASSET_SOURCES.md. 유틸은 후속 개발에 사용 가능.
+
+- TASK-003 PASS: Room v1 스키마 자동 생성, 캐시·LRU·설정·연속 Undo 단위 검증 및 Pixel_9_Pro Android 15 Room 보존/삭제·DataStore 재시작 복원 계측 2개 PASS. docs/evidence/TASK-003.json.
+
+- TASK-004 PASS: ktlintCheck·lintDebug·JVM 14개·에뮬레이터 계측 5개·assembleDebug 통과. 실황/단기/초단기 실제 응답 및 미래 48개 이상·캐시 재사용 추가 전송 0 확인. 성공·실패 동시 요청 공유와 실패 시 자료/시각 보존 확인. docs/evidence/TASK-004.json.
+
+- TASK-005 PASS: 17 JVM·6 에뮬레이터 계측·ktlintCheck·lintDebug·assembleDebug 통과. 중기육상/기온 실응답, 오늘~+10일 11개 슬롯, 실제 발표일 기준 범위, 종일 해상도 유지 확인. 새벽 +10일 미제공은 오류/누락 위조 없이 보존. docs/evidence/TASK-005.json.
+- TASK-008은 사용자 계측 보류 확정 후 PARTIAL 브랜치로 보존. 마지막 실패 증거 유지, 위치 호출 테스트 @Ignore. 나머지 구현·통합 계속 진행.
+- TASK-006 PASS: JVM 18개·에뮬레이터 계측 6개·ktlintCheck·lintDebug·assembleDebug 통과. ver1.1 공개 측정소 목록과 ver1.5 최근 측정 실 API·재조회 전송 0 확인. PM별 결측/플래그/1h 등급, 24:00 정규화·중복·공백 분리 검증. docs/evidence/TASK-006.json. 독립 브랜치 기반 TASK-004이며 TASK-005·008은 별도 브랜치.
+- TASK-007 PASS: JVM 17개·에뮬레이터 계측 7개·ktlintCheck·lintDebug·assembleDebug 통과. ASOS 실 API 게시 완료 9일·재조회 전송 0 확인. KST 10일 창·어제 비교·결측 강수 null, 미게시 후 누락 날짜만 재조회·LRU 삭제 날짜 복구를 Room 계측으로 확인. docs/evidence/TASK-007.json. 독립 기반 TASK-004.
+- TASK-008 보류: 로컬 매핑·검색·거부/사전 안내 PASS. 전경/공개 서울 모의 좌표에서도 COARSE 결과 OUTSIDE_COVERAGE. 5회 검증 상한 도달, 커밋·푸시 보류. docs/evidence/TASK-008.json. 원본 좌표는 출력·저장 없음. 이후 사용자 계측 보류 확정에 따라 수용 기준 검증 예외로 관리.
+
+- 2026-11-25 사용자 후속 결정: 위치 계측 보류 유지. 해당 수용 기준을 미검증 예외로 명시하고 위치 호출 테스트 @Ignore 처리(마지막 실패 기록 보존, 추가 진단 없음). 검색·매핑·거부 안내와 구현 코드는 화면 통합에 사용, 전체 TASK-008 DONE 판정은 보류.
+
+- TASK-009 의존 통합: TASK-005 기반에 TASK-006·007·008 병합. TASK-008 위치 호출 계측은 사용자 지시로 재실행 없음. 알려진 실패를 PASS로 치환하지 않으며, 나머지 자동 검사·화면 검증은 계속 진행.
+
+- TASK-009 진행 기록(2026-11-25): 실제 검색→지역 선택→홈/자료 상세→뒤로 복귀 통과. 통합 JVM 30개 PASS, 에뮬레이터 계측 실패 0·위치 호출 1개 사용자 보류. 최신 타이포그래피·메타 정렬·시스템 애니메이션 설정 감지 반영. 375dp/200%/다크/고대비 화면 확인 중 시간 칸 폭 부족 발견, 글자 배율에 따른 폭 보정 적용. 최종 화면 검증·커밋·푸시 아직 미완료. TASK-010~013 상세/위젯 구현 계속 필요. docs/evidence/TASK-009.json.
+
+- TASK-009 화면 후속 확인: 200% 시간 칸 폭 보정 후 assembleDebug PASS 및 실제 화면 확인. 증거 docs/evidence/TASK-009/*.png. 에뮬레이터 font_scale=1.0·wm size 기본값 복원. 홈 최종 QA·커밋/푸시와 TASK-010~013는 미완료 상태 유지.
+
+- 2026-11-25 /git 체크포인트: 홈 200% 폭 보정 포함 빌드·단위 30개·린트 PASS. 저장 지역명 중복으로 발생한 UI 테스트 선택자 실패를 고유 접근성 설명으로 수정, 해당 검사 재실행 PASS. 위치 호출 1개 보류 유지. 사용자 지시로 현재 작업 Draft PR 제출, TASK-009 IN_PROGRESS·TASK-010~013 미완료 유지. 증거 docs/evidence/GIT_REVIEW.json.

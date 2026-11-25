@@ -1,0 +1,17 @@
+{
+  "region_count": 3839,
+  "asos_count": 95,
+  "mid_count": 221,
+  "inputs_sha256": {
+    "short-0.xlsx": "76c1bdae7b5299c81e0582b42d1507775183603072f141ce8d96e6054851b391",
+    "mid-1.xlsx": "a9f9715f8adb1f7805d074ee9d0744a5b7d6a5f066a0829291c87ad71e589d59",
+    "asos.zip": "60e1014ff64ebfeb387d65d8cb5682c9f6058a00415cf45481bc4e59db1a769a",
+    "kma-stations.csv": "5c74d9f514e625a390516bac6296d3b0e489843891327e4f5b79cf4e65086e51"
+  },
+  "task": "TASK-002",
+  "automated_checks": "PASS",
+  "requirement_TEST_008": "PARTIAL: nine exact matches, ASSET-001 original discrepancy",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug",
+  "base": "feat/task-001-foundation",
+  "timestamp": "2026-11-24T13:20:15.355214+00:00"
+}
