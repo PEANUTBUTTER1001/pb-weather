@@ -162,4 +162,6 @@
     <string name="theme_dark">다크</string>
     <string name="theme_contrast">고대비</string>
     <string name="weekly_sources">단기 %1$s · 중기 %2$s 발표 ⓘ</string>
+    <string name="confirm">확인</string>
+    <string name="show_hourly">시간별 보기</string>
 </resources>

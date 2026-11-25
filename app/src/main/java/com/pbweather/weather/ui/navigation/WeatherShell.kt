@@ -322,7 +322,12 @@ fun WeatherShell(
             }
         }
     }
-    details?.let { WeatherDetails(it, state) { details = null } }
+    details?.let {
+        WeatherDetails(it, state, onNavigate = { target ->
+            details = target
+            target.removePrefix("hour:").toLongOrNull()?.let { hour -> selectedHour = hour }
+        }) { details = null }
+    }
 }
 
 @Composable private fun RegionLanding(

@@ -3,6 +3,7 @@ package com.pbweather.weather.ui.home
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -29,8 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
@@ -72,6 +75,7 @@ import com.pbweather.weather.ui.theme.gradeTokens
 import java.time.Instant
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 fun currentSky(state: WeatherUiState): SkyCondition {
     val hour = state.data.forecast.hourly.data?.hours?.minByOrNull { abs(it.at - state.now) }
@@ -99,7 +103,7 @@ fun HomeScreen(
             list.layoutInfo.visibleItemsInfo.any { it.key == "hero" && it.offset > -threshold }
         }
     }
-    LazyColumn(state = list, verticalArrangement = Arrangement.spacedBy(Dims.gutter)) {
+    LazyColumn(state = list, modifier = Modifier.focusRestorer().focusGroup(), verticalArrangement = Arrangement.spacedBy(Dims.gutter)) {
         val resource = state.data.forecast.now
         if (resource.error != null || resource.isOffline || resource.data == null) {
             item(key = "status") {
@@ -338,9 +342,18 @@ fun HomeScreen(
     onRetry: () -> Unit
 ) {
     val resource = state.data.forecast.hourly
+    val scope = rememberCoroutineScope()
     val hours = resource.data?.hours.orEmpty().filter { it.at > state.now && it.at <= state.now + 48 * 3600000L }.take(48)
     SectionCard {
         SectionTitle(stringResource(R.string.hourly_title))
+        Row {
+            TextButton(enabled = list.canScrollBackward, onClick = {
+                scope.launch { list.animateScrollToItem((list.firstVisibleItemIndex - 4).coerceAtLeast(0)) }
+            }) { Text(stringResource(R.string.previous_hours)) }
+            TextButton(enabled = list.canScrollForward, onClick = {
+                scope.launch { list.animateScrollToItem((list.firstVisibleItemIndex + 4).coerceAtMost(hours.lastIndex.coerceAtLeast(0))) }
+            }) { Text(stringResource(R.string.next_hours)) }
+        }
         SourceLine(resource.meta, resource, state.now) { onDetails("sourceHourly") }
         if (resource.data == null || resource.error != null || resource.isOffline) StatusBlock(resource, onRetry)
         val summary = ForecastSummary.select(resource.data?.hours.orEmpty(), state.now)

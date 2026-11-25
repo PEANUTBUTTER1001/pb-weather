@@ -172,3 +172,5 @@
 - TASK-009 화면 후속 확인: 200% 시간 칸 폭 보정 후 assembleDebug PASS 및 실제 화면 확인. 증거 docs/evidence/TASK-009/*.png. 에뮬레이터 font_scale=1.0·wm size 기본값 복원. 홈 최종 QA·커밋/푸시와 TASK-010~013는 미완료 상태 유지.
 
 - 2026-11-25 /git 체크포인트: 홈 200% 폭 보정 포함 빌드·단위 30개·린트 PASS. 저장 지역명 중복으로 발생한 UI 테스트 선택자 실패를 고유 접근성 설명으로 수정, 해당 검사 재실행 PASS. 위치 호출 1개 보류 유지. 사용자 지시로 현재 작업 Draft PR 제출, TASK-009 IN_PROGRESS·TASK-010~013 미완료 유지. 증거 docs/evidence/GIT_REVIEW.json.
+
+- 2026-11-25 TASK-009 보완: 상세 이전/다음 실제 시간 탐색, 48시간 내 실제 원자료가 있는 날짜의 시간별 연결, 가로 스크롤 보조 버튼, 홈 focusRestorer 추가. S25 Ultra·TalkBack 실제 낭독·프레임 할당 프로파일은 별도 미검증. 겨울 WSD 입력 규격 미확인 유지. PR 생성 전 작업 브랜치 푸시 경계 적용.
