@@ -275,4 +275,5 @@ weather/                                         # [KEEP] 저장소 루트
 
 - TASK-004 경로: `data/remote/{PublicDataApi,ApiClient,NetworkMonitor,ServiceKeyInterceptor}.kt`, `data/repository/RequestCoordinator.kt`, `di/{NetworkModule,DataEntryPoint}.kt`, `domain/{ForecastSource,ForecastMerger}.kt`, `docs/API_CONTRACT.md`.
 
+- TASK-006 경로: `data/remote/airkorea/AirParser.kt`, `data/repository/{AirStationCatalog,AirQualityRepository}.kt`, `domain/AirQualitySource.kt`, `di/AirModule.kt`. 공개 측정소 좌표는 로컬 최근접 탐색 전용, AIR 원본은 측정소별 캐시.
 - TASK-005 경로: `data/remote/kma/MidParser.kt`, `data/repository/MidForecastRepository.kt`, `domain/WeeklyForecast.kt`, `app/src/test/.../MidForecastTest.kt`, `app/src/androidTest/.../LiveMidContractTest.kt`. 중기는 regId별 공유 캐시, 화면은 오늘~+10일 11개 날짜에 실제 제공값만 병합.

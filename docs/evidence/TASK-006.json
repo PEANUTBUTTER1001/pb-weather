@@ -1,0 +1,91 @@
+{
+  "task": "TASK-006",
+  "result": "PASS",
+  "clientDate": "2026-11-25",
+  "command": "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+  "unit": [
+    {
+      "name": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:57:10.181Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:57:10.262Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.AirContractTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:57:10.367Z"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:57:10.435Z"
+    },
+    {
+      "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-11-24T15:57:11.075Z"
+    }
+  ],
+  "instrumentation": [
+    {
+      "tests": "6",
+      "failures": "0",
+      "skipped": "0",
+      "cases": [
+        {
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.315"
+        },
+        {
+          "name": "cacheDeletionPreservesPublicAssets",
+          "classname": "com.pbweather.weather.data.local.LocalStorageTest",
+          "time": "0.948"
+        },
+        {
+          "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+          "classname": "com.pbweather.weather.data.remote.ForecastIntegrationTest",
+          "time": "0.109"
+        },
+        {
+          "name": "realPublicStationCatalogAndHourlyAirContract",
+          "classname": "com.pbweather.weather.data.remote.LiveAirContractTest",
+          "time": "1.637"
+        },
+        {
+          "name": "realNowcastContractSmoke",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "0.13"
+        },
+        {
+          "name": "realShortUltraAndCacheContract",
+          "classname": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "time": "1.718"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "ENH-005 display/interaction validation belongs to home UI task",
+    "S25 Ultra manual testing is user-owned",
+    "Metadata is public ver=1.1; no user coordinates transmitted"
+  ],
+  "sourceSecretScan": {
+    "publicOperationLiterals": 1,
+    "suspectedKeyLiterals": 0
+  }
+}
