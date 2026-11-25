@@ -76,6 +76,8 @@
 
 ## 7. 디렉터리 구조
 
+TASK-013 경로: `ui/settings/SettingsScreen.kt`, `ui/settings/LegalDocSheets.kt`, `assets/legal/apache-2.0.txt`, `androidTest/.../ui/settings/SettingsScreenTest.kt`. 캐시 삭제 전 요청 세대와 완료 저장 세대를 비교해 삭제 이전 응답의 재저장 방지.
+
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,
 `.editorconfig`, `docs/IMPLEMENTATION_SPEC.md`, `docs/API_CONTRACT.md`,

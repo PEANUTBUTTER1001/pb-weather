@@ -70,6 +70,7 @@ import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.home.HomeScreen
 import com.pbweather.weather.ui.home.currentSky
 import com.pbweather.weather.ui.permission.LocationPermissionAction
+import com.pbweather.weather.ui.settings.SettingsScreen
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.FontSize
 import com.pbweather.weather.ui.theme.Palette
@@ -98,7 +99,8 @@ data class WeatherActions(
     val undo: () -> Unit = {},
     val theme: (ThemeMode) -> Unit = {},
     val palette: (Palette) -> Unit = {},
-    val font: (FontSize) -> Unit = {}
+    val font: (FontSize) -> Unit = {},
+    val clearCache: () -> Unit = {}
 )
 
 @Composable
@@ -109,7 +111,10 @@ fun WeatherShell(
     mode: ThemeMode,
     palette: Palette,
     actions: WeatherActions,
-    notices: Flow<Notice>
+    notices: Flow<Notice>,
+    cacheBytes: Long = 0,
+    clearingCache: Boolean = false,
+    primaryForecast: com.pbweather.weather.domain.ForecastState = com.pbweather.weather.domain.ForecastState()
 ) {
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
@@ -155,11 +160,15 @@ fun WeatherShell(
     val restored = stringResource(R.string.favorite_restored)
     val limit = stringResource(R.string.favorite_limit)
     val undo = stringResource(R.string.undo)
+    val cleared = stringResource(R.string.cache_cleared)
+    val clearFailed = stringResource(R.string.cache_clear_failed)
     LaunchedEffect(notices) {
         notices.collectLatest { notice ->
             val message = when (notice) {
                 Notice.DELETED -> deleted
                 Notice.RESTORED -> restored
+                Notice.CACHE_CLEARED -> cleared
+                Notice.CACHE_CLEAR_FAILED -> clearFailed
                 else -> limit
             }
             val result = withTimeoutOrNull(6000) {
@@ -317,12 +326,21 @@ fun WeatherShell(
                     }
                     WeatherTab.LOCATIONS -> RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
                     WeatherTab.HISTORY -> HistoryLanding(state, { details = it }, { tab = WeatherTab.LOCATIONS })
-                    WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
+                    WeatherTab.SETTINGS -> SettingsScreen(state, cacheBytes, clearingCache, primaryForecast, actions, {
+                        tab =
+                            WeatherTab.LOCATIONS
+                    }, openSettings) { details = it }
                 }
             }
         }
     }
-    details?.let { WeatherDetails(it, state) { details = null } }
+    details?.let { target ->
+        if (target in setOf("help", "privacy", "licenses", "usage")) {
+            com.pbweather.weather.ui.settings.LegalDocSheet(target) { details = null }
+        } else {
+            WeatherDetails(target, state) { details = null }
+        }
+    }
 }
 
 @Composable private fun RegionLanding(
@@ -422,28 +440,6 @@ fun WeatherShell(
                     Text(stringResource(R.string.today_extrema, temperature(day.maximum), temperature(day.minimum)))
                 }
             }
-        }
-    }
-}
-
-@Composable private fun SettingsLanding(state: WeatherUiState, actions: WeatherActions, onHelp: () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-        SectionCard {
-            SectionTitle(stringResource(R.string.settings))
-            ThemeMode.entries.forEach { mode ->
-                TextButton(onClick = { actions.theme(mode) }) {
-                    Text(
-                        stringResource(
-                            when (mode) {
-                                ThemeMode.LIGHT -> R.string.theme_light
-                                ThemeMode.DARK -> R.string.theme_dark
-                                ThemeMode.HIGH_CONTRAST -> R.string.theme_contrast
-                            }
-                        )
-                    )
-                }
-            }
-            TextButton(onClick = onHelp) { Text(stringResource(R.string.help)) }
         }
     }
 }

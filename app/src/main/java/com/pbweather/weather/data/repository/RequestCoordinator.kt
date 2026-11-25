@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 
 data class RequestKey(val location: String, val kind: DataKind)
 data class RequestStatus(val refreshing: Boolean = false, val error: DomainError? = null)
@@ -34,8 +35,10 @@ class RequestCoordinator @Inject constructor(private val cache: CacheStore) {
             if (existing != null && !cache.policy.expired(existing.expiresAt)) return true.also { pending.complete(it) }
             mutable.update { it + (request to RequestStatus(refreshing = true)) }
             try {
-                val loaded = load()
-                cache.write(key, kind, loaded.payload, loaded.meta, loaded.expiresAt)
+                withContext(cache.requestContext()) {
+                    val loaded = load()
+                    cache.write(key, kind, loaded.payload, loaded.meta, loaded.expiresAt)
+                }
                 mutable.update { it + (request to RequestStatus()) }
                 return true.also { pending.complete(it) }
             } catch (cancelled: CancellationException) {

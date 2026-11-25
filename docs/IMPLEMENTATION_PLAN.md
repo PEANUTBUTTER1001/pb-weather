@@ -31,7 +31,7 @@
 | TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | TODO |
 | TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | TODO |
 | TASK-012 | 홈 화면 위젯·백그라운드 갱신 | FR-009, NFR-PERF-002 | TASK-003, TASK-004 | TODO |
-| TASK-013 | 정보·설정 화면 | DATA-002, SEC-001, DATA-001 | TASK-003 | TODO |
+| TASK-013 | 정보·설정 화면 | DATA-002, SEC-001, DATA-001 | TASK-003 | IMPLEMENTED (설정·삭제 자동 검증, 통합 QA 후속) |
 | TASK-014 | 릴리스 준비(서명·AAB·내부 테스트) | BIZ-002, SEC-002 | TASK-009~013 | TODO |
 
 ### 완료 조건(Done When) 상세
@@ -172,3 +172,5 @@
 - TASK-009 화면 후속 확인: 200% 시간 칸 폭 보정 후 assembleDebug PASS 및 실제 화면 확인. 증거 docs/evidence/TASK-009/*.png. 에뮬레이터 font_scale=1.0·wm size 기본값 복원. 홈 최종 QA·커밋/푸시와 TASK-010~013는 미완료 상태 유지.
 
 - 2026-11-25 /git 체크포인트: 홈 200% 폭 보정 포함 빌드·단위 30개·린트 PASS. 저장 지역명 중복으로 발생한 UI 테스트 선택자 실패를 고유 접근성 설명으로 수정, 해당 검사 재실행 PASS. 위치 호출 1개 보류 유지. 사용자 지시로 현재 작업 Draft PR 제출, TASK-009 IN_PROGRESS·TASK-010~013 미완료 유지. 증거 docs/evidence/GIT_REVIEW.json.
+
+- TASK-013: 화면/홈 위젯/위치/정리/앱 정보 시그니처, 실측 기반 1줄·2줄 배치·4색 2x2, DataStore 설정·캐시 용량/확인 삭제·안내 문서·오픈소스 이용 조건 연결. 캐시 삭제 세대 이후에만 쓰기 허용하여 삭제 이전 요청의 지연 응답(스냅샷·일자료) 재저장 차단. 서비스 키·위치 권한·스키마 버전 변경 없음. RELEASE_RUNBOOK의 debug BODY 허용 문구를 보안 상위 계약으로 정정.

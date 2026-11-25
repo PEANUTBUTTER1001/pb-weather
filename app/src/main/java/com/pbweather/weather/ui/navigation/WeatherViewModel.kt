@@ -25,11 +25,13 @@ import com.pbweather.weather.ui.theme.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +62,7 @@ data class WeatherUiState(
     val location: LocationUi = LocationUi(),
     val now: Long = 0
 )
-enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED }
+enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED, CACHE_CLEAR_FAILED }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
@@ -71,8 +73,30 @@ class WeatherViewModel @Inject constructor(
     private val history: ObserveHistory,
     private val findRegions: FindRegions,
     private val locations: LocationSource,
-    private val clock: Clock
+    private val clock: Clock,
+    private val cache: com.pbweather.weather.data.local.CacheStore
 ) : ViewModel() {
+    val cacheBytes = cache.dao.observeCacheBytes().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
+    val clearingCache = MutableStateFlow(false)
+    fun clearCache() {
+        if (clearingCache.value) return
+        clearingCache.value = true
+        viewModelScope.launch {
+            try {
+                refreshJob?.cancelAndJoin()
+                cache.clearWeather()
+                notices.emit(Notice.CACHE_CLEARED)
+            } catch (
+                cancelled: CancellationException
+            ) {
+                throw cancelled
+            } catch (_: Exception) {
+                notices.emit(Notice.CACHE_CLEAR_FAILED)
+            } finally {
+                clearingCache.value = false
+            }
+        }
+    }
     val query = MutableStateFlow("")
     private val range = MutableStateFlow(HistoryWindow.recent(clock))
     private val location = MutableStateFlow(LocationUi(granted = locations.permissionGranted()))
@@ -105,6 +129,9 @@ class WeatherViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value))
     val results = query.debounce(100).flatMapLatest { text -> flow { emit(findRegions(text)) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val primaryForecast = saved.map { prefs -> prefs.favorites.firstOrNull { it.id == prefs.primaryId } }
+        .distinctUntilChanged().flatMapLatest { region -> region?.let { forecast(it) } ?: flowOf(ForecastState()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ForecastState())
     init {
         viewModelScope.launch { locations.prepare() }
         viewModelScope.launch {

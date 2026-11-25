@@ -27,16 +27,22 @@ class MainActivity : ComponentActivity() {
             val state by model.ui.collectAsStateWithLifecycle()
             val query by model.query.collectAsStateWithLifecycle()
             val results by model.results.collectAsStateWithLifecycle()
+            val cacheBytes by model.cacheBytes.collectAsStateWithLifecycle()
+            val clearing by model.clearingCache.collectAsStateWithLifecycle()
+            val primaryForecast by model.primaryForecast.collectAsStateWithLifecycle()
             val mode = ThemeMode.entries.firstOrNull { it.name == state.preferences.theme } ?: ThemeMode.LIGHT
             val palette = Palette.entries.firstOrNull { it.name == state.preferences.palette } ?: Palette.INDIGO
             val font = FontSize.entries.firstOrNull { it.name == state.preferences.font } ?: FontSize.NORMAL
             val actions = remember(model) {
                 WeatherActions(
                     model::search, model::select, model::refresh, model::locate,
-                    model::updatePermission, model::undo, model::theme, model::palette, model::font
+                    model::updatePermission, model::undo, model::theme, model::palette, model::font,
+                    clearCache = model::clearCache
                 )
             }
-            WeatherTheme(mode, palette, font) { WeatherShell(state, query, results, mode, palette, actions, model.notices) }
+            WeatherTheme(mode, palette, font) {
+                WeatherShell(state, query, results, mode, palette, actions, model.notices, cacheBytes, clearing, primaryForecast)
+            }
         }
     }
 }

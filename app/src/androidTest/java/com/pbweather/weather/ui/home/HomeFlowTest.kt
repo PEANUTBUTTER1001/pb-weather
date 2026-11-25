@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import com.pbweather.weather.MainActivity
@@ -26,7 +27,7 @@ class HomeFlowTest {
         compose.onNodeWithContentDescription("서울특별시 종로구").performClick()
         val source = hasText("기상청 실황 ·", substring = true) and !hasText("미제공", substring = true)
         compose.waitUntil(timeoutMillis = 30000) { compose.onAllNodes(source).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNode(source).performClick()
+        compose.onNode(source).performScrollTo().performClick()
         compose.waitUntil(timeoutMillis = 5000) {
             compose.onAllNodesWithText("앱 수신 시각").fetchSemanticsNodes().isNotEmpty()
         }
