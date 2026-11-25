@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +48,7 @@ import com.pbweather.weather.ui.theme.modalScrim
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
+fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -> Unit = {}, onClose: () -> Unit) {
     val title = when {
         target.startsWith("hour:") -> stringResource(R.string.hour_details)
         target.startsWith("day:") -> stringResource(R.string.day_details)
@@ -88,6 +89,18 @@ fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
                             } ?: stringResource(R.string.not_provided)
                         )
                         DetailRow(stringResource(R.string.precipitation_forecast), precipitation(hour.precipitation))
+                        val hours = state.data.forecast.hourly.data?.hours.orEmpty().filter { it.at > state.now }
+                        val index = hours.indexOfFirst { it.at == hour.at }
+                        Row {
+                            TextButton(enabled = index > 0, onClick = { onNavigate("hour:${hours[index - 1].at}") }) {
+                                Text(stringResource(R.string.previous_hours))
+                            }
+                            TextButton(enabled = index >= 0 && index < hours.lastIndex, onClick = {
+                                onNavigate("hour:${hours[index + 1].at}")
+                            }) {
+                                Text(stringResource(R.string.next_hours))
+                            }
+                        }
                         Rule()
                         hour.origins.forEach { (field, meta) ->
                             Text(fieldLabel(field), style = MaterialTheme.typography.titleMedium)
@@ -100,7 +113,7 @@ fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
                     if (day == null) {
                         Text(stringResource(R.string.details_missing))
                     } else {
-                        Text(dateLabel(day.date), style = MaterialTheme.typography.titleLarge)
+                        Text(day.date, style = MaterialTheme.typography.titleLarge)
                         DetailRow(stringResource(R.string.minimum), temperature(day.minimum))
                         DetailRow(stringResource(R.string.maximum), temperature(day.maximum))
                         fun probability(value: Int?) = value?.toString()
@@ -135,6 +148,16 @@ fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
                             )
                         }
                         if (day.origins.isEmpty()) Text(stringResource(R.string.not_provided))
+                        val firstHour = state.data.forecast.hourly.data?.hours?.firstOrNull {
+                            it.at > state.now && it.at <= state.now + 48 * 3600000L &&
+                                java.time.Instant.ofEpochMilli(it.at).atZone(com.pbweather.weather.core.time.ReleaseTimeCalculator.KST)
+                                    .toLocalDate().toString() == day.date
+                        }
+                        if (firstHour != null) {
+                            TextButton(onClick = { onNavigate("hour:${firstHour.at}") }) {
+                                Text(stringResource(R.string.show_hourly))
+                            }
+                        }
                         if (day.periodMaximum) {
                             Text(
                                 stringResource(R.string.period_maximum_note),
@@ -174,6 +197,7 @@ fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
                 }
                 else -> SourceInfo(state.data.forecast.now.meta, state.preferences.selected?.name, state.data.forecast.now)
             }
+            TextButton(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.confirm)) }
         }
     }
 }
@@ -210,18 +234,18 @@ fun WeatherDetails(target: String, state: WeatherUiState, onClose: () -> Unit) {
     }
     DetailRow(
         stringResource(R.string.provider),
-        if (meta?.provider == Provider.AIRKOREA) {
+        if (meta.provider == Provider.AIRKOREA) {
             stringResource(R.string.airkorea)
         } else {
             stringResource(R.string.kma)
         }
     )
     DetailRow(stringResource(R.string.data_region), missing(region))
-    if (meta?.issuedAt != null) DetailRow(stringResource(R.string.issued_at), missing(dateTimeLabel(meta.issuedAt)))
-    if (meta?.observedAt != null) DetailRow(stringResource(R.string.observed_at), missing(dateTimeLabel(meta.observedAt)))
-    if (meta?.validFrom != null) DetailRow(stringResource(R.string.valid_from), missing(dateTimeLabel(meta.validFrom)))
-    if (meta?.validTo != null) DetailRow(stringResource(R.string.valid_to), missing(dateTimeLabel(meta.validTo)))
-    DetailRow(stringResource(R.string.received_at), missing(dateTimeLabel(meta?.receivedAt)))
+    if (meta.issuedAt != null) DetailRow(stringResource(R.string.issued_at), missing(dateTimeLabel(meta.issuedAt)))
+    if (meta.observedAt != null) DetailRow(stringResource(R.string.observed_at), missing(dateTimeLabel(meta.observedAt)))
+    if (meta.validFrom != null) DetailRow(stringResource(R.string.valid_from), missing(dateTimeLabel(meta.validFrom)))
+    if (meta.validTo != null) DetailRow(stringResource(R.string.valid_to), missing(dateTimeLabel(meta.validTo)))
+    DetailRow(stringResource(R.string.received_at), missing(dateTimeLabel(meta.receivedAt)))
     if (resource.isStale) Text(stringResource(R.string.stale), color = WeatherTheme.colors.warning)
     if (resource.isOffline) Text(stringResource(R.string.cached_offline))
     resource.error?.let { Text(errorText(it), color = WeatherTheme.colors.error) }

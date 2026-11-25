@@ -1,0 +1,99 @@
+{
+  "task": "TASK-009",
+  "branch": "fix/task-009-home-completion",
+  "clientDate": "2026-11-25",
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": [
+      {
+        "name": "com.pbweather.weather.core.geo.GeoTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:13.734Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.local.LocalRulesTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:13.810Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.location.RegionResolverTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:13.895Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.AirContractTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:13.924Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:13.981Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:14.476Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.MidForecastTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:14.492Z"
+      },
+      {
+        "name": "com.pbweather.weather.domain.HomeRulesTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:14.504Z"
+      },
+      {
+        "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:22:14.511Z"
+      }
+    ],
+    "android": [
+      {
+        "name": null,
+        "tests": "14",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "1",
+        "timestamp": "2026-11-25T03:22:44"
+      }
+    ]
+  },
+  "secretScan": {
+    "changedFiles": 8,
+    "suspectLocations": []
+  },
+  "limits": [
+    "Location invocation remains user-deferred; S25 Ultra tests user-owned; release excluded"
+  ]
+}
