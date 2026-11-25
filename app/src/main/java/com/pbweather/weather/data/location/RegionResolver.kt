@@ -51,7 +51,9 @@ class RegionResolver(
 
     /** Device coordinates are used only during this call; returned coordinates always come from the public catalog. */
     fun current(latitude: Double, longitude: Double): Region {
-        if (!latitude.isFinite() || !longitude.isFinite()) throw LocationException(LocationProblem.OUTSIDE_COVERAGE)
+        if (!latitude.isFinite() || !longitude.isFinite() || latitude <= -90 || latitude >= 90 || longitude !in -180.0..180.0) {
+            throw LocationException(LocationProblem.OUTSIDE_COVERAGE)
+        }
         val nearest = regions.minByOrNull {
             NearestFinder.distanceKm(latitude, longitude, it.latitude, it.longitude)
         } ?: throw LocationException(LocationProblem.UNAVAILABLE)

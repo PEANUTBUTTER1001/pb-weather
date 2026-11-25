@@ -1,0 +1,84 @@
+{
+  "task": "TASK-009",
+  "status": "IN_PROGRESS",
+  "clientDate": "2026-11-25",
+  "automated": "Git readiness: ktlintCheck/lintDebug/unit30/assembleDebug PASS. Full instrumentation had one duplicate-selector failure and one user-deferred skip; fixed selector target rerun PASS. No full-suite rerun claimed. See GIT_REVIEW.json.",
+  "unit": [
+    {
+      "name": "com.pbweather.weather.core.geo.GeoTest",
+      "tests": "3",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.local.LocalRulesTest",
+      "tests": "4",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.location.RegionResolverTest",
+      "tests": "3",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.AirContractTest",
+      "tests": "4",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+      "tests": "6",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+      "tests": "3",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.data.remote.MidForecastTest",
+      "tests": "3",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.domain.HomeRulesTest",
+      "tests": "3",
+      "failures": "0"
+    },
+    {
+      "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+      "tests": "1",
+      "failures": "0"
+    }
+  ],
+  "instrumentation": [
+    {
+      "tests": "13",
+      "failures": "0",
+      "skipped": "1"
+    }
+  ],
+  "limits": [
+    "Full task not DONE",
+    "History/date controls, full favorites/settings, widget remain subsequent tasks",
+    "TalkBack/manual performance not verified",
+    "Winter WSD mean interval unconfirmed",
+    "Location invocation remains user-deferred",
+    "Remaining home QA includes TalkBack, complete sheet focus restoration, animation allocation profiling and scroll-assist controls"
+  ],
+  "latestBuild": "assembleDebug PASS after 200% hour-width adjustment",
+  "visual": [
+    "375dp light home",
+    "375dp font200 vertical metrics",
+    "font200 dark",
+    "font200 high contrast static background",
+    "font200 hourly width adjusted and viewed"
+  ],
+  "screenshots": [
+    "docs/evidence/TASK-009/home-375-font200-contrast.png",
+    "docs/evidence/TASK-009/home-375-font200-dark.png",
+    "docs/evidence/TASK-009/home-375-font200.png",
+    "docs/evidence/TASK-009/home-375-light.png",
+    "docs/evidence/TASK-009/hourly-375-font200-fixed.png"
+  ],
+  "gitReadiness": "Checkpoint Draft PR; TASK-009 still IN_PROGRESS."
+}

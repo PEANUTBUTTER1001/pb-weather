@@ -279,3 +279,7 @@ weather/                                         # [KEEP] 저장소 루트
 - TASK-006 경로: `data/remote/airkorea/AirParser.kt`, `data/repository/{AirStationCatalog,AirQualityRepository}.kt`, `domain/AirQualitySource.kt`, `di/AirModule.kt`. 공개 측정소 좌표는 로컬 최근접 탐색 전용, AIR 원본은 측정소별 캐시.
 - TASK-007 경로: `data/remote/kma/AsosParser.kt`, `data/repository/HistoryRepository.kt`, `domain/{HistorySource,HistoryRules}.kt`, `di/HistoryModule.kt`. 일자료는 observations SSOT, snapshots HISTORY는 완료 날짜 표식만 보관. 실제 행 유무를 검사하여 LRU 후 누락 날짜만 재조회.
 - TASK-008 경로: `data/location/{RegionResolver,CoarseLocationProvider}.kt`, `data/repository/LocationRepository.kt`, `domain/LocationSource.kt`, `di/LocationModule.kt`, `ui/permission/LocationPermissionAction.kt`. 최소 오프라인 검색을 위치 대체 경로로 먼저 구현.
+
+- TASK-009 경로: `ui/navigation/{WeatherViewModel,WeatherShell}.kt`, `ui/components/{WeatherComponents,WeatherIcon,WeatherDetails}.kt`, `ui/home/{HomeScreen,HeroWeather}.kt`, `domain/{ForecastSummary,ApparentTemperature}.kt`. 초기 지역 선택 경로는 TASK-008 오프라인 검색 재사용, 과거·지역·설정 상세는 후속 TASK에서 완성.
+
+- Git 검토 경로: `.github/pull_request_template.md`(별도 `chore/add-pr-template` 브랜치), `docs/evidence/GIT_REVIEW.json`(안전 검사·제출 전 검증 결과). 기능 PR과 템플릿 PR 분리.

@@ -59,7 +59,10 @@ object KmaParser {
         return Precipitation(text, type)
     }
     fun observed(items: List<JsonObject>): ObservedWeather {
-        val fields = items.associateBy { it.text("category") }
+        val base = items.firstOrNull()
+        val fields = items.filter {
+            it.text("baseDate") == base?.text("baseDate") && it.text("baseTime") == base?.text("baseTime")
+        }.associateBy { it.text("category") }
         fun value(name: String) = fields[name]?.number("obsrValue")
         return ObservedWeather(
             value("T1H"),

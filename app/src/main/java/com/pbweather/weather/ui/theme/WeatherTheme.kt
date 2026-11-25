@@ -102,9 +102,27 @@ object Dims {
     val maxWidth = 760.dp
     val narrow = 360.dp
     val heroThreshold = 320.dp
+    val icon = 20.dp
+    val smallIcon = 16.dp
+    val weatherSmall = 24.dp
+    val field = 44.dp
+    val labelCap = 120.dp
+    val gridGap = 10.dp
+    val weeklyDate = 74.dp
+    val weeklyWeather = 72.dp
+    val weeklyTemperature = 32.dp
+    val rangeBar = 7.dp
+    val chartStroke = 2.2.dp
+    val chartDot = 2.8.dp
+    val selectedDot = 5.dp
+    val corona = 96.dp
+    val coronaPulse = 14.dp
 }
 object WeatherTheme {
     val colors: WeatherColors @Composable get() = LocalWeatherColors.current
+    val type: WeatherTypography @Composable get() = LocalWeatherType.current
+    val mode: ThemeMode @Composable get() = LocalWeatherMode.current
+    val fontScale: Float @Composable get() = LocalAppScale.current
 }
 private val LocalWeatherColors = staticCompositionLocalOf { weatherColors(ThemeMode.LIGHT, Palette.INDIGO) }
 
@@ -116,19 +134,7 @@ fun WeatherTheme(
     content: @Composable () -> Unit
 ) {
     val colors = weatherColors(mode, palette)
-    fun style(size: Float, weight: FontWeight = FontWeight.Normal) = TextStyle(
-        fontSize = (size * font.scale).sp,
-        lineHeight = (size * font.scale * 1.4f).sp,
-        fontWeight = weight,
-        fontFeatureSettings = "tnum"
-    )
-    val type = Typography(
-        displayLarge = style(65.6f, FontWeight.Light), headlineMedium = style(36.8f),
-        titleLarge = style(16.8f, FontWeight.Bold), titleMedium = style(14.3f, FontWeight.Bold),
-        titleSmall = style(13.8f, FontWeight.SemiBold), bodyLarge = style(13.2f), bodyMedium = style(13.2f),
-        bodySmall = style(11.7f), labelLarge = style(13.2f, FontWeight.SemiBold),
-        labelMedium = style(11.7f), labelSmall = style(11.4f)
-    )
+    val type = weatherTypography(font)
     val scheme = if (mode ==
         ThemeMode.LIGHT
     ) {
@@ -143,7 +149,14 @@ fun WeatherTheme(
             secondaryContainer = colors.accentSoft,
             onSecondaryContainer = colors.accentOnSoft,
             error = colors.error,
-            outlineVariant = colors.border
+            outlineVariant = colors.border,
+            outline = colors.border, surfaceVariant = colors.tonal, surfaceTint = colors.accent,
+            primaryContainer = colors.accentSoft, onPrimaryContainer = colors.accentOnSoft,
+            secondary = colors.accent, onSecondary = colors.onAccent,
+            tertiary = colors.accent, onTertiary = colors.onAccent,
+            surfaceContainer = colors.surface, surfaceContainerHigh = colors.surface,
+            surfaceContainerHighest = colors.tonal, surfaceContainerLow = colors.tonal,
+            surfaceContainerLowest = colors.ground, surfaceDim = colors.ground, surfaceBright = colors.surface
         )
     } else {
         darkColorScheme(
@@ -157,10 +170,113 @@ fun WeatherTheme(
             secondaryContainer = colors.accentSoft,
             onSecondaryContainer = colors.accentOnSoft,
             error = colors.error,
-            outlineVariant = colors.border
+            outlineVariant = colors.border,
+            outline = colors.border, surfaceVariant = colors.tonal, surfaceTint = colors.accent,
+            primaryContainer = colors.accentSoft, onPrimaryContainer = colors.accentOnSoft,
+            secondary = colors.accent, onSecondary = colors.onAccent,
+            tertiary = colors.accent, onTertiary = colors.onAccent,
+            surfaceContainer = colors.surface, surfaceContainerHigh = colors.surface,
+            surfaceContainerHighest = colors.tonal, surfaceContainerLow = colors.tonal,
+            surfaceContainerLowest = colors.ground, surfaceDim = colors.ground, surfaceBright = colors.surface
         )
     }
-    CompositionLocalProvider(LocalWeatherColors provides colors) {
-        MaterialTheme(colorScheme = scheme, typography = type, content = content)
+    CompositionLocalProvider(
+        LocalWeatherColors provides colors,
+        LocalWeatherType provides type,
+        LocalWeatherMode provides mode,
+        LocalAppScale provides font.scale
+    ) {
+        MaterialTheme(colorScheme = scheme, typography = type.material, content = content)
     }
 }
+
+fun heroColor(mode: ThemeMode, palette: Palette, sky: com.pbweather.weather.domain.SkyCondition): Color {
+    if (mode == ThemeMode.HIGH_CONTRAST) return Color.Black
+    if (sky == com.pbweather.weather.domain.SkyCondition.UNKNOWN) return weatherColors(mode, palette).ground
+    val dark = mode == ThemeMode.DARK
+    val light = when (sky) {
+        com.pbweather.weather.domain.SkyCondition.CLEAR -> longArrayOf(0xFFD8EBFF, 0xFFF4E6CC, 0xFFD6F0EE, 0xFFE6ECF4)
+        com.pbweather.weather.domain.SkyCondition.CLOUDY -> longArrayOf(0xFFDDE5F0, 0xFFE6E3DD, 0xFFDDE6E8, 0xFFE2E6EC)
+        com.pbweather.weather.domain.SkyCondition.RAIN -> longArrayOf(0xFFCFDCED, 0xFFDBE1E8, 0xFFD0DFE5, 0xFFD7DFE8)
+        com.pbweather.weather.domain.SkyCondition.SLEET, com.pbweather.weather.domain.SkyCondition.SNOW ->
+            longArrayOf(0xFFD3E1EF, 0xFFDDE3EA, 0xFFD4E3E8, 0xFFDBE3EC)
+        else -> longArrayOf(0xFFDCE9FB, 0xFFECE8E0, 0xFFDFEEEF, 0xFFE8ECF2)
+    }
+    val night = when (sky) {
+        com.pbweather.weather.domain.SkyCondition.CLEAR -> longArrayOf(0xFF16305C, 0xFF352614, 0xFF12373A, 0xFF232936)
+        com.pbweather.weather.domain.SkyCondition.CLOUDY -> longArrayOf(0xFF1C2638, 0xFF23201C, 0xFF172528, 0xFF1C2028)
+        com.pbweather.weather.domain.SkyCondition.RAIN -> longArrayOf(0xFF142238, 0xFF1B222C, 0xFF12232C, 0xFF181F2A)
+        com.pbweather.weather.domain.SkyCondition.SLEET, com.pbweather.weather.domain.SkyCondition.SNOW ->
+            longArrayOf(0xFF16263D, 0xFF1D242F, 0xFF142731, 0xFF1A222E)
+        else -> longArrayOf(0xFF182B4D, 0xFF282119, 0xFF132C30, 0xFF1F242E)
+    }
+    return Color((if (dark) night else light)[palette.ordinal])
+}
+
+fun gradeTokens(mode: ThemeMode, grade: Int?): Pair<Color, Color> {
+    val i = ((grade ?: 2) - 1).coerceIn(0, 3)
+    if (mode == ThemeMode.HIGH_CONTRAST) return Color.Black to Color(longArrayOf(0xFF7DFF9B, 0xFF7AD7FF, 0xFFFFBE5C, 0xFFFF7A7A)[i])
+    val bg = if (mode == ThemeMode.DARK) {
+        longArrayOf(0xFF123324, 0xFF172E54, 0xFF43230F, 0xFF45161B)
+    } else {
+        longArrayOf(0xFFDCFCE7, 0xFFDBEAFE, 0xFFFFEDD5, 0xFFFEE2E2)
+    }
+    val fg = if (mode == ThemeMode.DARK) {
+        longArrayOf(0xFF86EFAC, 0xFF93C5FD, 0xFFFDBA74, 0xFFFCA5A5)
+    } else {
+        longArrayOf(0xFF14532D, 0xFF1E3A8A, 0xFF9A3412, 0xFF991B1B)
+    }
+    return Color(bg[i]) to Color(fg[i])
+}
+fun successColor(mode: ThemeMode): Color = when (mode) {
+    ThemeMode.LIGHT -> Color(0xFF15803D)
+    ThemeMode.DARK -> Color(0xFF4ADE80)
+    ThemeMode.HIGH_CONTRAST -> Color(0xFF7DFF9B)
+}
+
+data class WeatherTypography(
+    val hero: TextStyle,
+    val heroAccessible: TextStyle,
+    val airValue: TextStyle,
+    val sheetTitle: TextStyle,
+    val location: TextStyle,
+    val meta: TextStyle,
+    val material: Typography
+)
+private val LocalWeatherType = staticCompositionLocalOf { weatherTypography(FontSize.NORMAL) }
+private val LocalWeatherMode = staticCompositionLocalOf { ThemeMode.LIGHT }
+private val LocalAppScale = staticCompositionLocalOf { 1f }
+fun weatherTypography(font: FontSize): WeatherTypography {
+    fun style(size: Float, weight: FontWeight = FontWeight.Normal, line: Float = 1.4f, spacing: Float = 0f) = TextStyle(
+        fontSize = (size * font.scale).sp,
+        lineHeight = (size * font.scale * line).sp,
+        fontWeight = weight,
+        letterSpacing = (size * font.scale * spacing).sp,
+        fontFeatureSettings = "tnum"
+    )
+    val hero = style(65.6f, FontWeight.Light, .96f, -.04f)
+    val accessible = style(47.2f, FontWeight.Light, .96f, -.04f)
+    val meta = style(11.4f, FontWeight.Medium, 1.35f)
+    val material = Typography(
+        displayLarge = hero, displayMedium = accessible, headlineMedium = style(36.8f, line = 1f, spacing = -.02f),
+        titleLarge = style(16.8f, FontWeight.Bold, 1.3f), titleMedium = style(14.3f, FontWeight.Bold, 1.35f),
+        titleSmall = style(13.8f, FontWeight.SemiBold, 1.35f), bodyLarge = style(13.2f, line = 1.5f),
+        bodyMedium = style(13.2f, line = 1.5f), bodySmall = style(11.7f),
+        labelLarge = style(11.7f, FontWeight.SemiBold), labelMedium = meta, labelSmall = style(9.6f, FontWeight.Bold, 1.2f)
+    )
+    return WeatherTypography(
+        hero,
+        accessible,
+        style(17.2f, FontWeight.Bold, 1.2f),
+        style(15.6f, FontWeight.Bold, 1.3f),
+        style(15.3f, FontWeight.Bold, 1.25f),
+        meta,
+        material
+    )
+}
+fun modalScrim(mode: ThemeMode): Color = if (mode == ThemeMode.HIGH_CONTRAST) Color(0xC2000000) else Color(0x8F0F172A)
+fun snackbarColor(mode: ThemeMode): Color = if (mode == ThemeMode.HIGH_CONTRAST) Color.Black else Color(0xFF1E293B)
+
+fun snackbarTextColor(): Color = Color.White
+fun snackbarActionColor(mode: ThemeMode, palette: Palette): Color =
+    weatherColors(if (mode == ThemeMode.HIGH_CONTRAST) mode else ThemeMode.DARK, palette).accent

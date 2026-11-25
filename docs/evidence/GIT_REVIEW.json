@@ -1,0 +1,301 @@
+{
+  "purpose": "Draft PR readiness checkpoint; no ready/merge",
+  "clientDate": "2026-11-25",
+  "safety": {
+    "branches": 9,
+    "uniqueTextBlobsScanned": 134,
+    "forbiddenTrackedFiles": [],
+    "suspectLocations": [],
+    "keyValuesPrinted": false
+  },
+  "protectedBranchCheck": "All targets feat/* or chore/add-pr-template; no protected branch writes",
+  "releasePR": false,
+  "verification": {
+    "commands": [
+      "gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest",
+      "gradlew.bat ktlintCheck lintDebug connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.pbweather.weather.ui.home.HomeFlowTest"
+    ],
+    "unit": [
+      {
+        "file": "TEST-com.pbweather.weather.core.geo.GeoTest.xml",
+        "tests": "3",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "nearest station selection is ordered and distance symmetric",
+            "result": "PASS"
+          },
+          {
+            "name": "invalid coordinates cannot enter conversion",
+            "result": "PASS"
+          },
+          {
+            "name": "official grid comparison preserves the known source discrepancy",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.local.LocalRulesTest.xml",
+        "tests": "4",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "lru evicts only enough payload and respects recent access",
+            "result": "PASS"
+          },
+          {
+            "name": "ttl expiration includes exact boundary without extending offline data",
+            "result": "PASS"
+          },
+          {
+            "name": "favorites cap duplicate and consecutive undo preserve order and primary",
+            "result": "PASS"
+          },
+          {
+            "name": "last deletion leaves no representative and serialization restores preferences",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.location.RegionResolverTest.xml",
+        "tests": "3",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "transient position returns only public reference coordinates",
+            "result": "PASS"
+          },
+          {
+            "name": "outside coverage and invalid position produce explicit failure",
+            "result": "PASS"
+          },
+          {
+            "name": "same city name stays inside its province code group",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.remote.AirContractTest.xml",
+        "tests": "4",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "fallback must improve latest coverage and cannot blend two stations",
+            "result": "PASS"
+          },
+          {
+            "name": "catalog version coordinates and ambiguous names are validated",
+            "result": "PASS"
+          },
+          {
+            "name": "midnight duplicate gaps and independent PM flags are preserved",
+            "result": "PASS"
+          },
+          {
+            "name": "only latest 24 actual entries are returned without filling missing hours",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.remote.ForecastContractTest.xml",
+        "tests": "6",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "precipitation ranges qualitative codes and missing values stay distinct",
+            "result": "PASS"
+          },
+          {
+            "name": "release boundaries and midnight preserve the actual date",
+            "result": "PASS"
+          },
+          {
+            "name": "quota prevents later requests and XML key failures are classified",
+            "result": "PASS"
+          },
+          {
+            "name": "invalid numeric API fields remain null",
+            "result": "PASS"
+          },
+          {
+            "name": "preferred missing fields cannot erase valid probability or precipitation",
+            "result": "PASS"
+          },
+          {
+            "name": "pagination uses a single encoded decoding key and accepts result zero",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.remote.HistoryContractTest.xml",
+        "tests": "3",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "missing rainfall stays null and delta uses forecast extrema only",
+            "result": "PASS"
+          },
+          {
+            "name": "KST midnight window is ten inclusive past dates and validation rejects today",
+            "result": "PASS"
+          },
+          {
+            "name": "missing dates form only contiguous gaps",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.data.remote.MidForecastTest.xml",
+        "tests": "3",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "morning release and temperature null are handled by provided fields only",
+            "result": "PASS"
+          },
+          {
+            "name": "midnight does not shift previous release offsets and whole day is not duplicated",
+            "result": "PASS"
+          },
+          {
+            "name": "near forecast takes priority without erasing mid extrema and missing dates remain missing",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.domain.HomeRulesTest.xml",
+        "tests": "3",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "observed variables from a different base time cannot enter apparent calculation",
+            "result": "PASS"
+          },
+          {
+            "name": "apparent calculations validate seasonal inputs and withhold unconfirmed winter spec",
+            "result": "PASS"
+          },
+          {
+            "name": "summary uses future six entries earliest maximum tie and temperature fallback",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "file": "TEST-com.pbweather.weather.ui.theme.WeatherThemeTest.xml",
+        "tests": "1",
+        "failures": "0",
+        "skipped": "0",
+        "cases": [
+          {
+            "name": "text and data labels meet contrast across all nine themes",
+            "result": "PASS"
+          }
+        ]
+      }
+    ],
+    "initialFullInstrumentation": [
+      {
+        "file": "TEST-Pixel_9_Pro(AVD) - 15-_app-.xml",
+        "tests": "13",
+        "failures": "1",
+        "skipped": "1",
+        "cases": [
+          {
+            "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+            "result": "PASS"
+          },
+          {
+            "name": "cacheDeletionPreservesPublicAssets",
+            "result": "PASS"
+          },
+          {
+            "name": "offlineSearchUsesLiteralQueryAndResolvesOfficialMetadata",
+            "result": "PASS"
+          },
+          {
+            "name": "deniedThenForegroundSimulatedCoarseFix",
+            "result": "SKIP"
+          },
+          {
+            "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+            "result": "PASS"
+          },
+          {
+            "name": "partialPublicationRetriesOnlyMissingDateAndRecoversAfterLru",
+            "result": "PASS"
+          },
+          {
+            "name": "realPublicStationCatalogAndHourlyAirContract",
+            "result": "PASS"
+          },
+          {
+            "name": "realNowcastContractSmoke",
+            "result": "PASS"
+          },
+          {
+            "name": "realShortUltraAndCacheContract",
+            "result": "PASS"
+          },
+          {
+            "name": "realAsosDailyHistoryAndImmutableCacheContract",
+            "result": "PASS"
+          },
+          {
+            "name": "realLandTemperatureAndElevenDateContract",
+            "result": "PASS"
+          },
+          {
+            "name": "manualSearchOpensRealWeatherAndSourceSheetWithoutLocationRequest",
+            "result": "FAIL"
+          },
+          {
+            "name": "explanationOffersSearchBeforeRequestingPermission",
+            "result": "PASS"
+          }
+        ]
+      }
+    ],
+    "fixedTargetInstrumentation": [
+      {
+        "tests": "1",
+        "failures": "0",
+        "cases": [
+          {
+            "name": "manualSearchOpensRealWeatherAndSourceSheetWithoutLocationRequest",
+            "result": "PASS"
+          }
+        ]
+      }
+    ],
+    "reason": "Only test selector changed after full run: choose exact result contentDescription to distinguish saved region in top bar. Failed target rerun PASS; no full-suite rerun claimed.",
+    "locationInvocation": "User-deferred @Ignore; not PASS",
+    "releaseBuild": "NOT_RUN, TASK-014 excluded"
+  },
+  "scope": {
+    "foundation": "initial project/docs/prototypes/build tokens",
+    "data": "separate TASK branches with existing prerequisites",
+    "home": "IN_PROGRESS, checkpoint only; includes merged dependency branches 006/007/008 on base005",
+    "knownPartial": [
+      "ASSET-001 official source discrepancy",
+      "TASK-008 location invocation deferred",
+      "TASK-009 full QA and TASK-010~013 remaining",
+      "Winter WSD mean specification unconfirmed"
+    ]
+  }
+}

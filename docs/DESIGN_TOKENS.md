@@ -194,3 +194,5 @@
 | `WeatherTheme.kt` | Material 3 `MaterialTheme` 래핑 + `LocalWeatherColors` 제공 + 시스템 바 대비(`enableEdgeToEdge` / `WindowInsetsControllerCompat`, `P14`) |
 
 - 접근성 정정(2026-11-24): 강수 차트 rainColor는 유지. 작은 강수 텍스트는 별도 rainText 토큰(라이트 #0369A1, 다크 #7CB3FF, 고대비 #7AD7FF) 사용. 흰 표면 대비 기존 #0284C7은 4.095:1로 본문 기준 미달.
+
+- TASK-009 구현 매핑: 각 역할별 행간·자간과 200% heroTemp 47.2sp 역할을 WeatherTypography로 분리. 앱 배율은 TextStyle의 sp 토큰에 적용하고 시스템 Density를 유지하여 Android 14+ 비선형 글자 확대를 보존. 시트/대화상자는 동일 CompositionLocal 역할·배율을 상속. 위의 수동 Density 교체 예시는 현재 구현에서 사용하지 않음.

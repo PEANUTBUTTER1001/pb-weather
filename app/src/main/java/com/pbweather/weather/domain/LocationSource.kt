@@ -5,6 +5,7 @@ import javax.inject.Inject
 enum class LocationProblem { PERMISSION_DENIED, DISABLED, TIMEOUT, UNAVAILABLE, OUTSIDE_COVERAGE }
 class LocationException(val problem: LocationProblem) : Exception(problem.name)
 interface LocationSource {
+    suspend fun prepare() = Unit
     suspend fun search(query: String): List<Region>
     suspend fun current(): Region
     fun permissionGranted(): Boolean

@@ -28,6 +28,9 @@ class LocationRepository @Inject constructor(
             RegionResolver(dao.regions(), dao.asosStations(), dao.midRegions()).also { catalog = it }
         }
     }
+    override suspend fun prepare() {
+        withContext(Dispatchers.IO) { resolver() }
+    }
     override suspend fun search(query: String): List<Region> = withContext(Dispatchers.IO) {
         val value = query.trim().replace(Regex("\\s+"), " ")
         if (value.length !in 2..30) return@withContext emptyList()
