@@ -1,0 +1,21 @@
+{
+  "approval": {
+    "approval_note": "1차 Adaptive Wizard에서 safe_auto_apply 정책을 확정함",
+    "approved_by": "write_policy:safe_auto_apply"
+  },
+  "managed_files": {
+    "AGENTS.md": "afe098f4cb77313aa5d20e1a2e2a9905653dd6cbd89a5f3f331972d1d47d3148",
+    "README.md": "5afc705d69df0bb9a5f6194068ada8ab528e448660c100a97adaabf301be0a13",
+    "docs/ARCHITECTURE.md": "8fb1664f7660404dcadbe7adc16313630135a23ef112bd3aea0e668fb7491fc8",
+    "docs/IMPLEMENTATION_PLAN.md": "bca4c07270741e9d3e5b9e0d3dd6a3f6c14b23405e078e06e80c4bb67a55ac84",
+    "docs/RELEASE_RUNBOOK.md": "71b44a05ac8fec50f98e678d52ca6d9af9076b0ea905417bbc95b3b8f3f1b27e",
+    "docs/REQUIREMENTS.md": "44ff3901874b147ceb8e159ff1c99e473c79b8e5ef89aa21f61aa5fa309233db",
+    "docs/SECURITY_PRIVACY.md": "4df93deb7b1a8586d696fed8d72a1659375fb77e6561de827d12daaf99facae8",
+    "docs/TEST_PLAN.md": "74ece397fa6711265efd54ba8965f79060791332dcb7e83bcbb92e9c47d8a1ea"
+  },
+  "profile": "MVP_6_SECURITY",
+  "schema_version": 2,
+  "source_contract_sha256": "8b12f0431d53b1e36dea799d35486520b24799f965ef1cddefb2f5a6df4b371d",
+  "spec_id": "adaptive-run-L3HljIi8CHprJeFwQ9iAnxoy",
+  "stale_outputs": []
+}
