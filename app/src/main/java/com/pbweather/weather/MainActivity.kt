@@ -23,10 +23,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        handleWidgetIntent(intent)
         setContent {
             val state by model.ui.collectAsStateWithLifecycle()
             val query by model.query.collectAsStateWithLifecycle()
             val results by model.results.collectAsStateWithLifecycle()
+            val widgetTab by model.widgetTab.collectAsStateWithLifecycle()
             val mode = ThemeMode.entries.firstOrNull { it.name == state.preferences.theme } ?: ThemeMode.LIGHT
             val palette = Palette.entries.firstOrNull { it.name == state.preferences.palette } ?: Palette.INDIGO
             val font = FontSize.entries.firstOrNull { it.name == state.preferences.font } ?: FontSize.NORMAL
@@ -36,7 +38,18 @@ class MainActivity : ComponentActivity() {
                     model::updatePermission, model::undo, model::theme, model::palette, model::font
                 )
             }
-            WeatherTheme(mode, palette, font) { WeatherShell(state, query, results, mode, palette, actions, model.notices) }
+            WeatherTheme(mode, palette, font) { WeatherShell(state, query, results, mode, palette, actions, model.notices, widgetTab) }
+        }
+    }
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleWidgetIntent(intent)
+    }
+    private fun handleWidgetIntent(intent: android.content.Intent?) {
+        if (intent?.getBooleanExtra(com.pbweather.weather.widget.OPEN_WIDGET, false) == true) {
+            intent.removeExtra(com.pbweather.weather.widget.OPEN_WIDGET)
+            model.openWidget()
         }
     }
 }

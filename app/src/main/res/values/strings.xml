@@ -162,4 +162,12 @@
     <string name="theme_dark">다크</string>
     <string name="theme_contrast">고대비</string>
     <string name="weekly_sources">단기 %1$s · 중기 %2$s 발표 ⓘ</string>
+    <string name="widget_no_primary">대표 지역이 지정되지 않았습니다</string>
+    <string name="widget_choose_primary">대표 지역 선택 ›</string>
+    <string name="widget_extremes">최고 %1$s° · 최저 %2$s°</string>
+    <string name="widget_frequency">약 1시간마다 갱신 · 절전 시 지연 가능</string>
+    <string name="widget_delayed">갱신 지연 · 마지막 성공 자료 유지</string>
+    <string name="widget_loading">저장된 자료 없음 · 앱에서 조회</string>
+    <string name="widget_last_success">마지막 성공 %1$s</string>
+    <string name="widget_description">대표 지역의 날씨와 마지막 성공 시각</string>
 </resources>

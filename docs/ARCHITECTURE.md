@@ -76,6 +76,8 @@
 
 ## 7. 디렉터리 구조
 
+TASK-012 추가: `data/repository/WidgetRepository.kt`, `widget/WeatherWidget.kt`, `work/WeatherRefreshWorker.kt`, `work/WidgetSync.kt`, `androidTest/.../widget/WidgetIntegrationTest.kt`, `res/drawable/widget_preview.xml`, `res/drawable/widget_symbol_*.xml`, `res/values/widget_colors.xml`, `androidTest/.../widget/WidgetHostTest.kt`. 기기 위치 조회 없이 대표 지역·기존 Room 캐시 공유.
+
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,
 `.editorconfig`, `docs/IMPLEMENTATION_SPEC.md`, `docs/API_CONTRACT.md`,

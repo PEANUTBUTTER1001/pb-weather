@@ -109,7 +109,8 @@ fun WeatherShell(
     mode: ThemeMode,
     palette: Palette,
     actions: WeatherActions,
-    notices: Flow<Notice>
+    notices: Flow<Notice>,
+    widgetTab: Pair<WeatherTab, Long>? = null
 ) {
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
@@ -135,6 +136,7 @@ fun WeatherShell(
     val owner = LocalLifecycleOwner.current
     var resumed by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
     var wasEmpty by remember { mutableStateOf(true) }
+    LaunchedEffect(widgetTab) { widgetTab?.let { tab = it.first } }
     LaunchedEffect(state.preferences.selected?.id) {
         if (state.preferences.selected == null) {
             tab = WeatherTab.LOCATIONS
