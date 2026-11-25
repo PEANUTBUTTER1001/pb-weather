@@ -162,4 +162,9 @@
     <string name="theme_dark">다크</string>
     <string name="theme_contrast">고대비</string>
     <string name="weekly_sources">단기 %1$s · 중기 %2$s 발표 ⓘ</string>
+    <string name="favorites_empty">검색 결과의 추가 버튼으로 즐겨찾기를 저장하세요.</string>
+    <string name="displaying">표시 중</string>
+    <string name="set_primary_named">%1$s 대표 지정</string>
+    <string name="delete_named">%1$s 삭제</string>
+    <string name="region_cached_weather_missing">저장된 날씨 없음 · 선택하여 조회</string>
 </resources>

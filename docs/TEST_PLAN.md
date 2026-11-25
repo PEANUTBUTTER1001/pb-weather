@@ -176,3 +176,5 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - TEST-004 PASS(실제 제공 범위 기준): 중기육상/기온 실제 응답·11개 날짜·자정 기준 발표일 유지·종일 자료 복제 금지. docs/evidence/TASK-005.json. 새벽 +10일은 미제공 슬롯으로 명시.
 - TASK-006: TEST-005 API/캐시/파싱 하위 기준 PASS, ENH-005 정규화·공백·PM별 플래그 단위 기준 PASS. 추이 UI 조작·200%·시트는 TASK-009에서 검증 예정. docs/evidence/TASK-006.json.
 - TASK-007: TEST-006 비교 도메인·TEST-007 최근 창/검증/파싱/ASOS 실 API·TEST-016 누락 날짜 및 LRU 복구 하위 기준 PASS. 화면·차트·200% 조작은 TASK-010에서 검증 예정. docs/evidence/TASK-007.json.
+
+- TASK-011: 전체 자동 게이트 PASS. 저장·저장됨 비활성·대표 지정·마지막 삭제 후 대표 null 및 일반 선택 유지 UI 검사 PASS. 검색→실 API 홈 기존 회귀 재실행 PASS. 375dp·200%·다크·고대비 캡처, S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-011-completion.json 및 TASK-011/*.png.

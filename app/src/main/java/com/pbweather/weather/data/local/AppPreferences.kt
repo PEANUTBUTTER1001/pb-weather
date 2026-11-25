@@ -68,6 +68,14 @@ class PreferencesRepository(private val store: DataStore<Preferences>, private v
         }
         return deletion
     }
-    suspend fun restore(deleted: DeletedFavorite) = update { FavoriteRules.restore(it, deleted) }
+    suspend fun restore(deleted: DeletedFavorite): Boolean {
+        var restored = false
+        update { old ->
+            val next = FavoriteRules.restore(old, deleted)
+            restored = next != old
+            next
+        }
+        return restored
+    }
     suspend fun setPrimary(id: String) = update { if (it.favorites.any { r -> r.id == id }) it.copy(primaryId = id) else it }
 }

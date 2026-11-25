@@ -105,6 +105,19 @@ class WeatherViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value))
     val results = query.debounce(100).flatMapLatest { text -> flow { emit(findRegions(text)) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val locationForecasts: StateFlow<Map<String, ForecastState>> = combine(results, saved) { matches, prefs ->
+        (matches + prefs.favorites).distinctBy { it.id }
+    }.flatMapLatest { regions ->
+        if (regions.isEmpty()) {
+            flowOf(emptyMap())
+        } else {
+            combine(
+                regions.map { region ->
+                    forecast(region).map { region.id to it }
+                }
+            ) { entries -> entries.toMap() }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
     init {
         viewModelScope.launch { locations.prepare() }
         viewModelScope.launch {
@@ -176,9 +189,13 @@ class WeatherViewModel @Inject constructor(
     }
     fun undo() {
         viewModelScope.launch {
-            deleted.removeLastOrNull()?.let {
-                preferences.restore(it)
-                notices.emit(Notice.RESTORED)
+            deleted.lastOrNull()?.let {
+                if (preferences.restore(it)) {
+                    deleted.removeLast()
+                    notices.emit(Notice.RESTORED)
+                } else {
+                    notices.emit(Notice.FAVORITE_LIMIT)
+                }
             }
         }
     }
