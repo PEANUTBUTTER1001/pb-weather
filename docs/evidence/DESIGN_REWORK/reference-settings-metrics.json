@@ -1,0 +1,44 @@
+[
+  {
+    "className": "setting-row",
+    "gap": "12px",
+    "height": 64,
+    "padding": "12px 16px",
+    "width": 329
+  },
+  {
+    "className": "sig-segmented",
+    "gap": "2px",
+    "height": 40,
+    "padding": "3px",
+    "width": 180.921875
+  },
+  {
+    "className": "setting-row",
+    "gap": "12px",
+    "height": 65,
+    "padding": "12px 16px",
+    "width": 329
+  },
+  {
+    "className": "sig-segmented palette-seg",
+    "gap": "2px",
+    "height": 40,
+    "padding": "3px",
+    "width": 225.15625
+  },
+  {
+    "className": "setting-row",
+    "gap": "12px",
+    "height": 65,
+    "padding": "12px 16px",
+    "width": 329
+  },
+  {
+    "className": "sig-segmented",
+    "gap": "2px",
+    "height": 40,
+    "padding": "3px",
+    "width": 147.703125
+  }
+]

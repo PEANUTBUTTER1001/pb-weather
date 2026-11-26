@@ -1,0 +1,79 @@
+[
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "4px",
+    "height": 60,
+    "padding": "8px 16px",
+    "selector": "#appTopbar",
+    "width": 373,
+    "x": 627.5,
+    "y": 21
+  },
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "normal",
+    "height": 403.453125,
+    "padding": "8px 16px 16px",
+    "selector": ".hero-stage",
+    "width": 373,
+    "x": 627.5,
+    "y": 81
+  },
+  {
+    "font": "",
+    "fontSize": "65.6px",
+    "gap": "normal",
+    "height": 62.96875,
+    "padding": "0px",
+    "selector": ".hero-temp",
+    "width": 150.453125,
+    "x": 643.5,
+    "y": 89
+  },
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "10px 12px",
+    "height": 103.90625,
+    "padding": "12px 0px 0px",
+    "selector": ".hero-metrics",
+    "width": 341,
+    "x": 643.5,
+    "y": 212.21875
+  },
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "4px",
+    "height": 102.328125,
+    "padding": "11px 0px 0px",
+    "selector": ".hero-air-band",
+    "width": 341,
+    "x": 643.5,
+    "y": 366.125
+  },
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "7px",
+    "height": 129.8125,
+    "padding": "14px 16px",
+    "selector": "#homeCompareBtn",
+    "width": 341,
+    "x": 643.5,
+    "y": 490.453125
+  },
+  {
+    "font": "15px / 22.5px \"Pretendard Variable\", Pretendard, \"Noto Sans KR\", \"Apple SD Gothic Neo\", \"Malgun Gothic\", system-ui, -apple-system, sans-serif",
+    "fontSize": "15px",
+    "gap": "normal",
+    "height": 68,
+    "padding": "4px 6px 6px",
+    "selector": ".bottom-nav",
+    "width": 373,
+    "x": 627.5,
+    "y": 811
+  }
+]

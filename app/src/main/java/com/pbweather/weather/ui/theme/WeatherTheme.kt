@@ -122,6 +122,8 @@ object Dims {
     val trend = 184.dp
     val spline = 44.dp
     val symbol = 66.dp
+    val heroSymbolBox = 74.dp
+    val heroAccessibleSize = 47.2.dp
     val maxWidth = 760.dp
     val narrow = 360.dp
     val heroThreshold = 320.dp
@@ -138,6 +140,10 @@ object Dims {
     val chartStroke = 2.2.dp
     val chartDot = 2.8.dp
     val selectedDot = 5.dp
+    val beamLength = 190.dp
+    val beamNear = 10.dp
+    val beamFar = 28.dp
+    val sunInset = 44.dp
     val corona = 96.dp
     val coronaPulse = 14.dp
 }
@@ -277,8 +283,8 @@ fun weatherTypography(font: FontSize): WeatherTypography {
         letterSpacing = (size * font.scale * spacing).sp,
         fontFeatureSettings = "tnum"
     )
-    val hero = style(65.6f, FontWeight.Light, .96f, -.04f)
-    val accessible = style(47.2f, FontWeight.Light, .96f, -.04f)
+    val hero = style(65.6f, FontWeight.Light, .96f, -.04f).copy(fontSize = 65.6.sp, lineHeight = (65.6 * .96).sp)
+    val accessible = style(47.2f, FontWeight.Light, .96f, -.04f).copy(fontSize = 47.2.sp, lineHeight = (47.2 * .96).sp)
     val meta = style(11.4f, FontWeight.Medium, 1.35f)
     val material = Typography(
         displayLarge = hero, displayMedium = accessible, headlineMedium = style(36.8f, line = 1f, spacing = -.02f),

@@ -88,7 +88,7 @@ TASK-013 경로: `ui/settings/SettingsScreen.kt`, `ui/settings/LegalDocSheets.kt
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,
 `.editorconfig`, `docs/IMPLEMENTATION_SPEC.md`, `docs/API_CONTRACT.md`,
-`docs/ASSET_SOURCES.md`, `docs/evidence/`, `tools/`(자산 변환·보안 검사),
+`docs/ASSET_SOURCES.md`, `docs/evidence/`, `tools/`(자산 변환·보안 검사·디자인 비교용 원본 프레임 생성 `design_reference.py`),
 `app/schemas/`(Room 자동 생성), `app/src/test/resources/fixtures/`,
 `app/src/main/res/values/`, `app/src/main/res/drawable/`,
 `app/src/main/res/xml/`, 패키지 `di/`, `ui/components/`,

@@ -279,4 +279,7 @@
     <string name="air_actual_period">실제 %1$d개 · %2$s ~ %3$s · µg/m³</string>
     <string name="air_grade_basis">등급 기준: %1$s · 시간 기준 혼용 없음</string>
     <string name="air_original_time">기관 원문 시각: %1$s</string>
+    <string name="design_delta">%1$s %2$s℃</string>
+    <string name="design_high">최고</string>
+    <string name="design_low">최저</string>
 </resources>

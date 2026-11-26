@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import com.pbweather.weather.domain.SkyCondition
@@ -69,6 +71,46 @@ fun HeroWeather(sky: SkyCondition, mode: ThemeMode, palette: Palette, active: Bo
     }
     val corona = with(density) { Dims.corona.toPx() }
     val pulse = with(density) { Dims.coronaPulse.toPx() }
+    val beamLength = with(density) { Dims.beamLength.toPx() }
+    val sunInset = with(density) { Dims.sunInset.toPx() }
+    val sunTop = with(density) { Dims.weatherSmall.toPx() }
+    val beam = remember(density) {
+        val near = with(density) { Dims.beamNear.toPx() }
+        val far = with(density) { Dims.beamFar.toPx() }
+        Path().apply {
+            moveTo(0f, -near)
+            lineTo(beamLength, -far)
+            lineTo(beamLength, far)
+            lineTo(0f, near)
+            close()
+        }
+    }
+    val beamBrush = remember(colors, mode, beamLength) {
+        Brush.horizontalGradient(
+            listOf(
+                colors.sunGlow.copy(
+                    alpha = if (mode ==
+                        ThemeMode.DARK
+                    ) {
+                        .16f
+                    } else {
+                        .24f
+                    }
+                ),
+                colors.sunGlow.copy(alpha = 0f)
+            ),
+            endX = beamLength
+        )
+    }
+    val haloBrush = remember(colors, mode, corona) {
+        Brush.radialGradient(
+            0f to colors.sunGlow.copy(alpha = if (mode == ThemeMode.DARK) .28f else .42f),
+            .55f to colors.sunHalo.copy(alpha = if (mode == ThemeMode.DARK) .12f else .16f),
+            1f to colors.sunGlow.copy(alpha = 0f),
+            center = Offset.Zero,
+            radius = corona
+        )
+    }
     LaunchedEffect(canAnimate) {
         var previous = 0L
         val updateFrame: (Long) -> Unit = { current ->
@@ -83,23 +125,27 @@ fun HeroWeather(sky: SkyCondition, mode: ThemeMode, palette: Palette, active: Bo
         val t = (frame.longValue / 1000000000.0).toFloat()
         val w = size.width
         val h = size.height
-        val center = Offset(w * .83f, h * .16f)
+        val center = Offset(w - sunInset, sunTop)
         val beams = when (sky) {
             SkyCondition.CLEAR -> 8
             SkyCondition.PARTLY -> 5
             else -> 0
         }
         if (beams > 0) {
-            val radius = corona + sin(t * .4f) * pulse
-            drawCircle(colors.warm.copy(alpha = .06f), radius, center)
-            repeat(beams) { i ->
-                val angle = i * 2 * PI / beams + t * .035
-                drawLine(
-                    colors.warm.copy(alpha = .12f),
-                    center,
-                    Offset(center.x + cos(angle).toFloat() * radius * 1.7f, center.y + sin(angle).toFloat() * radius * 1.7f),
-                    radius * .15f
-                )
+            withTransform({
+                translate(center.x, center.y)
+                rotate(t * 5.15662f, Offset.Zero)
+            }) {
+                repeat(beams) { i ->
+                    withTransform({ rotate((i + 1) * 360f / beams, Offset.Zero) }) { drawPath(beam, beamBrush) }
+                }
+            }
+            val radius = corona + sin(t * 1.4f) * pulse
+            withTransform({
+                translate(center.x, center.y)
+                scale(radius / corona, radius / corona, Offset.Zero)
+            }) {
+                drawCircle(haloBrush, corona, Offset.Zero)
             }
         }
         val clouds = when (sky) {
