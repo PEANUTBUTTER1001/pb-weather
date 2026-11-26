@@ -187,13 +187,13 @@
 | 경로 (`com.pbweather.weather.ui.*`) | 대응 화면·컴포넌트 |
 | --- | --- |
 | `ui/theme/` | [DESIGN_TOKENS.md](DESIGN_TOKENS.md) 7절 참조 (4종 팔레트 · 3종 테마 · 글씨 배율) |
-| `ui/navigation/WeatherScaffold.kt` | 상단 앱바(일반/설정 분기 · `?` 도움말) · 3dp 진행바 · 4탭 하단 바 · 스낵바 |
-| `ui/home/HeroWeatherStage.kt` | C안 `Canvas` 파티클 · 스크림 · 현재 실황 · 2×2 보조 지표 · 미세먼지 1안 통합 띠 |
-| `ui/home/HourlyForecastCard.kt` | ENH-004 한 줄 요약 · 60dp 선택 칸 · 44dp 기온 곡선 `Canvas` |
-| `ui/home/WeeklyForecastCard.kt` | 11일 비례 온도 막대 · 종일/오전·오후 해상도 · 중기 오류 독립 복구 |
-| `ui/home/HomeDetailSheets.kt` | 자료 출처(ENH-001) · 시간/일자(ENH-003) · 미세먼지 추이(ENH-005) · 계산 체감온도(ENH-006) |
+| `ui/navigation/WeatherShell.kt` | 상단 앱바(일반/설정 분기 · `?` 도움말) · 3dp 진행바 · 4탭 하단 바 · 스낵바 |
+| `ui/home/HeroWeather.kt · HomeScreen.kt` | C안 `Canvas` 파티클 · 스크림 · 현재 실황 · 2×2 보조 지표 · 미세먼지 1안 통합 띠 |
+| `ui/home/HomeScreen.kt (시간별 컴포넌트)` | ENH-004 한 줄 요약 · 60dp 선택 칸 · 44dp 기온 곡선 `Canvas` |
+| `ui/home/HomeScreen.kt (주간 컴포넌트)` | 11일 비례 온도 막대 · 종일/오전·오후 해상도 · 중기 오류 독립 복구 |
+| `ui/components/WeatherDetails.kt` | 자료 출처(ENH-001) · 시간/일자(ENH-003) · 미세먼지 추이(ENH-005) · 계산 체감온도(ENH-006) |
 | `ui/history/HistoryScreen.kt` | 어제 비교 표 · 최근 10일 칩/입력 · 210dp 복합 그래프 · `FlatDividerList` 일별 목록 |
 | `ui/locations/LocationsScreen.kt` | 외부 분리 검색 행 · `FlatDividerList` · `-12.dp` 아이콘 끝 정렬 · 연속 삭제 Undo |
-| `ui/settings/SettingsScreen.kt` | 5슬롯 시그니처 섹션 · `AdaptiveSettingRow`(실측 1줄/2줄) · `SignatureSegmented` · 4색 팔레트 |
+| `ui/settings/SettingsScreen.kt` | 5슬롯 시그니처 섹션 · `AdaptiveSettingRow`(실측 1줄/2줄) · `SignatureSegments` · 4색 팔레트 |
 | `ui/settings/LegalDocSheets.kt` | 도움말 · 개인정보 처리방침 · 접이식 오픈소스 라이선스 · 이용 안내 문서 창 |
 | `widget/WeatherWidget.kt` | Glance 위젯(대표 지정/미지정/지연 상태 · 대표 지역 딥링크) |

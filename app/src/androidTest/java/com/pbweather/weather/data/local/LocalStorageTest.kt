@@ -4,6 +4,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.pbweather.weather.data.repository.LoadedSnapshot
+import com.pbweather.weather.data.repository.RequestCoordinator
+import com.pbweather.weather.domain.DailyObservation
 import com.pbweather.weather.domain.DataKind
 import com.pbweather.weather.domain.Provider
 import com.pbweather.weather.domain.Region
@@ -11,9 +14,11 @@ import com.pbweather.weather.domain.SourceMeta
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -27,6 +32,35 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LocalStorageTest {
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Test fun clearingDuringRequestDiscardsLateSnapshotsAndDailyRowsButAllowsFreshRequests() = runBlocking {
+        val db = Room.inMemoryDatabaseBuilder(context, WeatherDatabase::class.java).build()
+        try {
+            val clock = Clock.fixed(Instant.parse("2026-11-25T03:00:00Z"), ZoneOffset.UTC)
+            val cache = CacheStore(db, Json, clock, CachePolicy(clock))
+            val coordinator = RequestCoordinator(cache)
+            val started = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
+            val meta = SourceMeta(Provider.KMA, DataKind.HISTORY, "108", clock.instant().toEpochMilli())
+            val pending = async {
+                coordinator.refresh("late", DataKind.HISTORY) {
+                    started.complete(Unit)
+                    release.await()
+                    cache.saveObservation(DailyObservation("108", "2026-11-24", maximum = 10.0, meta = meta))
+                    LoadedSnapshot("{}", meta)
+                }
+            }
+            started.await()
+            cache.clearWeather()
+            release.complete(Unit)
+            pending.await()
+            assertEquals(0L, cache.sizeBytes())
+            coordinator.refresh("new", DataKind.HISTORY) { LoadedSnapshot("{}", meta) }
+            assertNotNull(cache.read("new", DataKind.HISTORY))
+        } finally {
+            db.close()
+        }
+    }
 
     @Test
     fun cacheDeletionPreservesPublicAssets() = runBlocking {

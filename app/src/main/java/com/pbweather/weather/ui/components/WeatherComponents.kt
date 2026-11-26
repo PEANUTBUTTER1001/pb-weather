@@ -36,7 +36,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 fun number(value: Double?, digits: Int = 1): String? = value?.takeIf { it.isFinite() }?.let {
-    String.format(Locale.KOREA, "%.${digits}f", if (kotlin.math.abs(it) < 0.00001) 0.0 else it)
+    val rounded = java.math.BigDecimal.valueOf(it).setScale(digits, java.math.RoundingMode.HALF_UP)
+    (if (rounded.signum() == 0) rounded.abs() else rounded).toPlainString()
 }
 fun timeLabel(at: Long?): String? = at?.let {
     Instant.ofEpochMilli(it).atZone(ReleaseTimeCalculator.KST).format(DateTimeFormatter.ofPattern("HH:mm"))

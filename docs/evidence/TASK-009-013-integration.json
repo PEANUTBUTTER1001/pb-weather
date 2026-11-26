@@ -1,0 +1,553 @@
+{
+  "task": "TASK-009~013 integration",
+  "clientDate": "2026-11-26",
+  "branch": "fix/task-009-013-integration",
+  "base": "origin/develop@8001da1",
+  "scope": "Shared shell/ViewModel wiring, restored navigation, dual PM details, rounding, location settings scroll, integration evidence and document reconciliation",
+  "command": "JAVA_HOME=JDK23 GRADLE_USER_HOME=.gradle-user-home ANDROID_SERIAL=emulator-5554 gradlew.bat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true --no-daemon --console=plain",
+  "gate": "PASS",
+  "results": {
+    "unit": {
+      "suites": [
+        {
+          "name": "com.pbweather.weather.core.geo.GeoTest",
+          "tests": "3",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:05.489Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.local.LocalRulesTest",
+          "tests": "4",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:05.619Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.location.RegionResolverTest",
+          "tests": "3",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:05.848Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.remote.AirContractTest",
+          "tests": "4",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:05.897Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "tests": "6",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:06.038Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+          "tests": "3",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:06.843Z"
+        },
+        {
+          "name": "com.pbweather.weather.data.remote.MidForecastTest",
+          "tests": "3",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:06.861Z"
+        },
+        {
+          "name": "com.pbweather.weather.domain.HomeRulesTest",
+          "tests": "4",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:06.880Z"
+        },
+        {
+          "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+          "tests": "1",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "0",
+          "timestamp": "2026-11-26T08:55:06.892Z"
+        }
+      ],
+      "cases": [
+        {
+          "class": "com.pbweather.weather.core.geo.GeoTest",
+          "name": "nearest station selection is ordered and distance symmetric",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.core.geo.GeoTest",
+          "name": "invalid coordinates cannot enter conversion",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.core.geo.GeoTest",
+          "name": "official grid comparison preserves the known source discrepancy",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalRulesTest",
+          "name": "lru evicts only enough payload and respects recent access",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalRulesTest",
+          "name": "ttl expiration includes exact boundary without extending offline data",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalRulesTest",
+          "name": "favorites cap duplicate and consecutive undo preserve order and primary",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalRulesTest",
+          "name": "last deletion leaves no representative and serialization restores preferences",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.location.RegionResolverTest",
+          "name": "transient position returns only public reference coordinates",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.location.RegionResolverTest",
+          "name": "outside coverage and invalid position produce explicit failure",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.location.RegionResolverTest",
+          "name": "same city name stays inside its province code group",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.AirContractTest",
+          "name": "fallback must improve latest coverage and cannot blend two stations",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.AirContractTest",
+          "name": "catalog version coordinates and ambiguous names are validated",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.AirContractTest",
+          "name": "midnight duplicate gaps and independent PM flags are preserved",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.AirContractTest",
+          "name": "only latest 24 actual entries are returned without filling missing hours",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "precipitation ranges qualitative codes and missing values stay distinct",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "release boundaries and midnight preserve the actual date",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "quota prevents later requests and XML key failures are classified",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "invalid numeric API fields remain null",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "preferred missing fields cannot erase valid probability or precipitation",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastContractTest",
+          "name": "pagination uses a single encoded decoding key and accepts result zero",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.HistoryContractTest",
+          "name": "missing rainfall stays null and delta uses forecast extrema only",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.HistoryContractTest",
+          "name": "KST midnight window is ten inclusive past dates and validation rejects today",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.HistoryContractTest",
+          "name": "missing dates form only contiguous gaps",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.MidForecastTest",
+          "name": "morning release and temperature null are handled by provided fields only",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.MidForecastTest",
+          "name": "midnight does not shift previous release offsets and whole day is not duplicated",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.MidForecastTest",
+          "name": "near forecast takes priority without erasing mid extrema and missing dates remain missing",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.domain.HomeRulesTest",
+          "name": "observed variables from a different base time cannot enter apparent calculation",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.domain.HomeRulesTest",
+          "name": "apparent calculations validate seasonal inputs and withhold unconfirmed winter spec",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.domain.HomeRulesTest",
+          "name": "summary uses future six entries earliest maximum tie and temperature fallback",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.domain.HomeRulesTest",
+          "name": "display rounding is half up and never negative zero",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+          "name": "text and data labels meet contrast across all nine themes",
+          "result": "PASS"
+        }
+      ],
+      "pass": 31,
+      "skip": 0
+    },
+    "android": {
+      "suites": [
+        {
+          "name": null,
+          "tests": "26",
+          "failures": "0",
+          "errors": "0",
+          "skipped": "1",
+          "timestamp": "2026-11-26T08:57:16"
+        }
+      ],
+      "cases": [
+        {
+          "class": "com.pbweather.weather.data.local.LocalStorageTest",
+          "name": "preferencesSurviveStoreRestartWithPrimaryAndPalette",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalStorageTest",
+          "name": "clearingDuringRequestDiscardsLateSnapshotsAndDailyRowsButAllowsFreshRequests",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.local.LocalStorageTest",
+          "name": "cacheDeletionPreservesPublicAssets",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.location.LocationIntegrationTest",
+          "name": "offlineSearchUsesLiteralQueryAndResolvesOfficialMetadata",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.location.LocationIntegrationTest",
+          "name": "deniedThenForegroundSimulatedCoarseFix",
+          "result": "SKIPPED"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.ForecastIntegrationTest",
+          "name": "coalescedRequestsAndFailuresPreserveSuccessfulCache",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.HistoryCacheTest",
+          "name": "partialPublicationRetriesOnlyMissingDateAndRecoversAfterLru",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.LiveAirContractTest",
+          "name": "realPublicStationCatalogAndHourlyAirContract",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "name": "realNowcastContractSmoke",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.LiveApiContractTest",
+          "name": "realShortUltraAndCacheContract",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.LiveHistoryContractTest",
+          "name": "realAsosDailyHistoryAndImmutableCacheContract",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.data.remote.LiveMidContractTest",
+          "name": "realLandTemperatureAndElevenDateContract",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.history.HistoryScreenTest",
+          "name": "invalidRangeStaysNearInputAndOneWeekChoosesSevenKstDates",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.DetailNavigationTest",
+          "name": "summerCalculationDisplaysResultAndBothWindUnits",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.DetailNavigationTest",
+          "name": "dayOpensOnlyActualHoursAndNavigationStopsAtBoundaries",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.DetailNavigationTest",
+          "name": "airShowsBothIndicatorsAndPreservesIndependentMissingReason",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.HeroAnimationTest",
+          "name": "leavingHeroStopsFramesAndHighContrastHasStaticFallback",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.HomeFlowTest",
+          "name": "manualSearchOpensRealWeatherAndSourceSheetWithoutLocationRequest",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.IntegratedFlowTest",
+          "name": "favoritesUndoWidgetEntrySettingsAndRecreationShareSavedState",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.home.RefreshMetricsTest",
+          "name": "recordTenRealRefreshSamplesWithoutLoggingPayloadsKeysOrCoordinates",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.locations.LocationsScreenTest",
+          "name": "savePrimaryAndDeleteAreConnectedWithoutChangingCurrentSelection",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.permission.PermissionRationaleTest",
+          "name": "explanationOffersSearchBeforeRequestingPermission",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.ui.settings.SettingsScreenTest",
+          "name": "highContrastDisablesPaletteAndDeletionRequiresConfirmation",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.widget.WidgetHostTest",
+          "name": "actualRemoteViewsReflectPrimaryChangeAndLastDeletion",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.widget.WidgetIntegrationTest",
+          "name": "repeatedSchedulingKeepsOnePeriodicJob",
+          "result": "PASS"
+        },
+        {
+          "class": "com.pbweather.weather.widget.WidgetIntegrationTest",
+          "name": "primaryDeletionUndoAndFailurePreserveRegionAndOriginalSuccessTime",
+          "result": "PASS"
+        }
+      ],
+      "pass": 25,
+      "skip": 1
+    }
+  },
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 36,
+    "Information": 0
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "result": "compile failure nullable cache size; fixed"
+    },
+    {
+      "attempt": 2,
+      "result": "test compile failure protected onNewIntent; actual SINGLE_TOP launch used"
+    },
+    {
+      "attempt": 3,
+      "result": "one IntegratedFlow failure during ActivityScenario teardown; original launch Intent retained"
+    },
+    {
+      "attempt": 4,
+      "result": "one IntegratedFlow failure from initial preferences overwriting early tab; explicit navigation retained"
+    },
+    {
+      "attempt": 5,
+      "result": "PASS"
+    },
+    {
+      "attempt": 6,
+      "authorization": "User explicitly allowed extra verification only for one-line settings list state connection",
+      "result": "PASS"
+    }
+  ],
+  "secretScan": {
+    "trackedAndNewFiles": 199,
+    "suspectLocations": [],
+    "privateConfigurationRead": false,
+    "actualPrivateKeyComparison": "NOT_RUN; key file reading prohibited"
+  },
+  "mergeMarkers": [],
+  "manifestPermissions": [
+    "android.permission.INTERNET",
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_COARSE_LOCATION",
+    "android.permission.WAKE_LOCK",
+    "android.permission.RECEIVE_BOOT_COMPLETED",
+    "com.pbweather.weather.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "releaseMinifyEnabled": true,
+  "sourceSha256": {
+    "app/src/androidTest/java/com/pbweather/weather/data/local/LocalStorageTest.kt": "2767c743d2f7104848f7bfe44c2467bf7d6160e434f0ae275f0f5717585a0de8",
+    "app/src/androidTest/java/com/pbweather/weather/data/location/LocationIntegrationTest.kt": "7872fd7b389b95c0ccf9e96ef73c4394e00701e15855a833daf46f7cfab87860",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/ForecastIntegrationTest.kt": "4d30b7d7c94149625422be199cb6644608ae3206db9cfd9b77d2469d4b88e97d",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/HistoryCacheTest.kt": "d3ec122eb7b43cfbd0ecda7cb5f0b1329e9cfc3d6844439205a91dc4a069cd3d",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/LiveAirContractTest.kt": "d9a849c6c602bd8a31de2c52ac9353024c9f83f57d3ab68577a83d890f9a5e4d",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/LiveApiContractTest.kt": "0cd30b7388648a689cbac51dc0aca394a67a69ccd9120a8cae1db1bf82f6e49d",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/LiveHistoryContractTest.kt": "7ac19a1fef2a48dd4cbbccac88f676d753056d95e94a92fcf38b2f79f74f912c",
+    "app/src/androidTest/java/com/pbweather/weather/data/remote/LiveMidContractTest.kt": "4ef332f99dcd7715f1f3e65954117b6829da87096d3537fcb48330155d2f11ab",
+    "app/src/androidTest/java/com/pbweather/weather/ui/history/HistoryScreenTest.kt": "8019bda34d0bb48b2ffe12df959d15dba938f2663d7ce20edf9a843a4f73d8a2",
+    "app/src/androidTest/java/com/pbweather/weather/ui/home/DetailNavigationTest.kt": "ae513ee23141300a707a7cd119974cdee0874e5f24389c8da890de417b013cc0",
+    "app/src/androidTest/java/com/pbweather/weather/ui/home/HeroAnimationTest.kt": "a4877d3f8b326e2843e7300f6852e1517762ce5d0eb52f40ca73c82f843b78d3",
+    "app/src/androidTest/java/com/pbweather/weather/ui/home/HomeFlowTest.kt": "8a1ab86eeb38fed24f9951031c1ecc06816795ba2bc180e2e8a8c24c544f0c62",
+    "app/src/androidTest/java/com/pbweather/weather/ui/home/IntegratedFlowTest.kt": "1e820d842c7911c4e2fde490f69b5a7cccbf31f98e3a176f946f7a9cd210980d",
+    "app/src/androidTest/java/com/pbweather/weather/ui/home/RefreshMetricsTest.kt": "7d13ff11e5e7bc391edef9d6daa455acf9a32e33d80042ccefc1706f6d1aea24",
+    "app/src/androidTest/java/com/pbweather/weather/ui/locations/LocationsScreenTest.kt": "3bf00dfba95dca8944b4ee6213fc6e9f9ad96c44d8b053101937e53b7557aa80",
+    "app/src/androidTest/java/com/pbweather/weather/ui/permission/PermissionRationaleTest.kt": "e8f93bcd5b2fdc89392da737cab837125dc905931246e10b202e2306c6a2ce6c",
+    "app/src/androidTest/java/com/pbweather/weather/ui/settings/SettingsScreenTest.kt": "8bc9113857ba1aa4319bd61901dd461dbd73d677cf3d95faaab13910f749c930",
+    "app/src/androidTest/java/com/pbweather/weather/widget/WidgetHostTest.kt": "5f5adac041d65f6faeea5e6743092ce6a5b1b9c2eb52b6d0f0cfffb6c95f4221",
+    "app/src/androidTest/java/com/pbweather/weather/widget/WidgetIntegrationTest.kt": "89e3603e833169eb40f1cdfdc0a84ee5aa3bc2fcd9b9e7c9e7f121be847fbefe",
+    "app/src/main/AndroidManifest.xml": "749e516b07386f7e75a75986363ed86b47defd070bb9aa05b5fcd75933783da0",
+    "app/src/main/java/com/pbweather/weather/MainActivity.kt": "4c390d5b0bbe55a489b0733362e1224f498487fb43076f31c51e09b0469974ce",
+    "app/src/main/java/com/pbweather/weather/WeatherApp.kt": "58cb21653729276a0ab7bcfe9648a1ee1378f3b815b030d66c8b67cebdbc2415",
+    "app/src/main/java/com/pbweather/weather/core/geo/KmaGridConverter.kt": "a45248d5c7351ade0cb15caad6eeb74a7649d4823b52997ed464971248e99bf3",
+    "app/src/main/java/com/pbweather/weather/core/geo/NearestFinder.kt": "b60360a9711d5744ac0f385bd9b2c933705c4dbfeb81256e55c2bf60498c61d0",
+    "app/src/main/java/com/pbweather/weather/core/time/ReleaseTimeCalculator.kt": "f39d94a5677608cb58a778e950c6b47d5b67747d1650a1e256799147a4969760",
+    "app/src/main/java/com/pbweather/weather/data/local/AppPreferences.kt": "d059b7e1606c396f7939fede8fb43eb17df5abbaa9eac496c443c66562cfaf06",
+    "app/src/main/java/com/pbweather/weather/data/local/AssetImporter.kt": "94cc78dc7055c717cab9debd47c9b48ac37900173e9aaae91136b5e7e5aac409",
+    "app/src/main/java/com/pbweather/weather/data/local/CachePolicy.kt": "10dbe7110e50f2de056f274daa61e3f780c7f57a050d0fc83c3078de9e8a3a48",
+    "app/src/main/java/com/pbweather/weather/data/local/CacheStore.kt": "47800b570bf7bfc15fa5fa204c6a12c4eecd797b42d61b52717aeb5513622422",
+    "app/src/main/java/com/pbweather/weather/data/local/WeatherDatabase.kt": "b98a2c1bc132d6f9b26d6b8c0a8b311b4bc7d1f930ec597134ffe8fd6cc19472",
+    "app/src/main/java/com/pbweather/weather/data/location/CoarseLocationProvider.kt": "f6b847b505199161b0867549186a8c39fca1731d389a1713c23d158feaffd206",
+    "app/src/main/java/com/pbweather/weather/data/location/RegionResolver.kt": "f8bcd2a021413649c68c461badc44c6feb55e1c27f77fb5ccb690ef53f10b2b9",
+    "app/src/main/java/com/pbweather/weather/data/remote/ApiClient.kt": "9b34abefe9a2b5e7682e548bcbc62683d8fda42ecc797dd8e9a8baf302c3cfe6",
+    "app/src/main/java/com/pbweather/weather/data/remote/NetworkMonitor.kt": "cd4680323ef03fa18e1fef9eb1f8c28b15e9f4d00d93a12ee8e3c205886b737a",
+    "app/src/main/java/com/pbweather/weather/data/remote/PublicDataApi.kt": "7673db3a58421e8ef732d8ff5a5bd2a0288672b3577643f2f8288c53fa1a11c8",
+    "app/src/main/java/com/pbweather/weather/data/remote/ServiceKeyInterceptor.kt": "5aa12ba237b53da83071604ef37a7bc779cf1f7216673faf294ce35852d5e029",
+    "app/src/main/java/com/pbweather/weather/data/remote/airkorea/AirParser.kt": "d25f3daf695ea502bab1db00a9d5c2aa335ccd65f9061ddc891b6e0dbef4374e",
+    "app/src/main/java/com/pbweather/weather/data/remote/kma/AsosParser.kt": "5a37b430665b3a73775f5307da7924174672ed9e66a4e75f0891324bcff27385",
+    "app/src/main/java/com/pbweather/weather/data/remote/kma/KmaParser.kt": "915dbd7518ec8a0d02b37a788b5e89005272bfd260acb9acccf76e48832e6732",
+    "app/src/main/java/com/pbweather/weather/data/remote/kma/MidParser.kt": "67271e3ede0aca0c053f4305570975297a8cd968df26b13d4cb09faf36ede8ad",
+    "app/src/main/java/com/pbweather/weather/data/repository/AirQualityRepository.kt": "2bc7f8d0ab661ff61a6f9ecbb9a5913c2ea9f51de9a3e39ad4f356cbfb74a3d4",
+    "app/src/main/java/com/pbweather/weather/data/repository/AirStationCatalog.kt": "166d631ad3f8d51c041ccdfb5d18790df570cab37e26dcb52c7dd23a6346441c",
+    "app/src/main/java/com/pbweather/weather/data/repository/ForecastRepository.kt": "7b51266fda880b2e3d70fb9b7c7b7dead511ebf79906eea4b93ed7bad7c15805",
+    "app/src/main/java/com/pbweather/weather/data/repository/HistoryRepository.kt": "c95b4e57efe5a8550d4b5a1ba998588b3192baee64f591840e562bfce3afb660",
+    "app/src/main/java/com/pbweather/weather/data/repository/LocationRepository.kt": "f5e658a2dd7e898a54a1efba1e50d5ae91187cb7607353d45f8ca0f068bf7c15",
+    "app/src/main/java/com/pbweather/weather/data/repository/MidForecastRepository.kt": "59ee4128fec07355b1bd23f87638a1789e821172d1b1e584ba8ab452175d12bd",
+    "app/src/main/java/com/pbweather/weather/data/repository/RequestCoordinator.kt": "17a5fbc9dbd242af301c7aabe1b4622c5a3be006991cb9d72a9cd37a77d1bc3f",
+    "app/src/main/java/com/pbweather/weather/data/repository/WidgetRepository.kt": "3e4240796912df81933bc0801f0fa297801a538057fa29c4ff367d2eeb9b4a2b",
+    "app/src/main/java/com/pbweather/weather/di/AirModule.kt": "6a028e9608d2306cb8eef9768162f5ddb17bed44183517583160cf00ec864594",
+    "app/src/main/java/com/pbweather/weather/di/DataEntryPoint.kt": "0151ed45711a2d71fa3b3acfddabf552d41b05b12bbed4a8a6ba9dbe4e0ed428",
+    "app/src/main/java/com/pbweather/weather/di/HistoryModule.kt": "410225018649f7ab5dc4b41f636f5e593aa3e3dffe8828f256ec6bc33fae831f",
+    "app/src/main/java/com/pbweather/weather/di/LocationModule.kt": "82c380b6ca6327e171cc07a0914ae9402d0328adb3e1f9aea2fbac165c21f4b1",
+    "app/src/main/java/com/pbweather/weather/di/NetworkModule.kt": "f9b0bda47ee2e3b27f00559d50ebaee77daf6aa7db69a27421445f716b601c7e",
+    "app/src/main/java/com/pbweather/weather/di/StorageModule.kt": "b4b0d86fd195e9d6f7d81b54cfa652dd5bf229acfc18f154af491dd130c259ad",
+    "app/src/main/java/com/pbweather/weather/domain/AirQualitySource.kt": "78d999fdd459f24db88960a51610b1e308340cdbfb1313321e4ed454a1ad2956",
+    "app/src/main/java/com/pbweather/weather/domain/ApparentTemperature.kt": "4e5eae5e3dfefd2a44038da302b7d587b16b11ba8e42c4e4896812fbada5ab3f",
+    "app/src/main/java/com/pbweather/weather/domain/ForecastMerger.kt": "121d3c0f8c485e240de601ac94254b03449116701594251d3532fb0789881f0b",
+    "app/src/main/java/com/pbweather/weather/domain/ForecastSource.kt": "4799ff2ac1e09cd3654923a421529a4084cda7cee0fc7e2238bebe0c18cc680e",
+    "app/src/main/java/com/pbweather/weather/domain/ForecastSummary.kt": "314af0e58040d692cf05ff3370d04a786add4f43b52b1a636d641b751727af2d",
+    "app/src/main/java/com/pbweather/weather/domain/HistoryRules.kt": "8e6976e4bc0de517c9e5b65f5e5fb16b7ab24f4edc8a7f6e58b9d2d6ecef4059",
+    "app/src/main/java/com/pbweather/weather/domain/HistorySource.kt": "eacc05ba2131a6417eb9b9f97cc41ea51cf81cc0d79a6114a6215d2d2e835ca5",
+    "app/src/main/java/com/pbweather/weather/domain/LocationSource.kt": "a6e8ba95bf41b23871ce4ceafdf0ffd661d522456676f3f2ba71d1ea72e023a2",
+    "app/src/main/java/com/pbweather/weather/domain/WeatherModels.kt": "8def11e32f73687d5ca193c5413b855623d79535ed4e31f6ec2e67b46499ed54",
+    "app/src/main/java/com/pbweather/weather/domain/WeeklyForecast.kt": "b6965d3847659e6f8a1aed15af2b5f0544bfa6469bf30da121d8f4d8dee46ba3",
+    "app/src/main/java/com/pbweather/weather/ui/components/WeatherComponents.kt": "da41b8a6ecebdcae24ed749fb35b8387d46e2738afe6bc2ca2aec7fac395be73",
+    "app/src/main/java/com/pbweather/weather/ui/components/WeatherDetails.kt": "9a32fd83ee3cf76b07a1bf7c6e7785f7b5720d89b08f195df5be629dddd976e4",
+    "app/src/main/java/com/pbweather/weather/ui/components/WeatherIcon.kt": "ddcce3b71575393262649950ee5eaaa3a837ad09bf3ed0174267a2d72a792b32",
+    "app/src/main/java/com/pbweather/weather/ui/history/HistoryScreen.kt": "6fa5e73c7e8ab87269e278f0e6f9cb32c6ad41bc60e8bf1c7cc14f804570956f",
+    "app/src/main/java/com/pbweather/weather/ui/home/HeroWeather.kt": "9f56a0b9a24ef30017be674f8d62ae2474c870d7348e1c198ae0b1d84b31bf1d",
+    "app/src/main/java/com/pbweather/weather/ui/home/HomeScreen.kt": "07af8594acea2f9dde77bcdfb4b908d6fb6a583f60c9f2d4f27d03c14cc46977",
+    "app/src/main/java/com/pbweather/weather/ui/locations/LocationsScreen.kt": "d0e9f44b59e38f57c34e741eb27c4f16e1e8fc4ea928b2c95fed4304fbb095d9",
+    "app/src/main/java/com/pbweather/weather/ui/navigation/WeatherShell.kt": "eca541efbeb969e69ae693aa0734a7fe145f563f357597b55553e97e518b55d0",
+    "app/src/main/java/com/pbweather/weather/ui/navigation/WeatherViewModel.kt": "de5f311fb8b5204e5762233de33e1e0cae287f7c6a2574ae8d5e82e4e2dad59b",
+    "app/src/main/java/com/pbweather/weather/ui/permission/LocationPermissionAction.kt": "e563228ca8af9e0b09138f97f2ac2d2670ac6d9b0e663e83c087ca0bcdee4606",
+    "app/src/main/java/com/pbweather/weather/ui/settings/LegalDocSheets.kt": "695e97bf3187ac7b4f5e216d6163fd00f5fc87c0a80a1fd947e49bdf33e075a1",
+    "app/src/main/java/com/pbweather/weather/ui/settings/SettingsScreen.kt": "e1b83f05f60d661bef5d80eec28a7ce7f5ead86d1fdbdfcab8112ce98561dcac",
+    "app/src/main/java/com/pbweather/weather/ui/theme/WeatherTheme.kt": "74650f2da7400120fac43f4a25dafebbeb438365151e7e48055e5f25683250be",
+    "app/src/main/java/com/pbweather/weather/widget/WeatherWidget.kt": "a7aef465401532603df0d690ecc72cea839fe9b1243f93de65cfa068d786a327",
+    "app/src/main/java/com/pbweather/weather/work/WeatherRefreshWorker.kt": "980c1f33e5cc779af26e49894cc5212d3fe5483327fee26be6135b08ca5c5521",
+    "app/src/main/java/com/pbweather/weather/work/WidgetSync.kt": "d164f499eb6f372ffb8b6e3d3ab3432ab440300d93ec47b3ab5066ca81df099b",
+    "app/src/main/res/drawable/widget_preview.xml": "f3c5c7bcdf30fb642eae7f91c59d2acabb75e191ac8cad5f9bd15d2ab53e234f",
+    "app/src/main/res/drawable/widget_symbol_clear.xml": "4094e11849b734bf3c235ea304e0eed87e40f56ee442b9c2029d8d1d13e10eed",
+    "app/src/main/res/drawable/widget_symbol_cloud.xml": "edfe30634ed4b5e9c671af3e0f05f2c30f2ea5f09ab51ebd001a91317c00aa37",
+    "app/src/main/res/drawable/widget_symbol_rain.xml": "8d079ea41b4883fc383eb78ed886b1fbccb7e3d55feca3c67fd920371c8d45d4",
+    "app/src/main/res/drawable/widget_symbol_snow.xml": "07a4fcd9ba8d4e60d8c0f1bc0da77a88751519e6366a894ef55937f09b1d8f20",
+    "app/src/main/res/values/strings.xml": "4ea879349a0665a1a9839966caae0ce42def1d16b66046e1b1273999527a0012",
+    "app/src/main/res/values/styles.xml": "3f29cd89407817b1ffe05e2315f69dfd2b6e466248d0416a63316c20ccdc0b2f",
+    "app/src/main/res/values/widget_colors.xml": "5834ec4496a82ed3ae772ff01683cca64891c5dd3763e5a83c2739f9d60cd29b",
+    "app/src/main/res/xml/weather_widget_info.xml": "ad7b4aea29d7ff6919be7c7158eef948d6073e5534896ca6bab0e85180f87125",
+    "app/src/test/java/com/pbweather/weather/core/geo/GeoTest.kt": "8a117f4cb12564183c1e740642118725a8ffb5ff8265ba9325c032b21d0cec20",
+    "app/src/test/java/com/pbweather/weather/data/local/LocalRulesTest.kt": "b39b473cbd1c42943ec5ea1347eab2d7549b6ebd6a0377704378be75eda85850",
+    "app/src/test/java/com/pbweather/weather/data/location/RegionResolverTest.kt": "b176b96b39084ed405a93ef931ced927b90d9c5410a7fcfdb8337eba940710f8",
+    "app/src/test/java/com/pbweather/weather/data/remote/AirContractTest.kt": "8420153d8fba7e2b075d9bc4825e129ca83c08b132df7ac10085c02f88b1745e",
+    "app/src/test/java/com/pbweather/weather/data/remote/ForecastContractTest.kt": "f377b971393413be566a0f0b62a5c21f097110acbba5aa4e2a2ad1aded40cf8f",
+    "app/src/test/java/com/pbweather/weather/data/remote/HistoryContractTest.kt": "1e81853cbce57ade08db3616ac580e3aef8896d85135a23518edf2a70d2a2169",
+    "app/src/test/java/com/pbweather/weather/data/remote/MidForecastTest.kt": "2a6447eceb323da9821a2e70285cd25f1246b6a5bb8c8d8ef346cbb33bdbfb54",
+    "app/src/test/java/com/pbweather/weather/domain/HomeRulesTest.kt": "5b6f0344fca3219a76b5b90e5598edd7db611887ec9909cabaa1c83b360a229b",
+    "app/src/test/java/com/pbweather/weather/ui/theme/WeatherThemeTest.kt": "0b05cf8a0cf45cf7bf3a7ae5de3e350d2990e9a21e4e3d22a5e674ffe21bb456"
+  },
+  "performance": {
+    "refresh": "PASS; refresh-metrics.json",
+    "coldStart": "FAIL; cold-start.json; debug emulator p90 exceeds 1000ms"
+  },
+  "limits": [
+    "ASSET-001 Baengnyeong original grid discrepancy remains",
+    "Location invocation @Ignore retained at user request; one skipped test",
+    "Winter WSD 10-minute mean input specification unconfirmed; no forced activation",
+    "S25 Ultra tests user-owned and NOT_RUN by agent",
+    "TalkBack spoken output, runtime VM allocation profile, physical widget resizing and power saving NOT_RUN",
+    "Release signing/bundle/Play excluded; PR creation excluded"
+  ]
+}

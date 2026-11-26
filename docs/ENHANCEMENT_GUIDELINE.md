@@ -9,7 +9,7 @@
 | 역할 | 사용자 확정 변경과 상용 앱 벤치마크 고도화 6항목의 구현·수용 계약 |
 | 승인 근거 | 사용자 지시: 벤치마크 1~6번 반영, 히어로 배경 C안, 미세먼지 히어로 통합 1안, 설정 시그니처 및 화면 색상 4종 선택 확정 |
 | 채택 상태 | ENH-001~006 · 히어로 배경 C안 · 미세먼지 1안 · 설정 시그니처(화면 색상 4종 포함) 구현 범위 확정 |
-| 제품 구현 상태 | 미착수. 본 문서 작성은 제품 구현·테스트 완료 의미 아님 |
+| 제품 구현 상태 | 2026-11-26 기본 기능·고도화 코드 구현 및 자동 검증. 겨울 입력·성능·실기기 잔여 검증은 별도 미완료 |
 | 디자인 기준 | [pb-weather-prototype.html](../outputs/pb-weather-prototype.html) (고도화 완성형) · 원본 참고 [android-weather-prototype-iv3.html](../android-weather-prototype-iv3.html) |
 | 검증 대상 | Galaxy S25 Ultra. 설치 Android·One UI 버전은 실기기 검증 시 기록 |
 | 명칭 | 프로젝트 `pb-weather` · 영문 표시명 `PB Weather` · 한국어 표시명 `땅버날씨` |
@@ -238,12 +238,12 @@ Tw = Ta*atan(0.151977*sqrt(RH + 8.313659))
 
 | 추가 TASK | ENH·기존 요구사항 연결 | 주요 경로·재사용 | 선행 조건 | 상태 |
 | --- | --- | --- | --- | --- |
-| TASK-ENH-001 | ENH-001 / FR-001~006·010, DATA-001·002 | domain, data/repository, ui/home·history, Resource·Clock | 기존 TASK-003~007의 데이터 계약 | TODO |
-| TASK-ENH-002 | ENH-002 / FR-008~010 | widget, work, data/local, ui/locations | 대표 지역 저장·기본 위젯·ENH-001 | TODO |
-| TASK-ENH-003 | ENH-003 / FR-002·003, NFR-A11Y-001 | ui/home, domain, 기존 상세 시트·ForecastRepository | 예보 병합·기본 홈·ENH-001 | TODO |
-| TASK-ENH-004 | ENH-004 / FR-002·005 | domain, ui/home, Clock | 시간별 정상화·ENH-001·003의 데이터 계약 | TODO |
-| TASK-ENH-005 | ENH-005 / FR-004·010, DATA-001·002 | data/remote/airkorea, data/repository, data/local, ui/home | 기존 TASK-006·AIR 목록 계약·ENH-001 | TODO |
-| TASK-ENH-006 | ENH-006 / FR-001, NFR-A11Y-001 | domain, ui/home, 기존 Clock·테마 | 실황 입력 계약·ENH-001 | TODO |
+| TASK-ENH-001 | ENH-001 / FR-001~006·010, DATA-001·002 | domain, data/repository, ui/home·history, Resource·Clock | 기존 TASK-003~007의 데이터 계약 | IMPLEMENTED (자동·에뮬레이터 검증, 실기기 미실행) |
+| TASK-ENH-002 | ENH-002 / FR-008~010 | widget, work, data/local, ui/locations | 대표 지역 저장·기본 위젯·ENH-001 | IMPLEMENTED (자동·에뮬레이터 검증, 실기기 미실행) |
+| TASK-ENH-003 | ENH-003 / FR-002·003, NFR-A11Y-001 | ui/home, domain, 기존 상세 시트·ForecastRepository | 예보 병합·기본 홈·ENH-001 | IMPLEMENTED (자동·에뮬레이터 검증, 실기기 미실행) |
+| TASK-ENH-004 | ENH-004 / FR-002·005 | domain, ui/home, Clock | 시간별 정상화·ENH-001·003의 데이터 계약 | IMPLEMENTED (자동·에뮬레이터 검증, 실기기 미실행) |
+| TASK-ENH-005 | ENH-005 / FR-004·010, DATA-001·002 | data/remote/airkorea, data/repository, data/local, ui/home | 기존 TASK-006·AIR 목록 계약·ENH-001 | IMPLEMENTED (자동·에뮬레이터 검증, 실기기 미실행) |
+| TASK-ENH-006 | ENH-006 / FR-001, NFR-A11Y-001 | domain, ui/home, 기존 Clock·테마 | 실황 입력 계약·ENH-001 | PARTIAL (겨울 WSD 규격 미확인) |
 
 - 추가 TASK는 기존 TASK-001~014와 별도 식별. 기존 완료 수·상태 덮어쓰기 금지.
 - 권장 순서: 데이터·입력 계약 확정 → ENH-001 → ENH-002·003 → ENH-004·005·006 → 통합 실기기 검증.
@@ -254,20 +254,20 @@ Tw = Ta*atan(0.151977*sqrt(RH + 8.313659))
 
 | TEST | 연결 | 검증·PASS 조건 | 유형 | 상태 |
 | --- | --- | --- | --- | --- |
-| TEST-ENH-001 | ENH-001 전체 AC | 자료/발표/수신 시각·지역 분리, Clock 경계·만료·온라인 실패·오프라인 상태 일치 | 자동 | NOT_RUN |
+| TEST-ENH-001 | ENH-001 전체 AC | 자료/발표/수신 시각·지역 분리, Clock 경계·만료·온라인 실패·오프라인 상태 일치 | 자동 | PARTIAL (시간·캐시·지역 자동 검사) |
 | TEST-ENH-002 | ENH-001 전체 AC | 실제 API·화면·자료 상세의 출처·시각·관측/예보·결측 표기 대조 | 실기기 수동 | NOT_RUN |
-| TEST-ENH-003 | ENH-002 전체 AC | 대표 변경·삭제·마지막 삭제·되돌리기·중복 작업 방지·실패 상태 종료 | 자동 | NOT_RUN |
+| TEST-ENH-003 | ENH-002 전체 AC | 대표 변경·삭제·마지막 삭제·되돌리기·중복 작업 방지·실패 상태 종료 | 자동 | PASS (WidgetIntegration/Host·통합 Flow) |
 | TEST-ENH-004 | ENH-002 전체 AC | S25 Ultra 위젯 배치·리사이즈·탭·재시작·절전·오프라인·대표 변경 대조 | 실기기 수동 | NOT_RUN |
-| TEST-ENH-005 | ENH-003 전체 AC | 시간/일자 선택·자정·중기 종일·병합 결측·강수 정성값·지역 전환 일치 | 자동·UI | NOT_RUN |
+| TEST-ENH-005 | ENH-003 전체 AC | 시간/일자 선택·자정·중기 종일·병합 결측·강수 정성값·지역 전환 일치 | 자동·UI | PARTIAL (상세·경계 UI/도메인) |
 | TEST-ENH-006 | ENH-003 전체 AC · 히어로 C안 | S25 Ultra 상세 진입·복귀·TalkBack·200% 글꼴·다크·고대비 조작, 히어로 C안 배경 명암비(4.5:1+)·스크롤/탭 정지·고대비/애니메이션 배율 0 정적 폴백·점멸 없음 확인 | 실기기 수동 | NOT_RUN |
-| TEST-ENH-007 | ENH-004 전체 AC | 최대 POP·동률·부분/전체 결측·6개 미만·시간 경계에서 동일 문구·원자료 일치 | 자동 | NOT_RUN |
+| TEST-ENH-007 | ENH-004 전체 AC | 최대 POP·동률·부분/전체 결측·6개 미만·시간 경계에서 동일 문구·원자료 일치 | 자동 | PASS (HomeRulesTest) |
 | TEST-ENH-008 | ENH-004 전체 AC | 실제 예보와 요약·상세 대조, 긴 문구·글꼴 확대·오래된 자료·지역 변경 확인 | 실기기 수동 | NOT_RUN |
-| TEST-ENH-009 | ENH-005 전체 AC · 미세먼지 1안 | 측정 목록 역순·중복·자정·24:00·부분 목록·지표별 결측·측정소 변경·캐시 복원, 히어로 통합 띠 독립 오류·대체·200% 1열 리플로 확인 | 자동·UI | NOT_RUN |
+| TEST-ENH-009 | ENH-005 전체 AC · 미세먼지 1안 | 측정 목록 역순·중복·자정·24:00·부분 목록·지표별 결측·측정소 변경·캐시 복원, 히어로 통합 띠 독립 오류·대체·200% 1열 리플로 확인 | 자동·UI | PARTIAL (AirContract·상세·확대 화면) |
 | TEST-ENH-010 | ENH-005 전체 AC · 미세먼지 1안 | 실 API 최근 측정 목록·차트·선택값·측정소·오프라인 캐시 및 히어로 하단 통합 띠(출처 분리·확정 전 안내·추이 진입) 대조 | 실기기 수동 | NOT_RUN |
-| TEST-ENH-011 | ENH-006 전체 AC | 산식 예시·단위·5/10월 경계·풍속 1.3·기온 10·RH 5/99 경계·결측·NaN 검증 | 자동 | NOT_RUN |
+| TEST-ENH-011 | ENH-006 전체 AC | 산식 예시·단위·5/10월 경계·풍속 1.3·기온 10·RH 5/99 경계·결측·NaN 검증 | 자동 | PARTIAL (예시·결측·시각, 전체 경계 미검증) |
 | TEST-ENH-012 | ENH-006 전체 AC | 입력 규격 근거·유효 실자료 계산·화면/상세 일치, 계절별 표시·적용 불가 안내 확인 | 실기기 수동 | NOT_RUN |
 
-- 자동 검증은 프로젝트 생성 후 기존 `ktlintCheck`, `lintDebug`, `testDebugUnitTest`, 필요한 `connectedDebugAndroidTest`, `assembleDebug`에 연결. 문서만 작성한 시점에는 해당 명령 실행 결과 없음.
+- 자동 검증은 `ktlintCheck`, `lintDebug`, `testDebugUnitTest`, `connectedDebugAndroidTest`, `assembleDebug`에 연결. 실행 증거: `evidence/TASK-009-013-integration.json`, `evidence/INTEGRATION/`. 전체 AC에 없는 검증은 PARTIAL로 유지.
 - S25 Ultra의 Android·One UI·앱 버전·네트워크·절전 설정·KST 검증 시각 기록. 설치 OS 버전을 기종명으로 추정 금지.
 - 증거에는 실행 명령·결과 요약·입력 조건·실제 로그/스크린샷 경로 포함. 서비스 키·전체 요청 URL·원본 사용자 좌표 기록 금지.
 - 실행하지 않은 TEST는 NOT_RUN. 외부 조건으로 실행이 막히면 원인·필요 조건 기록, PASS로 대체 금지.
@@ -280,7 +280,7 @@ Tw = Ta*atan(0.151977*sqrt(RH + 8.313659))
 - 캐시·대표 지역·날짜·단위·결측·오류·접근성 회귀 검증 포함. 실제 API 스모크를 픽스처 테스트로 대체 금지.
 - 5·6번도 최종 완료 조건 포함. 입력 계약·유효 실자료가 확인되지 않은 항목은 미완료로 보고, ‘선택 기능’이라는 이유로 제외 금지.
 - 분 단위 강수 예측·다중 예보모델·예보 신뢰도 점수·레이더·푸시·WHO 전환·꽃가루/UV/일출몰·활동 점수·작년 비교·1년치 조회는 본 고도화 범위 밖.
-- 현재 모든 추가 TASK는 TODO, TEST는 NOT_RUN. 제품 구현·실기기 검증·릴리스 기록 없음.
+- 현재 추가 TASK-ENH-001~005 구현 및 부분/전체 자동 검증, TASK-ENH-006 겨울 WSD 입력 규격 미확인으로 PARTIAL. 실기기 TEST 6개는 NOT_RUN(사용자 담당), 릴리스 기록 없음. 캐시 콜드 스타트 p90 4,867ms로 1초 목표 미달. 사용자 지시의 에뮬레이터 검증 완료와 기존 실기기 수용 기준 완료를 구분.
 
 ## 13. 벤치마크·기술 근거
 

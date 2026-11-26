@@ -139,6 +139,9 @@ interface WeatherDao {
     @Query("DELETE FROM observations WHERE stationId = :station AND date = :date")
     suspend fun deleteObservation(station: String, date: String)
 
+    @Query("SELECT COALESCE(SUM(byteCount), 0) FROM (SELECT byteCount FROM snapshots UNION ALL SELECT byteCount FROM observations)")
+    fun observeCacheBytes(): Flow<Long>
+
     @Query("DELETE FROM snapshots")
     suspend fun clearSnapshots()
 

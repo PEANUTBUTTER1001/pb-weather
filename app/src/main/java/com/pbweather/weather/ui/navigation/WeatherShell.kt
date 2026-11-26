@@ -67,9 +67,12 @@ import com.pbweather.weather.ui.components.SectionTitle
 import com.pbweather.weather.ui.components.UiIcon
 import com.pbweather.weather.ui.components.WeatherDetails
 import com.pbweather.weather.ui.components.temperature
+import com.pbweather.weather.ui.history.HistoryScreen
 import com.pbweather.weather.ui.home.HomeScreen
 import com.pbweather.weather.ui.home.currentSky
+import com.pbweather.weather.ui.locations.LocationsScreen
 import com.pbweather.weather.ui.permission.LocationPermissionAction
+import com.pbweather.weather.ui.settings.SettingsScreen
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.FontSize
 import com.pbweather.weather.ui.theme.Palette
@@ -103,6 +106,7 @@ data class WeatherActions(
     val favorite: (Region) -> Unit = {},
     val deleteFavorite: (String) -> Unit = {},
     val primary: (String) -> Unit = {},
+    val clearCache: () -> Unit = {}
 )
 
 @Composable
@@ -116,7 +120,12 @@ fun WeatherShell(
     notices: Flow<Notice>,
     regionForecasts: Map<String, com.pbweather.weather.domain.ForecastState> = emptyMap(),
     widgetTab: Pair<WeatherTab, Long>? = null,
+    cacheBytes: Long? = null,
+    clearingCache: Boolean = false,
+    primaryForecast: com.pbweather.weather.domain.ForecastState = com.pbweather.weather.domain.ForecastState()
 ) {
+    var userNavigated by rememberSaveable { mutableStateOf(false) }
+    var showSettingsLocation by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
     var selectedHour by rememberSaveable(state.preferences.selected?.key) { mutableLongStateOf(0L) }
@@ -140,12 +149,17 @@ fun WeatherShell(
     val focus = LocalFocusManager.current
     val owner = LocalLifecycleOwner.current
     var resumed by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
-    var wasEmpty by remember { mutableStateOf(true) }
-    LaunchedEffect(widgetTab) { widgetTab?.let { tab = it.first } }
-    LaunchedEffect(state.preferences.selected?.id) {
-        if (state.preferences.selected == null) {
+    var wasEmpty by rememberSaveable { mutableStateOf(state.preferences.selected == null) }
+    var lastWidgetRequest by rememberSaveable { mutableLongStateOf(-1L) }
+    LaunchedEffect(state.preferences.selected?.id, state.preferencesLoaded, widgetTab) {
+        if (!state.preferencesLoaded) return@LaunchedEffect
+        if (widgetTab != null && widgetTab.second != lastWidgetRequest) {
+            tab = widgetTab.first
+            details = null
+            lastWidgetRequest = widgetTab.second
+        } else if (state.preferences.selected == null && !userNavigated) {
             tab = WeatherTab.LOCATIONS
-        } else if (wasEmpty) {
+        } else if (wasEmpty && !userNavigated) {
             tab = WeatherTab.HOME
         }
         wasEmpty = state.preferences.selected == null
@@ -162,11 +176,15 @@ fun WeatherShell(
     val restored = stringResource(R.string.favorite_restored)
     val limit = stringResource(R.string.favorite_limit)
     val undo = stringResource(R.string.undo)
+    val cleared = stringResource(R.string.cache_cleared)
+    val clearFailed = stringResource(R.string.cache_clear_failed)
     LaunchedEffect(notices) {
         notices.collectLatest { notice ->
             val message = when (notice) {
                 Notice.DELETED -> deleted
                 Notice.RESTORED -> restored
+                Notice.CACHE_CLEARED -> cleared
+                Notice.CACHE_CLEAR_FAILED -> clearFailed
                 else -> limit
             }
             val result = withTimeoutOrNull(6000) {
@@ -184,6 +202,7 @@ fun WeatherShell(
         context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
     }
     val pick: (Region) -> Unit = { region ->
+        userNavigated = true
         focus.clearFocus()
         actions.select(region)
         tab = WeatherTab.HOME
@@ -207,7 +226,10 @@ fun WeatherShell(
                         Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
                     } else {
                         Row(
-                            Modifier.weight(1f).clickable { tab = WeatherTab.LOCATIONS }.padding(vertical = Dims.small),
+                            Modifier.weight(1f).clickable {
+                                userNavigated = true
+                                tab = WeatherTab.LOCATIONS
+                            }.padding(vertical = Dims.small),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(Dims.small)
                         ) {
@@ -261,7 +283,14 @@ fun WeatherShell(
                         val title = stringResource(item.title)
                         val description = stringResource(R.string.nav_description, title)
                         Column(
-                            Modifier.weight(1f).clickable { tab = item }.semantics { contentDescription = description }
+                            Modifier.weight(1f).clickable {
+                                userNavigated = true
+                                showSettingsLocation = false
+                                tab = item
+                            }.semantics {
+                                contentDescription =
+                                    description
+                            }
                                 .padding(vertical = Dims.small),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -311,52 +340,51 @@ fun WeatherShell(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             Box(Modifier.widthIn(max = Dims.maxWidth).fillMaxWidth()) {
-                when (tab) {
-                    WeatherTab.HOME -> if (state.preferences.selected ==
-                        null
-                    ) {
-                        com.pbweather.weather.ui.locations.LocationsScreen(state, query, results, regionForecasts, actions, pick, openSettings, locationsList)
-                    } else {
-                        HomeScreen(
-                            state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
-                            { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
+                if (!state.preferencesLoaded) {
+                    Text(stringResource(R.string.loading), Modifier.padding(Dims.gutter))
+                } else {
+                    when (tab) {
+                        WeatherTab.HOME -> if (state.preferences.selected ==
+                            null
+                        ) {
+                            LocationsScreen(state, query, results, regionForecasts, actions, pick, {
+                                showSettingsLocation = true
+                                tab =
+                                    WeatherTab.SETTINGS
+                            }, locationsList)
+                        } else {
+                            HomeScreen(
+                                state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
+                                { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
+                            )
+                        }
+                        WeatherTab.LOCATIONS -> LocationsScreen(state, query, results, regionForecasts, actions, pick, {
+                            showSettingsLocation =
+                                true
+                            tab = WeatherTab.SETTINGS
+                        }, locationsList)
+                        WeatherTab.HISTORY -> HistoryScreen(state, actions.range, actions.refresh) { tab = WeatherTab.LOCATIONS }
+                        WeatherTab.SETTINGS -> SettingsScreen(
+                            state, cacheBytes, clearingCache, primaryForecast, actions,
+                            {
+                                showSettingsLocation = false
+                                tab = WeatherTab.LOCATIONS
+                            }, openSettings,
+                            onDocument = { details = it }, showLocation = showSettingsLocation
                         )
                     }
-                    WeatherTab.LOCATIONS -> com.pbweather.weather.ui.locations.LocationsScreen(state, query, results, regionForecasts, actions, pick, openSettings, locationsList)
-                    WeatherTab.HISTORY -> com.pbweather.weather.ui.history.HistoryScreen(state, actions.range, actions.refresh) { tab = WeatherTab.LOCATIONS }
-                    WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
                 }
             }
         }
     }
     details?.let { target ->
-        WeatherDetails(target, state, onNavigate = { next ->
-            details = next
-            next.removePrefix("hour:").toLongOrNull()?.let { selectedHour = it }
-        }) { details = null }
-    }
-}
-
-
-
-@Composable private fun SettingsLanding(state: WeatherUiState, actions: WeatherActions, onHelp: () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-        SectionCard {
-            SectionTitle(stringResource(R.string.settings))
-            ThemeMode.entries.forEach { mode ->
-                TextButton(onClick = { actions.theme(mode) }) {
-                    Text(
-                        stringResource(
-                            when (mode) {
-                                ThemeMode.LIGHT -> R.string.theme_light
-                                ThemeMode.DARK -> R.string.theme_dark
-                                ThemeMode.HIGH_CONTRAST -> R.string.theme_contrast
-                            }
-                        )
-                    )
-                }
-            }
-            TextButton(onClick = onHelp) { Text(stringResource(R.string.help)) }
+        if (target in setOf("help", "privacy", "licenses", "usage")) {
+            com.pbweather.weather.ui.settings.LegalDocSheet(target) { details = null }
+        } else {
+            WeatherDetails(target, state, onNavigate = { next ->
+                details = next
+                next.removePrefix("hour:").toLongOrNull()?.let { selectedHour = it }
+            }) { details = null }
         }
     }
 }

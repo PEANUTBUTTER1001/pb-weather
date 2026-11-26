@@ -20,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -54,7 +55,7 @@ fun LocationsScreen(
 ) {
     LazyColumn(
         state = list,
-        modifier = Modifier.padding(horizontal = Dims.gutter),
+        modifier = Modifier.testTag("locations-list").padding(horizontal = Dims.gutter),
         verticalArrangement = Arrangement.spacedBy(Dims.small)
     ) {
         item(key = "search") {
@@ -75,7 +76,7 @@ fun LocationsScreen(
             Rule()
         }
         items(results, key = { "search_${it.id}" }) { region ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth().testTag("search:${region.id}"), verticalAlignment = Alignment.CenterVertically) {
                 RegionLabel(region, forecasts[region.id], state.now, Modifier.weight(1f), onSelect)
                 val saved = state.preferences.favorites.any { it.id == region.id }
                 OutlinedButton(onClick = {

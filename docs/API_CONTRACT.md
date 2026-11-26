@@ -42,3 +42,10 @@ The selected mid endpoint anchors day offsets to the actual 06/18 release date. 
 
 - 공식 초단기실황 설명: 대표 AWS 관측값(https://data.kma.go.kr/data/rmt/rmtList.do?code=400&pgmNo=570).
 - 기상청 누리사랑방 설명의 10분 간격 수집은 평균시간과 별개(https://data.kma.go.kr/community/nuriLovePopup.do). API WSD가 체감온도식의 10분 평균풍속과 동일하다는 대응 근거는 미확보. `INPUT_SPEC_UNCONFIRMED` 유지, `windMeanConfirmed=true` 실운영 전달 금지. 새 API·권한 도입 없음.
+
+## Cache deletion and widget integration (2026-11-26)
+
+- Cache deletion advances an in-memory request generation inside the Room transaction. Requests started before deletion cannot restore snapshots or daily rows after deletion; requests started after deletion may write normally. Assets, station metadata, favorites and preferences remain.
+- Favorites rows and widget use existing Room forecast flows. Widget has one unique network-constrained 60-minute periodic job and a replaceable immediate job for primary changes. No device location request from widget or worker.
+- Widget entry uses NEW_TASK/CLEAR_TOP/SINGLE_TOP and consumes its event once. Primary region opens home; no primary opens locations. Normal activity recreation preserves the selected tab and settings. Initial preference loading cannot overwrite a tab explicitly chosen by the user.
+- Integration measurements are numeric aggregates only: two sets of ten real full refreshes p90 2592/2580ms; largest HTTP body sum 301858B, largest UID RX+TX delta 375240/376225B. Debug process cold-start p90 4867ms exceeds the cached 1000ms target. Emulator/API35, virtual Wi-Fi, cache-clear refresh and process force-stop conditions are recorded in `evidence/INTEGRATION/`; these results do not establish S25 Ultra or release-build performance.

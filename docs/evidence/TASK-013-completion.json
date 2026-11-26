@@ -1,0 +1,129 @@
+{
+  "task": "TASK-013",
+  "branch": "feat/task-013-settings",
+  "clientDate": "2026-11-25",
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": [
+      {
+        "name": "com.pbweather.weather.core.geo.GeoTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.218Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.local.LocalRulesTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.271Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.location.RegionResolverTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.335Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.AirContractTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.355Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.396Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.741Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.MidForecastTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.754Z"
+      },
+      {
+        "name": "com.pbweather.weather.domain.HomeRulesTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.764Z"
+      },
+      {
+        "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T07:50:52.770Z"
+      }
+    ],
+    "android": [
+      {
+        "name": null,
+        "tests": "15",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "1",
+        "timestamp": "2026-11-25T07:54:25"
+      }
+    ]
+  },
+  "secretScan": {
+    "changedFiles": 21,
+    "suspectLocations": []
+  },
+  "limits": [
+    "Location invocation remains user-deferred; S25 Ultra tests user-owned; release excluded",
+    "TalkBack spoken output and S25 Ultra manual verification not run"
+  ],
+  "deviceTarget": "emulator-5554 only; physical device excluded",
+  "attempts": [
+    {
+      "attempt": 1,
+      "result": "Connected test selection failed before execution (--serial UnsupportedOperationException)"
+    },
+    {
+      "attempt": 2,
+      "result": "Full gate PASS using ANDROID_SERIAL emulator filter"
+    },
+    {
+      "attempt": 3,
+      "result": "Settings test failed to find uncomposed off-screen delete; replaced with list scrollToNode"
+    },
+    {
+      "attempt": 4,
+      "result": "Settings PASS, HomeFlow off-screen source click timeout at system font200"
+    },
+    {
+      "attempt": 5,
+      "result": "Full gate PASS after source scroll and baseline font reset"
+    }
+  ],
+  "visual": [
+    "375dp light",
+    "375dp font200",
+    "font200 dark",
+    "font200 high contrast"
+  ]
+}

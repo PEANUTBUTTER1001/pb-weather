@@ -1,0 +1,7 @@
+{
+  "clientDate": "2026-11-26",
+  "method": "javap -p -c compiled debug HeroWeatherKt class; inspect Canvas draw lambda",
+  "classSha256": "cd0feab0a6fffb237c1b0d048935ae27ade91363b8b789883b3734d9b8248291",
+  "directJvmAllocationInstructions": 0,
+  "scope": "App draw lambda only. Called Compose/framework internals not profiled; runtime VM allocation profiling NOT_RUN. HeroAnimationTest separately checks frame changes and pause/high-contrast static pixels."
+}

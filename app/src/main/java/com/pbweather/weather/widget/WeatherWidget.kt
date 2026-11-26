@@ -70,7 +70,9 @@ class WeatherWidget : GlanceAppWidget() {
     val intent = Intent(
         context,
         MainActivity::class.java
-    ).putExtra(OPEN_WIDGET, true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    ).putExtra(OPEN_WIDGET, true).addFlags(
+        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    )
     Column(
         GlanceModifier.fillMaxSize().background(colors.border).cornerRadius(Dims.widgetRadius)
             .clickable(actionStartActivity(intent)).padding(Dims.hairline)

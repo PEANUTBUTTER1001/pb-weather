@@ -9,6 +9,14 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class HomeRulesTest {
+    @Test fun `display rounding is half up and never negative zero`() {
+        assertEquals("0.0", com.pbweather.weather.ui.components.number(-0.04))
+        assertEquals("0.1", com.pbweather.weather.ui.components.number(0.05))
+        assertEquals("10.0", com.pbweather.weather.ui.components.number(9.95))
+        assertEquals("-10.0", com.pbweather.weather.ui.components.number(-9.95))
+        assertNull(com.pbweather.weather.ui.components.number(Double.NaN))
+    }
+
     @Test fun `summary uses future six entries earliest maximum tie and temperature fallback`() {
         val hours = listOf(
             ForecastHour(1, 5.0, probability = 100),

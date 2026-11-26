@@ -25,11 +25,13 @@ import com.pbweather.weather.ui.theme.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,9 +61,10 @@ data class WeatherUiState(
     val data: WeatherData = WeatherData(),
     val range: DateRange,
     val location: LocationUi = LocationUi(),
-    val now: Long = 0
+    val now: Long = 0,
+    val preferencesLoaded: Boolean = true
 )
-enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED }
+enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED, CACHE_CLEAR_FAILED }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
@@ -72,7 +75,8 @@ class WeatherViewModel @Inject constructor(
     private val history: ObserveHistory,
     private val findRegions: FindRegions,
     private val locations: LocationSource,
-    private val clock: Clock
+    private val clock: Clock,
+    private val cache: com.pbweather.weather.data.local.CacheStore
 ) : ViewModel() {
     val widgetTab = MutableStateFlow<Pair<WeatherTab, Long>?>(null)
     fun openWidget() {
@@ -81,6 +85,29 @@ class WeatherViewModel @Inject constructor(
             val primary = prefs.favorites.firstOrNull { it.id == prefs.primaryId }
             if (primary != null) preferences.select(primary)
             widgetTab.value = (if (primary == null) WeatherTab.LOCATIONS else WeatherTab.HOME) to ((widgetTab.value?.second ?: 0L) + 1L)
+        }
+    }
+    val cacheBytes = cache.dao.observeCacheBytes().map<Long, Long?> {
+        it
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    val clearingCache = MutableStateFlow(false)
+    fun clearCache() {
+        if (clearingCache.value) return
+        clearingCache.value = true
+        viewModelScope.launch {
+            try {
+                refreshJob?.cancelAndJoin()
+                cache.clearWeather()
+                notices.emit(Notice.CACHE_CLEARED)
+            } catch (
+                cancelled: CancellationException
+            ) {
+                throw cancelled
+            } catch (_: Exception) {
+                notices.emit(Notice.CACHE_CLEAR_FAILED)
+            } finally {
+                clearingCache.value = false
+            }
         }
     }
     val query = MutableStateFlow("")
@@ -110,9 +137,15 @@ class WeatherViewModel @Inject constructor(
             delay(60000)
         }
     }
-    val ui: StateFlow<WeatherUiState> = combine(saved, weather, range, location, ticks) { prefs, data, dates, permission, now ->
+    val ui: StateFlow<WeatherUiState> = combine(preferences.preferences, weather, range, location, ticks) {
+            prefs,
+            data,
+            dates,
+            permission,
+            now
+        ->
         WeatherUiState(prefs, if (data.key == prefs.selected?.key) data else WeatherData(), dates, permission, now)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value, preferencesLoaded = false))
     val results = query.debounce(100).flatMapLatest { text -> flow { emit(findRegions(text)) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val locationForecasts: StateFlow<Map<String, ForecastState>> = combine(results, saved) { matches, prefs ->
@@ -128,6 +161,9 @@ class WeatherViewModel @Inject constructor(
             ) { entries -> entries.toMap() }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
+    val primaryForecast = saved.map { prefs -> prefs.favorites.firstOrNull { it.id == prefs.primaryId } }
+        .distinctUntilChanged().flatMapLatest { region -> region?.let { forecast(it) } ?: flowOf(ForecastState()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ForecastState())
     init {
         viewModelScope.launch { locations.prepare() }
         viewModelScope.launch {

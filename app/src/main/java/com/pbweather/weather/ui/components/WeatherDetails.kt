@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -178,8 +181,18 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
                     Text(stringResource(if (result.summer) R.string.apparent_summer_explanation else R.string.apparent_winter_explanation))
                     Text(stringResource(R.string.apparent_input_note))
                     DetailRow(stringResource(R.string.temperature_label), temperature(state.data.forecast.now.data?.temperature))
-                    DetailRow(stringResource(R.string.humidity), missing(number(state.data.forecast.now.data?.humidity)))
-                    DetailRow(stringResource(R.string.wind), missing(number(state.data.forecast.now.data?.windMs)))
+                    DetailRow(
+                        stringResource(R.string.humidity),
+                        state.data.forecast.now.data?.humidity?.let { stringResource(R.string.percent, number(it).orEmpty()) }
+                            ?: stringResource(R.string.not_provided)
+                    )
+                    DetailRow(
+                        stringResource(R.string.wind),
+                        state.data.forecast.now.data?.windMs?.let {
+                            stringResource(R.string.apparent_wind_units, number(it).orEmpty(), number(it * 3.6).orEmpty())
+                        }
+                            ?: stringResource(R.string.not_provided)
+                    )
                     SourceInfo(state.data.forecast.now.meta, state.preferences.selected?.name, state.data.forecast.now)
                 }
                 target == "help" -> Text(stringResource(R.string.help_text))
@@ -263,58 +276,79 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
 
 @Composable private fun AirTrendDetails(resource: Resource<AirQualityData>, initialPm25: Boolean) {
     val data = resource.data
-    if (data == null) {
-        StatusBlock(resource)
+    if (data == null || data.readings.isEmpty()) {
+        StatusBlock(resource.copy(data = null))
         return
     }
     var pm25 by remember(initialPm25) { mutableStateOf(initialPm25) }
+    var selectedAt by rememberSaveable(data.station) { mutableStateOf<Long?>(null) }
+    val selected = data.readings.firstOrNull { it.at == selectedAt } ?: data.readings.last()
     Text(data.station, style = MaterialTheme.typography.titleLarge)
     Text(stringResource(R.string.air_unconfirmed), style = MaterialTheme.typography.bodySmall)
+    Text(
+        stringResource(
+            R.string.air_actual_period,
+            data.readings.size,
+            dateTimeLabel(data.readings.first().at).orEmpty(),
+            dateTimeLabel(data.readings.last().at).orEmpty()
+        )
+    )
+    Text(stringResource(R.string.air_grade_basis, data.gradeBasis), style = MaterialTheme.typography.bodySmall)
     Row(horizontalArrangement = Arrangement.spacedBy(Dims.small)) {
         ChoiceChip(stringResource(R.string.air_pm10), !pm25, Modifier.weight(1f)) { pm25 = false }
         ChoiceChip(stringResource(R.string.air_pm25), pm25, Modifier.weight(1f)) { pm25 = true }
     }
-    val segments = remember(data, pm25) { AirTrend.segments(data, pm25) }
-    val values = data.readings.mapNotNull { if (pm25) it.pm25 else it.pm10 }
-    val max = (values.maxOrNull() ?: 1.0).coerceAtLeast(1.0)
+    val pm10Segments = remember(data) { AirTrend.segments(data, false) }
+    val pm25Segments = remember(data) { AirTrend.segments(data, true) }
+    val max = data.readings.flatMap { listOfNotNull(it.pm10, it.pm25) }.maxOrNull()?.coerceAtLeast(1.0) ?: 1.0
     val first = data.readings.first().at
     val span = (data.readings.last().at - first).coerceAtLeast(3600000L)
-    val color = if (pm25) WeatherTheme.colors.pm25 else WeatherTheme.colors.rainText
+    val colors = WeatherTheme.colors
     val chartDescription = stringResource(R.string.air_chart_summary, data.station, data.readings.size)
     Canvas(Modifier.fillMaxWidth().height(Dims.trend).semantics { contentDescription = chartDescription }) {
         fun point(at: Long, value: Double) = Offset(
             ((at - first).toDouble() / span * size.width).toFloat(),
-            (size.height * (1 - value / max)).toFloat()
+            (
+                size.height *
+                    (1 - value / max)
+                ).toFloat()
         )
-        for (segment in segments) {
-            for (i in 1 until segment.size) {
-                val a = segment[i - 1]
-                val b = segment[i]
-                drawLine(
-                    color,
-                    point(a.at, (if (pm25) a.pm25 else a.pm10)!!),
-                    point(b.at, (if (pm25) b.pm25 else b.pm10)!!),
-                    Dims.chartStroke.toPx()
-                )
+        for (index in 0..1) {
+            val fine = index == 1
+            val color = if (fine) colors.pm25 else colors.accent
+            val segments = if (fine) pm25Segments else pm10Segments
+            for (segment in segments) {
+                for (i in 1 until segment.size) {
+                    val a = segment[i - 1]
+                    val b = segment[i]
+                    drawLine(
+                        color,
+                        point(a.at, (if (fine) a.pm25 else a.pm10)!!),
+                        point(b.at, (if (fine) b.pm25 else b.pm10)!!),
+                        Dims.chartStroke.toPx()
+                    )
+                }
+                for (row in segment) drawCircle(color, Dims.chartDot.toPx(), point(row.at, (if (fine) row.pm25 else row.pm10)!!))
             }
-            for (row in segment) drawCircle(color, Dims.chartDot.toPx(), point(row.at, (if (pm25) row.pm25 else row.pm10)!!))
         }
     }
-    var selected by remember { mutableStateOf<Long?>(null) }
     StatusBlock(resource)
-    for (row in data.readings) {
-        Rule()
-        Column(Modifier.fillMaxWidth().clickable { selected = row.at }.padding(vertical = Dims.medium)) {
-            Text(missing(dateTimeLabel(row.at)), style = MaterialTheme.typography.titleMedium)
-            val value = if (pm25) row.pm25 else row.pm10
-            val grade = if (pm25) row.pm25Grade else row.pm10Grade
-            Text(
-                (value?.let { stringResource(R.string.air_unit, number(it).orEmpty()) } ?: stringResource(R.string.not_provided)) +
-                    " · " + gradeLabel(grade)
-            )
-            val flag = if (pm25) row.pm25Flag else row.pm10Flag
-            if (flag != null) Text(stringResource(R.string.air_missing_flag, flag), color = WeatherTheme.colors.warning)
-            if (selected == row.at) Text(row.originalTime, style = MaterialTheme.typography.bodySmall)
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(Dims.small)) {
+        items(data.readings, key = { it.at }) { row ->
+            ChoiceChip(timeLabel(row.at).orEmpty(), row.at == selected.at) { selectedAt = row.at }
         }
     }
+    Text(dateTimeLabel(selected.at).orEmpty(), style = MaterialTheme.typography.titleMedium)
+    for (fine in if (pm25) listOf(true, false) else listOf(false, true)) {
+        val value = if (fine) selected.pm25 else selected.pm10
+        val grade = if (fine) selected.pm25Grade else selected.pm10Grade
+        val flag = if (fine) selected.pm25Flag else selected.pm10Flag
+        DetailRow(
+            stringResource(if (fine) R.string.air_pm25 else R.string.air_pm10),
+            (value?.let { stringResource(R.string.air_unit, number(it).orEmpty()) } ?: stringResource(R.string.not_provided)) + " · " +
+                gradeLabel(grade)
+        )
+        if (flag != null) Text(stringResource(R.string.air_missing_flag, flag), color = WeatherTheme.colors.warning)
+    }
+    Text(stringResource(R.string.air_original_time, selected.originalTime), style = MaterialTheme.typography.bodySmall)
 }

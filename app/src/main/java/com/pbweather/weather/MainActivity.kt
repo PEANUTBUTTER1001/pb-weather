@@ -2,6 +2,7 @@ package com.pbweather.weather
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -26,10 +27,19 @@ class MainActivity : ComponentActivity() {
         handleWidgetIntent(intent)
         setContent {
             val state by model.ui.collectAsStateWithLifecycle()
+            ReportDrawnWhen {
+                state.preferencesLoaded && (
+                    state.preferences.selected == null ||
+                        state.data.forecast.now.data != null || state.data.forecast.now.error != null
+                    )
+            }
             val query by model.query.collectAsStateWithLifecycle()
             val results by model.results.collectAsStateWithLifecycle()
             val regionForecasts by model.locationForecasts.collectAsStateWithLifecycle()
             val widgetTab by model.widgetTab.collectAsStateWithLifecycle()
+            val cacheBytes by model.cacheBytes.collectAsStateWithLifecycle()
+            val clearing by model.clearingCache.collectAsStateWithLifecycle()
+            val primaryForecast by model.primaryForecast.collectAsStateWithLifecycle()
             val mode = ThemeMode.entries.firstOrNull { it.name == state.preferences.theme } ?: ThemeMode.LIGHT
             val palette = Palette.entries.firstOrNull { it.name == state.preferences.palette } ?: Palette.INDIGO
             val font = FontSize.entries.firstOrNull { it.name == state.preferences.font } ?: FontSize.NORMAL
@@ -39,19 +49,21 @@ class MainActivity : ComponentActivity() {
                     model::updatePermission, model::undo, model::theme, model::palette, model::font,
                     range = model::setRange,
                     favorite = model::favorite, deleteFavorite = model::deleteFavorite, primary = model::primary,
+                    clearCache = model::clearCache
                 )
             }
             WeatherTheme(mode, palette, font) {
-                WeatherShell(state, query, results, mode, palette, actions, model.notices,
+                WeatherShell(
+                    state, query, results, mode, palette, actions, model.notices,
                     regionForecasts = regionForecasts,
                     widgetTab = widgetTab,
+                    cacheBytes = cacheBytes, clearingCache = clearing, primaryForecast = primaryForecast
                 )
             }
         }
     }
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
-        setIntent(intent)
         handleWidgetIntent(intent)
     }
     private fun handleWidgetIntent(intent: android.content.Intent?) {

@@ -76,9 +76,12 @@
 
 ## 7. 디렉터리 구조
 
+2026-11-26 통합 QA: `androidTest/.../ui/home/IntegratedFlowTest.kt`, `HeroAnimationTest.kt`, `androidTest/.../ui/home/RefreshMetricsTest.kt`, `docs/evidence/TASK-009-013-integration.json`, `docs/evidence/INTEGRATION/`. 설정 로드 완료 전 지역 자동 전환 보류, 캐시 크기 로딩과 실제 0바이트 구분.
+
 TASK-010 구현 경로: `ui/history/HistoryScreen.kt`, `androidTest/.../ui/history/HistoryScreenTest.kt`. 과거 화면은 전체 최근 10일 Room 관측을 공유하고 선택 기간만 필터링, 어제 비교 자료는 기간 선택과 독립 유지.
 TASK-011 경로: `ui/locations/LocationsScreen.kt`, `androidTest/.../ui/locations/LocationsScreenTest.kt`. 검색·즐겨찾기의 보조 날씨는 Room Flow만 구독하며 목록 표시를 위한 네트워크 요청 없음.
 TASK-012 추가: `data/repository/WidgetRepository.kt`, `widget/WeatherWidget.kt`, `work/WeatherRefreshWorker.kt`, `work/WidgetSync.kt`, `androidTest/.../widget/WidgetIntegrationTest.kt`, `res/drawable/widget_preview.xml`, `res/drawable/widget_symbol_*.xml`, `res/values/widget_colors.xml`, `androidTest/.../widget/WidgetHostTest.kt`. 기기 위치 조회 없이 대표 지역·기존 Room 캐시 공유.
+TASK-013 경로: `ui/settings/SettingsScreen.kt`, `ui/settings/LegalDocSheets.kt`, `assets/legal/apache-2.0.txt`, `androidTest/.../ui/settings/SettingsScreenTest.kt`. 캐시 삭제 전 요청 세대와 완료 저장 세대를 비교해 삭제 이전 응답의 재저장 방지.
 
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,
@@ -124,7 +127,7 @@ weather/                                         # [KEEP] 저장소 루트
 ├── app/src/main/java/com/pbweather/weather/       # [NEW] 패키지 루트(사용자 정정: com.pbweather.weather)
 │   ├── WeatherApp.kt                            # [NEW] Hilt Application
 │   ├── MainActivity.kt                          # [NEW] Compose 진입점
-│   ├── core/geo/                                # [NEW] 격자·TM 변환, 하버사인 최근접 탐색
+│   ├── core/geo/                                # [NEW] 격자 변환·하버사인 최근접 탐색(공개 측정소 로컬 매핑)
 │   ├── core/time/                               # [NEW] 발표 시각 계산(base_time, tmFc)
 │   ├── domain/                                  # [NEW] 모델·UseCase·비교 규칙
 │   ├── data/remote/kma/                         # [NEW] 단기·중기·ASOS Retrofit API
@@ -158,7 +161,7 @@ weather/                                         # [KEEP] 저장소 루트
 | --- | --- | --- |
 | `core/time/ReleaseTimeCalculator` | 초단기실황·초단기예보·단기예보 base_date/base_time, 중기 tmFc 계산 | FR-001~003 |
 | `core/geo/KmaGridConverter` | 위경도 → 격자(nx, ny), Lambert 정각원추도법 | FR-007 |
-| `core/geo/TmConverter` | 위경도 → 에어코리아 TM 좌표(좌표계 명세 확인) | FR-004 |
+| `core/geo/NearestFinder` · `data/repository/AirQualityRepository` | 원계획 TM 좌표 외부 조회 대신 공식 공개 측정소 목록 로컬 최근접 탐색(API_CONTRACT) | FR-004 |
 | `core/geo/NearestFinder` | 하버사인 거리 기반 최근접 ASOS 지점 | FR-005 |
 | `ForecastRepository` | 실황·시간별·주간 조회·병합·캐시 | FR-001~003 |
 | `AirQualityRepository` | 근접 측정소 → 실시간 측정, 결측 대체 | FR-004 |
