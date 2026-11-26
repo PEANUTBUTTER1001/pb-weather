@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -151,6 +152,7 @@ import com.pbweather.weather.ui.theme.WeatherTheme
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = WeatherTheme.colors.text),
+    borderColor: Color = WeatherTheme.colors.borderStrong,
     content: @Composable RowScope.() -> Unit
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
@@ -160,7 +162,7 @@ import com.pbweather.weather.ui.theme.WeatherTheme
             enabled,
             shape = RoundedCornerShape(Dims.small),
             colors = colors,
-            border = BorderStroke(Dims.hairline, WeatherTheme.colors.borderStrong),
+            border = BorderStroke(Dims.hairline, borderColor),
             contentPadding = PaddingValues(horizontal = Dims.medium, vertical = Dims.tiny),
             content = content
         )
@@ -257,7 +259,13 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
                             if (value.isEmpty() &&
                                 placeholder != null
                             ) {
-                                Text(placeholder, style = MaterialTheme.typography.bodyLarge, color = colors.tertiary)
+                                Text(
+                                    placeholder,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = colors.tertiary,
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
                             }
                             inner()
                         }

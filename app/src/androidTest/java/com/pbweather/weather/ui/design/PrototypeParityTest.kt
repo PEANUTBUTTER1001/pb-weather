@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -16,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.platform.app.InstrumentationRegistry
 import com.pbweather.weather.ui.navigation.WeatherActions
@@ -29,6 +31,23 @@ import org.junit.Test
 
 class PrototypeParityTest {
     @get:Rule val compose = createComposeRule()
+
+    @Test fun favoriteMarkerVectorsContainVisiblePixels() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        for (resource in listOf(
+            com.pbweather.weather.R.drawable.design_icon_star,
+            com.pbweather.weather.R.drawable.design_icon_star_filled
+        )) {
+            val bitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888)
+            val drawable = context.getDrawable(resource)!!
+            drawable.setBounds(0, 0, 32, 32)
+            drawable.draw(android.graphics.Canvas(bitmap))
+            val pixels = IntArray(32 * 32)
+            bitmap.getPixels(pixels, 0, 32, 0, 0, 32, 32)
+            org.junit.Assert.assertTrue("Favorite marker is blank: $resource", pixels.any { it ushr 24 != 0 })
+            bitmap.recycle()
+        }
+    }
 
     @Test fun compactFieldKeepsItsLabelAndEditableSemanticsTogether() {
         val value = mutableStateOf("2026-11-14")
@@ -101,7 +120,9 @@ class PrototypeParityTest {
                         palette.value,
                         WeatherActions(),
                         emptyFlow(),
-                        cacheBytes = 12400000
+                        regionForecasts = PrototypeFixtures.favoriteForecasts(),
+                        primaryForecast = fixture.data.forecast,
+                        cacheBytes = 13002342
                     )
                 }
             }
@@ -116,7 +137,7 @@ class PrototypeParityTest {
                     palette.value = color
                 }
                 for ((label, file) in listOf("홈" to "home", "과거" to "history", "지역" to "locations", "설정" to "settings")) {
-                    compose.onNodeWithContentDescription("$label 탭 열기").performClick()
+                    compose.onNodeWithContentDescription("$label 탭 열기").performSemanticsAction(SemanticsActions.OnClick) { it() }
                     compose.mainClock.advanceTimeBy(500)
                     SystemClock.sleep(350)
                     compose.waitForIdle()
