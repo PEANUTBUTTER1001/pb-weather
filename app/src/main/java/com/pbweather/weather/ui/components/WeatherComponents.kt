@@ -183,7 +183,7 @@ fun dateLabel(date: String): String = runCatching {
 @Composable fun ChoiceChip(text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = modifier.heightIn(min = Dims.action),
+        modifier = modifier.heightIn(min = Dims.chip),
         shape = RoundedCornerShape(Dims.pill),
         color = if (selected) WeatherTheme.colors.accent else WeatherTheme.colors.tonal,
         contentColor = if (selected) WeatherTheme.colors.onAccent else WeatherTheme.colors.text,

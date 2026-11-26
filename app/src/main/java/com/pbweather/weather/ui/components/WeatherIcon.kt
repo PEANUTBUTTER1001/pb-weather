@@ -31,7 +31,8 @@ enum class UiIcon {
     MOON,
     CHECK,
     SHIELD,
-    EMPTY
+    EMPTY,
+    CALENDAR
 }
 
 @Composable fun AppIcon(icon: UiIcon, description: String?, modifier: Modifier = Modifier, tint: Color = WeatherTheme.colors.text) {
@@ -54,6 +55,7 @@ enum class UiIcon {
         UiIcon.CHECK -> R.drawable.design_icon_check
         UiIcon.SHIELD -> R.drawable.design_icon_shield
         UiIcon.EMPTY -> R.drawable.design_icon_empty
+        UiIcon.CALENDAR -> R.drawable.design_icon_calendar
     }
     Icon(painterResource(resource), description, modifier.size(Dims.icon), tint)
 }
