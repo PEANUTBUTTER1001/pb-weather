@@ -179,3 +179,5 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 `n- TASK-009 보완 검증: 상세 날짜→실제 시간 연결·이전/다음 경계 UI 검사 포함 전체 자동 게이트 PASS. 위치 호출 1건 SKIPPED 유지. docs/evidence/TASK-009-completion.json. TalkBack 실제 낭독·프레임 할당 프로파일 미실행.
 
 - TASK-010: 전체 자동 검사 PASS, 기간 입력 오류·1주 7일 선택 UI 검사 PASS. 실제 검색→홈 실 API→과거 화면 확인, 375dp/200%·다크·고대비 캡처. S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-010-completion.json 및 TASK-010/*.png.
+
+- TASK-011: 전체 자동 게이트 PASS. 저장·저장됨 비활성·대표 지정·마지막 삭제 후 대표 null 및 일반 선택 유지 UI 검사 PASS. 검색→실 API 홈 기존 회귀 재실행 PASS. 375dp·200%·다크·고대비 캡처, S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-011-completion.json 및 TASK-011/*.png.

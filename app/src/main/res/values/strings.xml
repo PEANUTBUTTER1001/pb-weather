@@ -196,4 +196,9 @@
     <string name="history_legend">최고기온 선 · 최저기온 선 · 강수량 막대 (각 축은 독립 비례)</string>
     <string name="history_delta">오늘 예보 − 어제 관측 · 최고 %1$s℃ · 최저 %2$s℃</string>
     <string name="wind_unit">%1$s m/s</string>
+    <string name="favorites_empty">검색 결과의 추가 버튼으로 즐겨찾기를 저장하세요.</string>
+    <string name="displaying">표시 중</string>
+    <string name="set_primary_named">%1$s 대표 지정</string>
+    <string name="delete_named">%1$s 삭제</string>
+    <string name="region_cached_weather_missing">저장된 날씨 없음 · 선택하여 조회</string>
 </resources>

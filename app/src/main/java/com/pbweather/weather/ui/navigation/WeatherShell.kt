@@ -99,7 +99,10 @@ data class WeatherActions(
     val theme: (ThemeMode) -> Unit = {},
     val palette: (Palette) -> Unit = {},
     val font: (FontSize) -> Unit = {},
-    val range: (com.pbweather.weather.domain.DateRange) -> Unit = {}
+    val range: (com.pbweather.weather.domain.DateRange) -> Unit = {},
+    val favorite: (Region) -> Unit = {},
+    val deleteFavorite: (String) -> Unit = {},
+    val primary: (String) -> Unit = {},
 )
 
 @Composable
@@ -110,7 +113,8 @@ fun WeatherShell(
     mode: ThemeMode,
     palette: Palette,
     actions: WeatherActions,
-    notices: Flow<Notice>
+    notices: Flow<Notice>,
+    regionForecasts: Map<String, com.pbweather.weather.domain.ForecastState> = emptyMap(),
 ) {
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
@@ -309,114 +313,46 @@ fun WeatherShell(
                     WeatherTab.HOME -> if (state.preferences.selected ==
                         null
                     ) {
-                        RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
+                        com.pbweather.weather.ui.locations.LocationsScreen(
+                            state,
+                            query,
+                            results,
+                            regionForecasts,
+                            actions,
+                            pick,
+                            openSettings,
+                            locationsList
+                        )
                     } else {
                         HomeScreen(
                             state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
                             { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
                         )
                     }
-                    WeatherTab.LOCATIONS -> RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
-                    WeatherTab.HISTORY -> com.pbweather.weather.ui.history.HistoryScreen(state, actions.range, actions.refresh) {
-                        tab =
-                            WeatherTab.LOCATIONS
-                    }
+                    WeatherTab.LOCATIONS -> com.pbweather.weather.ui.locations.LocationsScreen(
+                        state,
+                        query,
+                        results,
+                        regionForecasts,
+                        actions,
+                        pick,
+                        openSettings,
+                        locationsList
+                    )
+                    WeatherTab.HISTORY -> com.pbweather.weather.ui.history.HistoryScreen(state, actions.range, actions.refresh) { tab = WeatherTab.LOCATIONS }
                     WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
                 }
             }
         }
     }
-    details?.let {
-        WeatherDetails(it, state, onNavigate = { target ->
-            details = target
-            target.removePrefix("hour:").toLongOrNull()?.let { hour -> selectedHour = hour }
+    details?.let { target ->
+        WeatherDetails(target, state, onNavigate = { next ->
+            details = next
+            next.removePrefix("hour:").toLongOrNull()?.let { selectedHour = it }
         }) { details = null }
     }
 }
 
-@Composable private fun RegionLanding(
-    state: WeatherUiState,
-    query: String,
-    results: List<Region>,
-    actions: WeatherActions,
-    onSelect: (Region) -> Unit,
-    onSettings: () -> Unit,
-    list: androidx.compose.foundation.lazy.LazyListState
-) {
-    LazyColumn(
-        state = list,
-        modifier = Modifier.padding(horizontal = Dims.gutter),
-        verticalArrangement = Arrangement.spacedBy(Dims.medium)
-    ) {
-        item {
-            SectionTitle(stringResource(R.string.search_region)) {
-                Text(stringResource(R.string.offline_search), style = MaterialTheme.typography.bodySmall)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(query, actions.search, Modifier.weight(1f), placeholder = { Text(stringResource(R.string.search_hint)) })
-                if (query.isNotEmpty()) TextButton(onClick = { actions.search("") }) { Text(stringResource(R.string.clear)) }
-            }
-            Text(
-                stringResource(
-                    if (query.length < 2) {
-                        R.string.search_minimum
-                    } else if (results.isEmpty()) {
-                        R.string.search_empty
-                    } else {
-                        R.string.offline_search
-                    }
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = WeatherTheme.colors.secondary
-            )
-        }
-        items(results, key = { it.id }) { region ->
-            Column(
-                Modifier.fillMaxWidth().heightIn(min = Dims.touch).clickable { onSelect(region) }.padding(vertical = Dims.medium)
-                    .semantics { contentDescription = region.name }
-            ) {
-                Text(region.name, style = MaterialTheme.typography.titleMedium)
-                Rule()
-            }
-        }
-        item {
-            SectionTitle(stringResource(R.string.current_location))
-            Text(stringResource(R.string.choose_without_location), style = MaterialTheme.typography.bodySmall)
-            state.location.problem?.let {
-                Text(
-                    stringResource(
-                        when (it) {
-                            LocationProblem.PERMISSION_DENIED -> R.string.location_denied
-                            LocationProblem.DISABLED -> R.string.location_disabled
-                            LocationProblem.TIMEOUT -> R.string.location_timeout
-                            LocationProblem.UNAVAILABLE -> R.string.location_unavailable
-                            LocationProblem.OUTSIDE_COVERAGE -> R.string.location_outside
-                        }
-                    ),
-                    color = WeatherTheme.colors.warning
-                )
-            }
-            if (state.location.working) Text(stringResource(R.string.locating))
-            LocationPermissionAction(onResult = { granted ->
-                actions.permissionChanged()
-                if (granted) actions.locate()
-            }) { request ->
-                TextButton(onClick = if (state.location.granted) actions.locate else request, enabled = !state.location.working) {
-                    Text(stringResource(R.string.use_location))
-                }
-            }
-            if (!state.location.granted) TextButton(onClick = onSettings) { Text(stringResource(R.string.open_settings)) }
-        }
-        if (state.preferences.favorites.isNotEmpty()) {
-            item {
-                SectionTitle(stringResource(R.string.favorites))
-                state.preferences.favorites.forEach { region ->
-                    TextButton(onClick = { onSelect(region) }) { Text(region.name) }
-                }
-            }
-        }
-    }
-}
 
 @Composable private fun SettingsLanding(state: WeatherUiState, actions: WeatherActions, onHelp: () -> Unit) {
     Column(Modifier.fillMaxWidth().padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {

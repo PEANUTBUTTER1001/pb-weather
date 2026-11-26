@@ -77,6 +77,7 @@
 ## 7. 디렉터리 구조
 
 TASK-010 구현 경로: `ui/history/HistoryScreen.kt`, `androidTest/.../ui/history/HistoryScreenTest.kt`. 과거 화면은 전체 최근 10일 Room 관측을 공유하고 선택 기간만 필터링, 어제 비교 자료는 기간 선택과 독립 유지.
+TASK-011 경로: `ui/locations/LocationsScreen.kt`, `androidTest/.../ui/locations/LocationsScreenTest.kt`. 검색·즐겨찾기의 보조 날씨는 Room Flow만 구독하며 목록 표시를 위한 네트워크 요청 없음.
 
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,

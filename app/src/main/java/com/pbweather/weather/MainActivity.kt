@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
             val state by model.ui.collectAsStateWithLifecycle()
             val query by model.query.collectAsStateWithLifecycle()
             val results by model.results.collectAsStateWithLifecycle()
+            val regionForecasts by model.locationForecasts.collectAsStateWithLifecycle()
             val mode = ThemeMode.entries.firstOrNull { it.name == state.preferences.theme } ?: ThemeMode.LIGHT
             val palette = Palette.entries.firstOrNull { it.name == state.preferences.palette } ?: Palette.INDIGO
             val font = FontSize.entries.firstOrNull { it.name == state.preferences.font } ?: FontSize.NORMAL
@@ -34,10 +35,15 @@ class MainActivity : ComponentActivity() {
                 WeatherActions(
                     model::search, model::select, model::refresh, model::locate,
                     model::updatePermission, model::undo, model::theme, model::palette, model::font,
-                    range = model::setRange
+                    range = model::setRange,
+                    favorite = model::favorite, deleteFavorite = model::deleteFavorite, primary = model::primary,
                 )
             }
-            WeatherTheme(mode, palette, font) { WeatherShell(state, query, results, mode, palette, actions, model.notices) }
+            WeatherTheme(mode, palette, font) {
+                WeatherShell(state, query, results, mode, palette, actions, model.notices,
+                    regionForecasts = regionForecasts,
+                )
+            }
         }
     }
 }
