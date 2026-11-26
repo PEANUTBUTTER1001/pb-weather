@@ -13,7 +13,26 @@ import com.pbweather.weather.domain.SkyCondition
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.WeatherTheme
 
-enum class UiIcon { HOME, HISTORY, PIN, SEARCH, SETTINGS, REFRESH, HELP, STAR, DELETE, NEXT, PREVIOUS, CLOSE, SUN, MOON, CHECK, SHIELD }
+enum class UiIcon {
+    HOME,
+    HISTORY,
+    PIN,
+    SEARCH,
+    SETTINGS,
+    REFRESH,
+    HELP,
+    STAR,
+    STAR_FILLED,
+    DELETE,
+    NEXT,
+    PREVIOUS,
+    CLOSE,
+    SUN,
+    MOON,
+    CHECK,
+    SHIELD,
+    EMPTY
+}
 
 @Composable fun AppIcon(icon: UiIcon, description: String?, modifier: Modifier = Modifier, tint: Color = WeatherTheme.colors.text) {
     val resource = when (icon) {
@@ -25,6 +44,7 @@ enum class UiIcon { HOME, HISTORY, PIN, SEARCH, SETTINGS, REFRESH, HELP, STAR, D
         UiIcon.REFRESH -> R.drawable.design_icon_refresh
         UiIcon.HELP -> R.drawable.design_icon_help
         UiIcon.STAR -> R.drawable.design_icon_star
+        UiIcon.STAR_FILLED -> R.drawable.design_icon_star_filled
         UiIcon.DELETE -> R.drawable.design_icon_delete
         UiIcon.NEXT -> R.drawable.design_icon_next
         UiIcon.PREVIOUS -> R.drawable.design_icon_previous
@@ -33,6 +53,7 @@ enum class UiIcon { HOME, HISTORY, PIN, SEARCH, SETTINGS, REFRESH, HELP, STAR, D
         UiIcon.MOON -> R.drawable.design_icon_moon
         UiIcon.CHECK -> R.drawable.design_icon_check
         UiIcon.SHIELD -> R.drawable.design_icon_shield
+        UiIcon.EMPTY -> R.drawable.design_icon_empty
     }
     Icon(painterResource(resource), description, modifier.size(Dims.icon), tint)
 }

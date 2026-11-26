@@ -1,0 +1,32 @@
+{
+  "clientDate": "2026-11-26",
+  "unit": "controls",
+  "branch": "fix/design-controls",
+  "gateAttempts": 3,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 29,
+      "skipped": 1,
+      "failures": 0
+    }
+  },
+  "scope": "Design implementation and regression; visual review separate from automatic checks",
+  "limits": [
+    "Location invocation held by user; S25 Ultra user-owned; release excluded",
+    "Winter WSD input specification unresolved",
+    "No claim of pixel identity from test success"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read",
+  "attempts": {
+    "1": "FAIL: new test expected a different button literal; production resource correct",
+    "2": "PASS: full gates, 31 unit and 28 Android pass + 1 location skip",
+    "3": "PASS: ktlintCheck lintDebug testDebugUnitTest assembleDebug and 4 affected Android tests"
+  },
+  "visualScope": "Common fields, status colors, empty/loading structure and app bar. Per-screen fidelity verified in dependent branches."
+}

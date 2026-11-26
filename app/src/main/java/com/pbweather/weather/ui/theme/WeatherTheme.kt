@@ -38,18 +38,36 @@ data class WeatherColors(
     val error: Color,
     val hero: Color
 ) {
-    val borderStrong: Color get() = if (text ==
-        Color.White
-    ) {
-        Color.White
-    } else if (text == Color(0xFFF1F5F9)) {
-        Color(0xFF64748B)
-    } else {
-        Color(0xFF94A3B8)
+    val borderStrong: Color get() = when (border) {
+        Color(0xFFD6E0EE) -> Color(0xFF94A3B8)
+        Color(0xFFDFD7CA) -> Color(0xFF9F9483)
+        Color(0xFFCFE0E2) -> Color(0xFF87A3A7)
+        Color(0xFFD6DCE5) -> Color(0xFF8A96A8)
+        Color(0xFF283854) -> Color(0xFF4B6186)
+        Color(0xFF3D3328) -> Color(0xFF6E5F4E)
+        Color(0xFF243F44) -> Color(0xFF487077)
+        Color(0xFF303644) -> Color(0xFF5A6376)
+        else -> border
     }
     val sunFill: Color get() = Color(0xFFF59E0B)
+    val tonalStrong: Color get() = when (tonal) {
+        Color(0xFFE7EEF9) -> Color(0xFFDAE4F5)
+        Color(0xFFEFEAE1) -> Color(0xFFE4DCCD)
+        Color(0xFFE3EFEF) -> Color(0xFFD4E6E6)
+        Color(0xFFE8EBF0) -> Color(0xFFDCE1E8)
+        Color(0xFF1D2B44) -> Color(0xFF253654)
+        Color(0xFF2D261E) -> Color(0xFF393026)
+        Color(0xFF1B3135) -> Color(0xFF233F44)
+        Color(0xFF242832) -> Color(0xFF2E3340)
+        else -> Color(0xFF1F1F1F)
+    }
     val sunGlow: Color get() = Color(0xFFFBBF24)
     val sunHalo: Color get() = Color(0xFFFDE047)
+    val statusOk: Color get() = when (text) {
+        Color.White -> Color(0xFF7DFF9B)
+        Color(0xFFF1F5F9) -> Color(0xFF4ADE80)
+        else -> Color(0xFF15803D)
+    }
 }
 
 fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
@@ -90,6 +108,12 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 
 object Dims {
     val control = 34.dp
+    val emptyPadding = 28.dp
+    val skeletonTemperatureWidth = 136.dp
+    val skeletonTemperatureHeight = 62.dp
+    val skeletonSubtitleWidth = 170.dp
+    val skeletonForecast = 150.dp
+    val skeletonWeekly = 220.dp
     val metaTouch = 32.dp
     val action = 36.dp
     val segmentPad = 3.dp
@@ -115,7 +139,7 @@ object Dims {
     val widgetRadius = 22.dp
     val pill = 999.dp
     val touch = 48.dp
-    val topBar = 58.dp
+    val topBar = 60.dp
     val navBar = 68.dp
     val hourly = 60.dp
     val chart = 210.dp
@@ -298,6 +322,32 @@ fun weatherTypography(font: FontSize): WeatherTypography {
     )
 }
 fun modalScrim(mode: ThemeMode): Color = if (mode == ThemeMode.HIGH_CONTRAST) Color(0xC2000000) else Color(0x8F0F172A)
+data class StatusColors(val background: Color, val foreground: Color, val border: Color)
+fun statusColors(mode: ThemeMode, error: Boolean): StatusColors = when (mode) {
+    ThemeMode.HIGH_CONTRAST -> StatusColors(
+        Color.Black,
+        if (error) Color(0xFFFF7A7A) else Color(0xFFFFE600),
+        if (error) Color(0xFFFF7A7A) else Color(0xFFFFE600)
+    )
+    ThemeMode.DARK -> if (error) {
+        StatusColors(
+            Color(0xFF421519),
+            Color(0xFFFECACA),
+            Color(0xFFF87171)
+        )
+    } else {
+        StatusColors(Color(0xFF3B2A0E), Color(0xFFFDE68A), Color(0xFFF59E0B))
+    }
+    ThemeMode.LIGHT -> if (error) {
+        StatusColors(
+            Color(0xFFFEE2E2),
+            Color(0xFF991B1B),
+            Color(0xFFDC2626)
+        )
+    } else {
+        StatusColors(Color(0xFFFEF3C7), Color(0xFF78350F), Color(0xFFD97706))
+    }
+}
 fun snackbarColor(mode: ThemeMode): Color = if (mode == ThemeMode.HIGH_CONTRAST) Color.Black else Color(0xFF1E293B)
 
 fun snackbarTextColor(): Color = Color.White

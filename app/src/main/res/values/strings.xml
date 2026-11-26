@@ -279,4 +279,6 @@
     <string name="air_actual_period">실제 %1$d개 · %2$s ~ %3$s · µg/m³</string>
     <string name="air_grade_basis">등급 기준: %1$s · 시간 기준 혼용 없음</string>
     <string name="air_original_time">기관 원문 시각: %1$s</string>
+    <string name="design_no_saved_weather">저장된 날씨 자료가 없습니다</string>
+    <string name="design_no_saved_explanation">오프라인 상태이며 저장된 기록이 없습니다.\n연결 후 다시 시도해 주세요.</string>
 </resources>
