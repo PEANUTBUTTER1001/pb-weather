@@ -177,3 +177,5 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - TASK-006: TEST-005 API/캐시/파싱 하위 기준 PASS, ENH-005 정규화·공백·PM별 플래그 단위 기준 PASS. 추이 UI 조작·200%·시트는 TASK-009에서 검증 예정. docs/evidence/TASK-006.json.
 - TASK-007: TEST-006 비교 도메인·TEST-007 최근 창/검증/파싱/ASOS 실 API·TEST-016 누락 날짜 및 LRU 복구 하위 기준 PASS. 화면·차트·200% 조작은 TASK-010에서 검증 예정. docs/evidence/TASK-007.json.
 `n- TASK-009 보완 검증: 상세 날짜→실제 시간 연결·이전/다음 경계 UI 검사 포함 전체 자동 게이트 PASS. 위치 호출 1건 SKIPPED 유지. docs/evidence/TASK-009-completion.json. TalkBack 실제 낭독·프레임 할당 프로파일 미실행.
+
+- TASK-010: 전체 자동 검사 PASS, 기간 입력 오류·1주 7일 선택 UI 검사 PASS. 실제 검색→홈 실 API→과거 화면 확인, 375dp/200%·다크·고대비 캡처. S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-010-completion.json 및 TASK-010/*.png.

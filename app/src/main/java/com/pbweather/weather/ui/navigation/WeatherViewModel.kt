@@ -88,7 +88,7 @@ class WeatherViewModel @Inject constructor(
             combine(
                 forecast(region),
                 air(region),
-                history(region, dates)
+                history(region, HistoryWindow.recent(clock))
             ) { f, a, h -> WeatherData(region.key, f, a, h) }
         }
     }
@@ -115,7 +115,7 @@ class WeatherViewModel @Inject constructor(
     }
     fun refresh() {
         val region = saved.value.selected ?: return
-        val dates = range.value
+        val dates = HistoryWindow.recent(clock)
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch {
             supervisorScope {

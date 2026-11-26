@@ -33,7 +33,8 @@ class MainActivity : ComponentActivity() {
             val actions = remember(model) {
                 WeatherActions(
                     model::search, model::select, model::refresh, model::locate,
-                    model::updatePermission, model::undo, model::theme, model::palette, model::font
+                    model::updatePermission, model::undo, model::theme, model::palette, model::font,
+                    range = model::setRange
                 )
             }
             WeatherTheme(mode, palette, font) { WeatherShell(state, query, results, mode, palette, actions, model.notices) }

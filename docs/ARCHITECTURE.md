@@ -76,6 +76,8 @@
 
 ## 7. 디렉터리 구조
 
+TASK-010 구현 경로: `ui/history/HistoryScreen.kt`, `androidTest/.../ui/history/HistoryScreenTest.kt`. 과거 화면은 전체 최근 10일 Room 관측을 공유하고 선택 기간만 필터링, 어제 비교 자료는 기간 선택과 독립 유지.
+
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,
 `.editorconfig`, `docs/IMPLEMENTATION_SPEC.md`, `docs/API_CONTRACT.md`,
