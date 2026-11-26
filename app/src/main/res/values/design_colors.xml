@@ -1,0 +1,10 @@
+<resources>
+    <color name="design_weather_sun_fill">#F59E0B</color>
+    <color name="design_weather_sun_stroke">#D97706</color>
+    <color name="design_weather_cloud_fill">#94A3B8</color>
+    <color name="design_weather_cloud_stroke">#475569</color>
+    <color name="design_weather_storm_fill">#64748B</color>
+    <color name="design_weather_storm_stroke">#334155</color>
+    <color name="design_weather_precipitation">#2563EB</color>
+    <color name="design_weather_snow_fill">#93C5FD</color>
+</resources>

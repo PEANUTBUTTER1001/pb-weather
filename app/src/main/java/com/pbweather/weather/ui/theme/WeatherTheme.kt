@@ -37,7 +37,20 @@ data class WeatherColors(
     val warning: Color,
     val error: Color,
     val hero: Color
-)
+) {
+    val borderStrong: Color get() = if (text ==
+        Color.White
+    ) {
+        Color.White
+    } else if (text == Color(0xFFF1F5F9)) {
+        Color(0xFF64748B)
+    } else {
+        Color(0xFF94A3B8)
+    }
+    val sunFill: Color get() = Color(0xFFF59E0B)
+    val sunGlow: Color get() = Color(0xFFFBBF24)
+    val sunHalo: Color get() = Color(0xFFFDE047)
+}
 
 fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
     if (mode == ThemeMode.HIGH_CONTRAST) {
@@ -76,6 +89,16 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 }
 
 object Dims {
+    val control = 34.dp
+    val metaTouch = 32.dp
+    val action = 36.dp
+    val segmentPad = 3.dp
+    val segmentGap = 2.dp
+    val segmentRadius = 7.dp
+    val groupRadius = 10.dp
+    val navPillWidth = 52.dp
+    val navPillHeight = 28.dp
+    val pageTop = 14.dp
     val zero = 0.dp
     val hairline = 1.dp
     val strong = 2.dp

@@ -1,6 +1,7 @@
 package com.pbweather.weather.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -93,7 +94,21 @@ fun dateLabel(date: String): String = runCatching {
 )
 
 @Composable fun SectionCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Surface(modifier.fillMaxWidth(), shape = RoundedCornerShape(Dims.radius), color = WeatherTheme.colors.surface) {
+    Surface(
+        modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(Dims.radius),
+        color = WeatherTheme.colors.surface,
+        border = BorderStroke(
+            if (WeatherTheme.mode ==
+                com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST
+            ) {
+                Dims.strong
+            } else {
+                Dims.hairline
+            },
+            WeatherTheme.colors.border
+        )
+    ) {
         Column(Modifier.padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium), content = content)
     }
 }
@@ -152,22 +167,21 @@ fun dateLabel(date: String): String = runCatching {
     }
     val text = listOf(label, age, if (resource.isStale) stringResource(R.string.stale) else "")
         .filter { it.isNotEmpty() }.joinToString(" · ") + " ⓘ"
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().heightIn(min = Dims.touch),
-        contentPadding = PaddingValues(Dims.zero)
-    ) {
-        Text(text, Modifier.fillMaxWidth(), style = WeatherTheme.type.meta, color = WeatherTheme.colors.secondary)
-    }
+    Text(
+        text,
+        Modifier.fillMaxWidth().heightIn(min = Dims.metaTouch).clickable(onClick = onClick).padding(vertical = Dims.segmentPad),
+        style = WeatherTheme.type.meta,
+        color = WeatherTheme.colors.secondary
+    )
 }
 
 @Composable fun ChoiceChip(text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = modifier.heightIn(min = Dims.touch),
+        modifier = modifier.heightIn(min = Dims.action),
         shape = RoundedCornerShape(Dims.pill),
-        color = if (selected) WeatherTheme.colors.accentSoft else WeatherTheme.colors.surface,
-        contentColor = if (selected) WeatherTheme.colors.accentOnSoft else WeatherTheme.colors.text,
+        color = if (selected) WeatherTheme.colors.accent else WeatherTheme.colors.tonal,
+        contentColor = if (selected) WeatherTheme.colors.onAccent else WeatherTheme.colors.text,
         border = BorderStroke(Dims.hairline, if (selected) WeatherTheme.colors.accent else WeatherTheme.colors.border)
     ) { Text(text, Modifier.padding(horizontal = Dims.medium, vertical = Dims.small), style = MaterialTheme.typography.labelLarge) }
 }

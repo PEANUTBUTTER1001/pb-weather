@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
@@ -89,7 +91,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 enum class WeatherTab(val title: Int, val icon: UiIcon) {
     HOME(R.string.home, UiIcon.HOME),
     HISTORY(R.string.history, UiIcon.HISTORY),
-    LOCATIONS(R.string.locations, UiIcon.PIN),
+    LOCATIONS(R.string.locations, UiIcon.SEARCH),
     SETTINGS(R.string.settings, UiIcon.SETTINGS)
 }
 data class WeatherActions(
@@ -290,15 +292,30 @@ fun WeatherShell(
                             }.semantics {
                                 contentDescription =
                                     description
+                                selected = tab == item
                             }
-                                .padding(vertical = Dims.small),
+                                .heightIn(min = Dims.navBar).padding(vertical = Dims.tiny),
+                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Box(
                                 Modifier.background(
                                     if (tab == item) WeatherTheme.colors.accentSoft else WeatherTheme.colors.surface,
                                     androidx.compose.foundation.shape.RoundedCornerShape(Dims.pill)
-                                ).padding(horizontal = Dims.gutter, vertical = Dims.tiny)
+                                ).then(
+                                    if (mode == ThemeMode.HIGH_CONTRAST &&
+                                        tab == item
+                                    ) {
+                                        Modifier.border(
+                                            Dims.strong,
+                                            WeatherTheme.colors.accent,
+                                            androidx.compose.foundation.shape.RoundedCornerShape(Dims.pill)
+                                        )
+                                    } else {
+                                        Modifier
+                                    }
+                                ).size(Dims.navPillWidth, Dims.navPillHeight),
+                                contentAlignment = Alignment.Center
                             ) {
                                 AppIcon(
                                     item.icon,
