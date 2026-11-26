@@ -1,0 +1,5 @@
+<resources>
+    <!-- DESIGN_TOKENS: indigo surface / accentPrimary. Static launcher preview only. -->
+    <color name="widget_preview_background">#FFFFFF</color>
+    <color name="widget_preview_foreground">#2B4ACB</color>
+</resources>

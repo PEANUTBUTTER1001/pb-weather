@@ -201,4 +201,12 @@
     <string name="set_primary_named">%1$s 대표 지정</string>
     <string name="delete_named">%1$s 삭제</string>
     <string name="region_cached_weather_missing">저장된 날씨 없음 · 선택하여 조회</string>
+    <string name="widget_no_primary">대표 지역이 지정되지 않았습니다</string>
+    <string name="widget_choose_primary">대표 지역 선택 ›</string>
+    <string name="widget_extremes">최고 %1$s° · 최저 %2$s°</string>
+    <string name="widget_frequency">약 1시간마다 갱신 · 절전 시 지연 가능</string>
+    <string name="widget_delayed">갱신 지연 · 마지막 성공 자료 유지</string>
+    <string name="widget_loading">저장된 자료 없음 · 앱에서 조회</string>
+    <string name="widget_last_success">마지막 성공 %1$s</string>
+    <string name="widget_description">대표 지역의 날씨와 마지막 성공 시각</string>
 </resources>

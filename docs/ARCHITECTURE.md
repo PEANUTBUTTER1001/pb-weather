@@ -78,6 +78,7 @@
 
 TASK-010 구현 경로: `ui/history/HistoryScreen.kt`, `androidTest/.../ui/history/HistoryScreenTest.kt`. 과거 화면은 전체 최근 10일 Room 관측을 공유하고 선택 기간만 필터링, 어제 비교 자료는 기간 선택과 독립 유지.
 TASK-011 경로: `ui/locations/LocationsScreen.kt`, `androidTest/.../ui/locations/LocationsScreenTest.kt`. 검색·즐겨찾기의 보조 날씨는 Room Flow만 구독하며 목록 표시를 위한 네트워크 요청 없음.
+TASK-012 추가: `data/repository/WidgetRepository.kt`, `widget/WeatherWidget.kt`, `work/WeatherRefreshWorker.kt`, `work/WidgetSync.kt`, `androidTest/.../widget/WidgetIntegrationTest.kt`, `res/drawable/widget_preview.xml`, `res/drawable/widget_symbol_*.xml`, `res/values/widget_colors.xml`, `androidTest/.../widget/WidgetHostTest.kt`. 기기 위치 조회 없이 대표 지역·기존 Room 캐시 공유.
 
 2026-11-24 구현 승인 추가 경로: `gradlew`, `gradlew.bat`, `gradle.properties`,
 `gradle/wrapper/gradle-wrapper.jar`, `gradle/wrapper/gradle-wrapper.properties`,

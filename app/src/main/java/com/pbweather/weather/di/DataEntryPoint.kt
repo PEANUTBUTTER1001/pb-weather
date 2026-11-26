@@ -19,5 +19,6 @@ interface DataEntryPoint {
     fun cache(): CacheStore
     fun preferences(): PreferencesRepository
     fun forecasts(): ForecastSource
+    fun widgets(): com.pbweather.weather.data.repository.WidgetRepository
     fun traffic(): ApiTraffic
 }

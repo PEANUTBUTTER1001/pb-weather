@@ -115,6 +115,7 @@ fun WeatherShell(
     actions: WeatherActions,
     notices: Flow<Notice>,
     regionForecasts: Map<String, com.pbweather.weather.domain.ForecastState> = emptyMap(),
+    widgetTab: Pair<WeatherTab, Long>? = null,
 ) {
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
@@ -140,6 +141,7 @@ fun WeatherShell(
     val owner = LocalLifecycleOwner.current
     var resumed by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
     var wasEmpty by remember { mutableStateOf(true) }
+    LaunchedEffect(widgetTab) { widgetTab?.let { tab = it.first } }
     LaunchedEffect(state.preferences.selected?.id) {
         if (state.preferences.selected == null) {
             tab = WeatherTab.LOCATIONS
@@ -313,32 +315,14 @@ fun WeatherShell(
                     WeatherTab.HOME -> if (state.preferences.selected ==
                         null
                     ) {
-                        com.pbweather.weather.ui.locations.LocationsScreen(
-                            state,
-                            query,
-                            results,
-                            regionForecasts,
-                            actions,
-                            pick,
-                            openSettings,
-                            locationsList
-                        )
+                        com.pbweather.weather.ui.locations.LocationsScreen(state, query, results, regionForecasts, actions, pick, openSettings, locationsList)
                     } else {
                         HomeScreen(
                             state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
                             { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
                         )
                     }
-                    WeatherTab.LOCATIONS -> com.pbweather.weather.ui.locations.LocationsScreen(
-                        state,
-                        query,
-                        results,
-                        regionForecasts,
-                        actions,
-                        pick,
-                        openSettings,
-                        locationsList
-                    )
+                    WeatherTab.LOCATIONS -> com.pbweather.weather.ui.locations.LocationsScreen(state, query, results, regionForecasts, actions, pick, openSettings, locationsList)
                     WeatherTab.HISTORY -> com.pbweather.weather.ui.history.HistoryScreen(state, actions.range, actions.refresh) { tab = WeatherTab.LOCATIONS }
                     WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
                 }
@@ -352,6 +336,7 @@ fun WeatherShell(
         }) { details = null }
     }
 }
+
 
 
 @Composable private fun SettingsLanding(state: WeatherUiState, actions: WeatherActions, onHelp: () -> Unit) {

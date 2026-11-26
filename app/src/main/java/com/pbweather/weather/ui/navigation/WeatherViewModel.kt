@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -73,6 +74,15 @@ class WeatherViewModel @Inject constructor(
     private val locations: LocationSource,
     private val clock: Clock
 ) : ViewModel() {
+    val widgetTab = MutableStateFlow<Pair<WeatherTab, Long>?>(null)
+    fun openWidget() {
+        viewModelScope.launch {
+            val prefs = preferences.preferences.first()
+            val primary = prefs.favorites.firstOrNull { it.id == prefs.primaryId }
+            if (primary != null) preferences.select(primary)
+            widgetTab.value = (if (primary == null) WeatherTab.LOCATIONS else WeatherTab.HOME) to ((widgetTab.value?.second ?: 0L) + 1L)
+        }
+    }
     val query = MutableStateFlow("")
     private val range = MutableStateFlow(HistoryWindow.recent(clock))
     private val location = MutableStateFlow(LocationUi(granted = locations.permissionGranted()))

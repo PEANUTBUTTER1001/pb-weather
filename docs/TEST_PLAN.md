@@ -181,3 +181,5 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - TASK-010: 전체 자동 검사 PASS, 기간 입력 오류·1주 7일 선택 UI 검사 PASS. 실제 검색→홈 실 API→과거 화면 확인, 375dp/200%·다크·고대비 캡처. S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-010-completion.json 및 TASK-010/*.png.
 
 - TASK-011: 전체 자동 게이트 PASS. 저장·저장됨 비활성·대표 지정·마지막 삭제 후 대표 null 및 일반 선택 유지 UI 검사 PASS. 검색→실 API 홈 기존 회귀 재실행 PASS. 375dp·200%·다크·고대비 캡처, S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-011-completion.json 및 TASK-011/*.png.
+
+- TASK-012: 첫 전체 자동 게이트 PASS(단위30, 계측15·위치1 보류), WidgetIntegrationTest의 대표 삭제/Undo·오류 시 수신 시각 보존·단일 주기 작업 PASS. 추가 호스트 검사 초기 바인딩 거부 1건 → 테스트 전용 BIND_APPWIDGET 권한 위임 방식으로 수정 후 WidgetHostTest 단독 PASS. 제품 Manifest 권한 추가 없음. 최종 캡처 수집은 adb device offline 이후 기기 0대로 환경 차단, 이미지 검증 PASS 주장 없음. docs/evidence/TASK-012-completion.json.
