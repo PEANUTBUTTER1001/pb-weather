@@ -74,11 +74,13 @@
 ## 8. 수용 기준
 
 - [x] 설치 가능한 debug APK 및 ktlint/lint/unit/UI 검증 결과(위치 호출 1개 보류).
-- [ ] 기본 기능·ENH-001~006·확정 디자인 계약 충족.
+- [ ] 기본 기능·ENH-001~006·확정 디자인 계약 충족(DR-001~012 정적 디자인·기능 통합 자동 검증 완료; ENH-006 겨울 WSD `INPUT_SPEC_UNCONFIRMED` 유지, debug 콜드 스타트 p90 4653ms로 1초 목표 미달).
 - [x] 동일 요청 재사용, 결측 보존, 오류 격리, 지역/위젯 일관성 자동 검증.
-- [ ] 민감 파일 Git 제외, 키/사용자 원본 좌표/전체 URL 로깅 없음.
-- [ ] 접근성·C안 정지/폴백·9종 색 조합 검증.
+- [ ] 민감 파일 Git 제외, 키/사용자 원본 좌표/전체 URL 로깅 없음(정적 시크릿·금지파일 스캔 PASS, 실기기 런타임 로그/DB 직접 대조 미실행).
+- [ ] 접근성·정적 배경·9종 색 조합 검증(2026-11-27 애니메이션 제외 반영, 9종 색·320/375/412dp·200%·위젯 호스트 자동 검증 완료; TalkBack 실제 낭독 사용자 미검증).
 - [ ] S25 Ultra 실 API와 위젯 확인은 사용자 담당. 위치 호출 계측 보류 유지, 미실행 항목 명시.
+
+> 2026-11-27 마감 검증(`fix/design-integration`): `ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest` PASS(단위 31 PASS, 계측 33 PASS·위치 1 SKIPPED), `WeatherApp`/`WidgetSync` 기동 지연 최적화 후 콜드 스타트 debug p90 4867ms→4653ms(`targetMet: false`). 증거 [integration.json](evidence/DESIGN_REWORK/integration.json), [cold-start.json](evidence/INTEGRATION/cold-start.json).
 
 ## 9. 최소 변경 구현 계획
 
