@@ -140,12 +140,6 @@ object Dims {
     val chartStroke = 2.2.dp
     val chartDot = 2.8.dp
     val selectedDot = 5.dp
-    val beamLength = 190.dp
-    val beamNear = 10.dp
-    val beamFar = 28.dp
-    val sunInset = 44.dp
-    val corona = 96.dp
-    val coronaPulse = 14.dp
 }
 object WeatherTheme {
     val colors: WeatherColors @Composable get() = LocalWeatherColors.current

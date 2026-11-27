@@ -42,7 +42,8 @@ enum class UiIcon { HOME, HISTORY, PIN, SEARCH, SETTINGS, REFRESH, HELP, STAR, D
         SkyCondition.CLEAR -> R.drawable.design_weather_clear
         SkyCondition.PARTLY -> R.drawable.design_weather_partly
         SkyCondition.CLOUDY -> R.drawable.design_weather_cloudy
-        SkyCondition.SLEET, SkyCondition.SNOW -> R.drawable.design_weather_sleet
+        SkyCondition.SLEET -> R.drawable.design_weather_sleet
+        SkyCondition.SNOW -> R.drawable.design_weather_snow
         else -> R.drawable.design_weather_rain
     }
     if (sky == SkyCondition.UNKNOWN) {

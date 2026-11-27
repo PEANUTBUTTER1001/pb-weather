@@ -99,20 +99,12 @@ fun HomeScreen(
     palette: Palette,
     list: LazyListState,
     hoursList: LazyListState,
-    active: Boolean,
     selectedHour: Long?,
     onHour: (Long) -> Unit,
     onDetails: (String) -> Unit,
     onHistory: () -> Unit,
     onRetry: () -> Unit
 ) {
-    val density = LocalDensity.current
-    val threshold = with(density) { Dims.heroThreshold.toPx() }
-    val heroVisible by remember(list, threshold) {
-        derivedStateOf {
-            list.layoutInfo.visibleItemsInfo.any { it.key == "hero" && it.offset > -threshold }
-        }
-    }
     LazyColumn(state = list, modifier = Modifier.focusRestorer().focusGroup(), verticalArrangement = Arrangement.spacedBy(Dims.gutter)) {
         val resource = state.data.forecast.now
         if (resource.error != null || resource.isOffline || resource.data == null) {
@@ -122,7 +114,7 @@ fun HomeScreen(
         }
         item(key = "hero") {
             Box(Modifier.fillMaxWidth().testTag("home-hero")) {
-                HeroWeather(currentSky(state), mode, palette, active && heroVisible, Modifier.matchParentSize())
+                HeroWeather(currentSky(state), mode, palette, Modifier.matchParentSize())
                 Column(
                     Modifier.padding(horizontal = Dims.gutter, vertical = Dims.small),
                     verticalArrangement = Arrangement.spacedBy(Dims.small)
@@ -416,13 +408,13 @@ fun HomeScreen(
         SectionTitle(stringResource(R.string.hourly_title)) {
             Row {
                 MiniScrollButton(enabled = list.canScrollBackward, onClick = {
-                    scope.launch { list.animateScrollToItem((list.firstVisibleItemIndex - 4).coerceAtLeast(0)) }
+                    scope.launch { list.scrollToItem((list.firstVisibleItemIndex - 4).coerceAtLeast(0)) }
                 }, modifier = Modifier.size(Dims.metaTouch).background(WeatherTheme.colors.tonal, RoundedCornerShape(Dims.pill))) {
                     AppIcon(UiIcon.PREVIOUS, stringResource(R.string.previous_hours))
                 }
                 MiniScrollButton(enabled = list.canScrollForward, onClick = {
                     scope.launch {
-                        list.animateScrollToItem((list.firstVisibleItemIndex + 4).coerceAtMost(hours.lastIndex.coerceAtLeast(0)))
+                        list.scrollToItem((list.firstVisibleItemIndex + 4).coerceAtMost(hours.lastIndex.coerceAtLeast(0)))
                     }
                 }, modifier = Modifier.size(Dims.metaTouch).background(WeatherTheme.colors.tonal, RoundedCornerShape(Dims.pill))) {
                     AppIcon(UiIcon.NEXT, stringResource(R.string.next_hours))

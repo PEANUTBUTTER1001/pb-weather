@@ -150,7 +150,6 @@ fun WeatherShell(
     }
     val focus = LocalFocusManager.current
     val owner = LocalLifecycleOwner.current
-    var resumed by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
     var wasEmpty by rememberSaveable { mutableStateOf(state.preferences.selected == null) }
     var lastWidgetRequest by rememberSaveable { mutableLongStateOf(-1L) }
     LaunchedEffect(state.preferences.selected?.id, state.preferencesLoaded, widgetTab) {
@@ -168,7 +167,6 @@ fun WeatherShell(
     }
     DisposableEffect(owner) {
         val observer = LifecycleEventObserver { _, event ->
-            resumed = owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
             if (event == Lifecycle.Event.ON_RESUME) actions.permissionChanged()
         }
         owner.lifecycle.addObserver(observer)
@@ -371,7 +369,7 @@ fun WeatherShell(
                             }, locationsList)
                         } else {
                             HomeScreen(
-                                state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
+                                state, mode, palette, homeList, hoursList, selectedHour.takeIf { it != 0L },
                                 { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
                             )
                         }
