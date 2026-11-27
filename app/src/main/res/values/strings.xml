@@ -214,6 +214,11 @@
     <string name="settings_theme">테마</string>
     <string name="settings_palette">색상</string>
     <string name="settings_font">글씨 크기</string>
+    <string name="settings_motion">배경 움직임</string>
+    <string name="motion_on">켜기</string>
+    <string name="motion_off">끄기</string>
+    <string name="motion_disabled_contrast">고대비 모드에서는 정적 배경을 유지합니다.</string>
+    <string name="motion_disabled_sdk">Android 13 이상에서 지원합니다.</string>
     <string name="palette_disabled">고대비 모드에서는 전용 색상을 유지합니다.</string>
     <string name="palette_indigo">인디고</string>
     <string name="palette_amber">앰버</string>

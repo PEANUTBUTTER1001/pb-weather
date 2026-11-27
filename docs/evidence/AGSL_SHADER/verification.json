@@ -1,0 +1,34 @@
+{
+  "clientDate": "2026-11-27",
+  "branch": "feat/hero-agsl-shader",
+  "checks": "ktlintFormat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": {
+      "total": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "android": {
+      "total": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    }
+  },
+  "samples": [
+    "home-LIGHT-CLEAR.png",
+    "home-LIGHT-CLOUDY.png",
+    "home-LIGHT-RAIN.png",
+    "home-LIGHT-SNOW.png",
+    "home-DARK-CLEAR.png",
+    "home-DARK-CLOUDY.png",
+    "home-DARK-RAIN.png",
+    "home-DARK-SNOW.png"
+  ],
+  "limits": [
+    "Location invocation held by user (@Ignore)",
+    "Budget phone 0.5x/30fps and flagship S25 Ultra visual/thermal feel on real hardware are user-owned",
+    "Release build excluded"
+  ]
+}

@@ -110,7 +110,8 @@ data class WeatherActions(
     val primary: (String) -> Unit = {},
     val clearCache: () -> Unit = {},
     val refreshWidget: () -> Unit = {},
-    val openWidget: () -> Unit = {}
+    val openWidget: () -> Unit = {},
+    val weatherMotion: (Boolean) -> Unit = {}
 )
 
 @Composable
