@@ -150,7 +150,10 @@ weather/                                         # [KEEP] 저장소 루트
 │   ├── ui/permission/                           # [NEW] 위치 권한 안내
 │   ├── widget/                                  # [NEW] Glance 위젯
 │   └── work/                                    # [NEW] WorkManager 갱신 작업
+├── app/src/main/res/mipmap-anydpi-v26/          # [NEW] 적응형 벡터 런처 아이콘
 ├── app/src/main/res/xml/weather_widget_info.xml # [NEW] 위젯 메타데이터
+├── app/src/main/res/xml/data_extraction_rules.xml # [NEW] Android 12+ 백업·전송 차단 규칙
+├── app/src/main/res/xml/backup_rules.xml        # [NEW] Android 8~11 백업 차단 규칙
 ├── app/src/test/                                # [NEW] 단위 테스트(JVM·Robolectric)
 └── app/src/androidTest/                         # [NEW] Compose UI 테스트
 ```
