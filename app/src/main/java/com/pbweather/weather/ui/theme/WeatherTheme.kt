@@ -138,15 +138,16 @@ object Dims {
     val skeletonWeekly = 220.dp
     val metaTouch = 32.dp
     val action = 36.dp
-    val segmentPad = 3.dp
+    val segmentPad = 2.dp
     val segmentGap = 2.dp
-    val segmentRadius = 7.dp
+    val segmentRadius = 8.dp
     val groupRadius = 10.dp
     val navPillWidth = 52.dp
     val navPillHeight = 28.dp
     val pageTop = 14.dp
     val zero = 0.dp
     val hairline = 1.dp
+    val cardElevation = 1.dp
     val strong = 2.dp
     val progress = 3.dp
     val tiny = 4.dp
@@ -156,7 +157,7 @@ object Dims {
     val section = 14.dp
     val large = 20.dp
     val sheet = 18.dp
-    val radius = 16.dp
+    val radius = 14.dp
     val sheetRadius = 20.dp
     val widgetRadius = 22.dp
     val pill = 999.dp
@@ -328,7 +329,7 @@ data class WeatherTypography(
     val groupTitle: TextStyle get() = material.bodyLarge.copy(
         fontSize = material.bodyLarge.fontSize * (12f / 13.2f),
         lineHeight = material.bodyLarge.lineHeight * (12f / 13.2f),
-        fontWeight = FontWeight.SemiBold
+        fontWeight = FontWeight.Bold
     )
     val caption: TextStyle get() = meta.copy(fontSize = meta.fontSize * (10.2f / 11.4f), lineHeight = meta.lineHeight * (10.2f / 11.4f))
     val chartAxis: TextStyle get() = meta.copy(fontSize = 10.sp, lineHeight = 12.sp, fontWeight = FontWeight.Normal)

@@ -47,6 +47,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import com.pbweather.weather.R
 import com.pbweather.weather.core.time.ReleaseTimeCalculator
@@ -206,29 +207,31 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyMedium
         )
     }
-    Box {
-        if (large) {
-            Column {
-                values()
-                Box(Modifier.size(Dims.heroSymbolBox), contentAlignment = Alignment.Center) { WeatherSymbol(sky) }
-            }
-        } else {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) { values() }
-                Box(Modifier.size(Dims.heroSymbolBox), contentAlignment = Alignment.Center) { WeatherSymbol(sky) }
+    Column(verticalArrangement = Arrangement.spacedBy(Dims.tiny)) {
+        Box {
+            if (large) {
+                Column {
+                    values()
+                    Box(Modifier.size(Dims.heroSymbolBox), contentAlignment = Alignment.Center) { WeatherSymbol(sky) }
+                }
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) { values() }
+                    Box(Modifier.size(Dims.heroSymbolBox), contentAlignment = Alignment.Center) { WeatherSymbol(sky) }
+                }
             }
         }
+        val hour = state.data.forecast.hourly.data?.hours?.minByOrNull { abs(it.at - state.now) }
+        Text(
+            if (weather?.precipitationType != null && weather.precipitationType != 0) {
+                stringResource(R.string.sky_observation_note)
+            } else {
+                stringResource(R.string.sky_forecast_note, missing(timeLabel(hour?.at)))
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = WeatherTheme.colors.secondary
+        )
     }
-    val hour = state.data.forecast.hourly.data?.hours?.minByOrNull { abs(it.at - state.now) }
-    Text(
-        if (weather?.precipitationType != null && weather.precipitationType != 0) {
-            stringResource(R.string.sky_observation_note)
-        } else {
-            stringResource(R.string.sky_forecast_note, missing(timeLabel(hour?.at)))
-        },
-        style = MaterialTheme.typography.bodySmall,
-        color = WeatherTheme.colors.secondary
-    )
     Rule()
     val humidity = weather?.humidity?.let { stringResource(R.string.percent, number(it, 0).orEmpty()) }
         ?: stringResource(R.string.not_provided)
@@ -293,7 +296,7 @@ fun HomeScreen(
             val value = if (pm25) latest.pm25 else latest.pm10
             val grade = if (pm25) latest.pm25Grade else latest.pm10Grade
             val flag = if (pm25) latest.pm25Flag else latest.pm10Flag
-            Column(modifier.clickable { onDetails(if (pm25) "air25" else "air10") }.padding(vertical = Dims.small)) {
+            Column(modifier.clickable { onDetails(if (pm25) "air25" else "air10") }.padding(vertical = Dims.tiny)) {
                 val tokens = gradeTokens(mode, grade)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -348,7 +351,10 @@ fun HomeScreen(
         }
     }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f).heightIn(min = Dims.metaTouch).clickable { onDetails("sourceAir") }) {
+        Column(
+            Modifier.weight(1f).heightIn(min = Dims.metaTouch).clickable { onDetails("sourceAir") },
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 stringResource(R.string.source_air, data.station, missing(timeLabel(resource.meta?.observedAt))),
                 style = WeatherTheme.type.meta,
@@ -356,14 +362,16 @@ fun HomeScreen(
             )
             if (resource.isStale) Text(stringResource(R.string.stale), style = WeatherTheme.type.meta)
         }
-        Text(
-            stringResource(R.string.air_trend),
-            Modifier.heightIn(min = Dims.metaTouch).clickable {
-                onDetails("air")
-            },
-            style = WeatherTheme.type.meta,
-            color = WeatherTheme.colors.accent
-        )
+        Box(
+            Modifier.heightIn(min = Dims.metaTouch).clickable { onDetails("air") },
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            Text(
+                stringResource(R.string.air_trend),
+                style = WeatherTheme.type.meta,
+                color = WeatherTheme.colors.accent
+            )
+        }
     }
 }
 
@@ -376,6 +384,13 @@ fun HomeScreen(
         Modifier.testTag("home-comparison").clickable(onClick = onClick),
         color = WeatherTheme.colors.surface,
         shape = RoundedCornerShape(Dims.radius),
+        shadowElevation = if (WeatherTheme.mode ==
+            com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST
+        ) {
+            Dims.zero
+        } else {
+            Dims.cardElevation
+        },
         border = androidx.compose.foundation.BorderStroke(
             if (WeatherTheme.mode == com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST) Dims.strong else Dims.hairline,
             WeatherTheme.colors.border
@@ -456,7 +471,7 @@ fun HomeScreen(
         SectionTitle(stringResource(R.string.hourly_title), caption = {
             SourceLine(resource.meta, resource, state.now) { onDetails("sourceHourly") }
         }) {
-            Row {
+            Row(horizontalArrangement = Arrangement.spacedBy(Dims.badgeInset)) {
                 MiniScrollButton(enabled = list.canScrollBackward, onClick = {
                     scope.launch { list.scrollToItem((list.firstVisibleItemIndex - 4).coerceAtLeast(0)) }
                 }, modifier = Modifier.size(Dims.metaTouch).background(WeatherTheme.colors.tonal, RoundedCornerShape(Dims.pill))) {
@@ -608,12 +623,16 @@ fun HomeScreen(
             it.kind == com.pbweather.weather.domain.DataKind.MID_LAND ||
                 it.kind == com.pbweather.weather.domain.DataKind.MID_TA
         }.mapNotNull { it.issuedAt }.maxOrNull()
-        Text(
-            stringResource(R.string.weekly_sources, missing(timeLabel(shortTime)), missing(timeLabel(midTime))),
+        Box(
             Modifier.fillMaxWidth().heightIn(min = Dims.metaTouch).clickable { onDetails("sourceWeekly") },
-            style = WeatherTheme.type.meta,
-            color = WeatherTheme.colors.secondary
-        )
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                stringResource(R.string.weekly_sources, missing(timeLabel(shortTime)), missing(timeLabel(midTime))),
+                style = WeatherTheme.type.meta,
+                color = WeatherTheme.colors.secondary
+            )
+        }
         if (resource.data == null || resource.error != null || resource.isOffline) StatusBlock(resource, onRetry)
         Text(
             stringResource(R.string.weekly_missing_note),
@@ -641,7 +660,7 @@ fun HomeScreen(
                 } else {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(dateLabel(day.date), Modifier.width(Dims.weeklyDate), style = MaterialTheme.typography.bodySmall)
-                        Column(Modifier.width(Dims.weeklyWeather)) {
+                        Column(Modifier.width(Dims.weeklyWeather), horizontalAlignment = Alignment.CenterHorizontally) {
                             WeatherSymbol(
                                 SkyCondition.entries.firstOrNull {
                                     it.name == weather
@@ -655,9 +674,19 @@ fun HomeScreen(
                                 color = WeatherTheme.colors.rainText
                             )
                         }
-                        Text(temperature(day.minimum, 0), Modifier.width(Dims.weeklyTemperature), color = WeatherTheme.colors.cool)
+                        Text(
+                            temperature(day.minimum, 0),
+                            Modifier.width(Dims.weeklyTemperature),
+                            color = WeatherTheme.colors.cool,
+                            textAlign = TextAlign.End
+                        )
                         RangeBar(day, min, max, Modifier.weight(1f))
-                        Text(temperature(day.maximum, 0), Modifier.width(Dims.weeklyTemperature), color = WeatherTheme.colors.warm)
+                        Text(
+                            temperature(day.maximum, 0),
+                            Modifier.width(Dims.weeklyTemperature),
+                            color = WeatherTheme.colors.warm,
+                            textAlign = TextAlign.End
+                        )
                     }
                 }
             }

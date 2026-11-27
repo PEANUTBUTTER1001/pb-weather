@@ -104,6 +104,13 @@ fun dateLabel(date: String): String = runCatching {
         modifier.fillMaxWidth(),
         shape = shape,
         color = WeatherTheme.colors.surface,
+        shadowElevation = if (WeatherTheme.mode ==
+            com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST
+        ) {
+            Dims.zero
+        } else {
+            Dims.cardElevation
+        },
         border = BorderStroke(
             if (WeatherTheme.mode ==
                 com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST

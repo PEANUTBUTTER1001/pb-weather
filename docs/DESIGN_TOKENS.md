@@ -121,18 +121,18 @@
 | `sectionGap` | `14.dp` | 홈 섹션 간격 (`16.dp` 과거/지역, `20.dp` 설정 섹션 간격) |
 | `cardPaddingH` / `V` | `16.dp` / `15.dp` | 홈·과거 표면 카드 내부 여백 |
 | `settingRowPaddingH` / `V` | `16.dp` / `12.dp` | 설정 카드 내부 모든 행 동일 여백 |
-| `settingSectionTitleInset` | `12.dp` | 설정 묶음 제목 좌측 들여쓰기(카드 본문 `16.dp`보다 살짝 안쪽) |
+| `settingSectionTitleInset` | `4.dp` | 설정 묶음 제목 좌측 들여쓰기(`Dims.tiny`) |
 | `minTouchTarget` | `44.dp` *(권장 `48.dp`)* | 모든 버튼·행·칩 최소 터치 높이 (`P9`) |
 | `edgeIconOffset` | `-12.dp` | 44dp 아이콘 버튼 내 20dp 아이콘의 시각 끝을 구분선 끝에 일치 (`(44-20)/2`, `P8`) |
-| `topbarMinHeight` | `58.dp` | 상단 앱바 최소 높이 |
+| `topbarMinHeight` | `60.dp` | 상단 앱바 최소 높이 (`Dims.topBar`) |
 | `bottomNavHeight` | `68.dp` | 하단 내비게이션 바 + `navigationBarsPadding()` |
 | `bottomNavPill` | `52.dp × 28.dp` | 선택 탭 Material 3 알약 인디케이터 |
-| `radiusSm` | `8.dp` | 입력창·요약 박스·인라인 버튼·선택 세그먼트 칸(`7.dp`) |
-| `radiusMd` | `12.dp` | 배너·스낵바·세그먼트 트랙(`10.dp`) |
-| `radiusLg` | `16.dp` | 섹션 카드·어제 비교 스트립 |
+| `radiusSm` | `8.dp` | 입력창·요약 박스·인라인 버튼·선택 세그먼트 칸(`segmentRadius 8.dp`, `segmentPad 2.dp`) |
+| `radiusMd` | `10.dp` / `12.dp` | 주 버튼·세그먼트 트랙·아이콘 클립(`groupRadius 10.dp`) / 배너·스낵바(`medium 12.dp`) |
+| `radiusLg` | `14.dp` | 섹션 카드·어제 비교 스트립(`Dims.radius 14.dp`, `cardElevation 1.dp`) |
 | `radiusSheet` | `20.dp` | 바텀시트·문서 창·확인 창 상단/전체 모서리 |
 | `radiusWidget` | `22.dp` | Glance 홈 위젯 모서리 |
-| `radiusPill` | `999.dp` | 주/보조 버튼·칩·등급 배지·온도 막대 |
+| `radiusPill` | `999.dp` | 보조 버튼·칩·등급 배지·온도 막대 |
 | `dividerThin` / `dividerStrong` | `1.dp` | 항목 사이 `borderSubtle` / 평평한 목록 상하 `borderStrong` (`P6`) |
 | `maxContentWidth` | `760.dp` | 폴더블 펼침(Medium) 단일 열 최대 폭(`ARCHITECTURE.md` 16절) |
 

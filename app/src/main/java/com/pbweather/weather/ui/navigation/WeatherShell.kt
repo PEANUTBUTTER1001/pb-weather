@@ -48,12 +48,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Lifecycle
@@ -263,18 +265,33 @@ fun WeatherShell(
                                 )
                             }
                         }
-                        if (tab == WeatherTab.SETTINGS) Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
-                        IconButton(onClick = {
-                            details = "help"
-                        }, modifier = Modifier.size(Dims.field).offset(x = Dims.medium)) {
-                            AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                        if (tab == WeatherTab.SETTINGS) {
+                            Text(
+                                stringResource(R.string.settings),
+                                Modifier.padding(end = Dims.tiny),
+                                style = MaterialTheme.typography.titleLarge
+                            )
                         }
-                        IconButton(
-                            onClick = actions.refresh,
-                            enabled = state.preferences.selected != null && !loading,
-                            modifier = Modifier.size(Dims.field).offset(x = Dims.medium)
+                        Row(
+                            Modifier.offset(x = Dims.small),
+                            horizontalArrangement = Arrangement.spacedBy(Dims.tiny),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
+                            IconButton(
+                                onClick = { details = "help" },
+                                modifier = Modifier.size(Dims.action)
+                                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(Dims.groupRadius))
+                            ) {
+                                AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                            }
+                            IconButton(
+                                onClick = actions.refresh,
+                                enabled = state.preferences.selected != null && !loading,
+                                modifier = Modifier.size(Dims.action)
+                                    .clip(androidx.compose.foundation.shape.RoundedCornerShape(Dims.groupRadius))
+                            ) {
+                                AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
+                            }
                         }
                     }
                 }
@@ -333,16 +350,24 @@ fun WeatherShell(
                                 AppIcon(
                                     item.icon,
                                     null,
-                                    tint = if (tab ==
-                                        item
-                                    ) {
-                                        WeatherTheme.colors.accentOnSoft
+                                    tint = if (tab == item) {
+                                        if (mode == ThemeMode.HIGH_CONTRAST) {
+                                            WeatherTheme.colors.accentOnSoft
+                                        } else {
+                                            WeatherTheme.colors.accent
+                                        }
                                     } else {
                                         WeatherTheme.colors.secondary
                                     }
                                 )
                             }
-                            Text(title, style = WeatherTheme.type.meta)
+                            Text(
+                                title,
+                                color = if (tab == item) WeatherTheme.colors.text else WeatherTheme.colors.secondary,
+                                style = WeatherTheme.type.meta.copy(
+                                    fontWeight = if (tab == item) FontWeight.SemiBold else FontWeight.Medium
+                                )
+                            )
                         }
                     }
                 }
@@ -350,7 +375,7 @@ fun WeatherShell(
         },
         snackbarHost = {
             SnackbarHost(snackbar) { data ->
-                val shape = androidx.compose.foundation.shape.RoundedCornerShape(Dims.small)
+                val shape = androidx.compose.foundation.shape.RoundedCornerShape(Dims.groupRadius)
                 val border = if (mode ==
                     ThemeMode.HIGH_CONTRAST
                 ) {
@@ -361,6 +386,7 @@ fun WeatherShell(
                 Snackbar(
                     snackbarData = data,
                     modifier = border,
+                    shape = shape,
                     containerColor = snackbarColor(mode),
                     contentColor = snackbarTextColor(),
                     actionColor = snackbarActionColor(mode, palette)

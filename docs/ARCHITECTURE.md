@@ -133,6 +133,7 @@ weather/                                         # [KEEP] 저장소 루트
 │   ├── MainActivity.kt                          # [NEW] Compose 진입점
 │   ├── core/geo/                                # [NEW] 격자 변환·하버사인 최근접 탐색(공개 측정소 로컬 매핑)
 │   ├── core/time/                               # [NEW] 발표 시각 계산(base_time, tmFc)
+│   ├── di/                                      # [NEW] Hilt 네트워크·저장소·기능별 DI 모듈
 │   ├── domain/                                  # [NEW] 모델·UseCase·비교 규칙
 │   ├── data/remote/kma/                         # [NEW] 단기·중기·ASOS Retrofit API
 │   ├── data/remote/airkorea/                    # [NEW] 측정소·실시간 측정 API
@@ -140,8 +141,9 @@ weather/                                         # [KEEP] 저장소 루트
 │   ├── data/location/                           # [NEW] 위치 제공자
 │   ├── data/repository/                         # [NEW] Forecast·AirQuality·History·Location Repository
 │   ├── ui/theme/                                # [NEW] 앱 테마(색·간격·글꼴)
+│   ├── ui/components/                           # [NEW] 공통 UI·상세 시트·아이콘(PrototypeComponents·WeatherComponents·WeatherDetails·WeatherIcon)
 │   ├── ui/navigation/                           # [NEW] 하단 탭 내비게이션
-│   ├── ui/home/                                 # [NEW] 홈 화면
+│   ├── ui/home/                                 # [NEW] 홈 화면(HomeScreen·HeroWeather·HeroMotionTier·HeroShader)
 │   ├── ui/history/                              # [NEW] 과거 날씨 화면
 │   ├── ui/locations/                            # [NEW] 지역 검색·즐겨찾기
 │   ├── ui/settings/                             # [NEW] 정보·설정

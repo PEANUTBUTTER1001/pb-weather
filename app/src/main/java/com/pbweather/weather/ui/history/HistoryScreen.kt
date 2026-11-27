@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
 import com.pbweather.weather.core.time.ReleaseTimeCalculator
@@ -167,43 +168,63 @@ fun HistoryScreen(state: WeatherUiState, onRange: (DateRange) -> Unit, onRefresh
                             }
                         } else {
                             Column {
-                                Row(Modifier.padding(vertical = Dims.small)) {
+                                val colWeights = floatArrayOf(1f, 1f, 1.15f, 1.25f)
+                                Row(Modifier.padding(vertical = Dims.small), verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         stringResource(R.string.comparison_kind),
-                                        Modifier.weight(3.5f),
-                                        style = MaterialTheme.typography.bodySmall
+                                        Modifier.weight(2.7f),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1
                                     )
-                                    headers.forEach {
-                                        Text(stringResource(it), Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
+                                    headers.forEachIndexed { index, label ->
+                                        Text(
+                                            stringResource(label),
+                                            Modifier.weight(colWeights[index]),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            textAlign = TextAlign.End,
+                                            maxLines = 1
+                                        )
                                     }
                                 }
                                 Rule()
-                                Row(Modifier.padding(vertical = Dims.small)) {
+                                Row(Modifier.padding(vertical = Dims.small), verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         stringResource(R.string.design_compare_forecast, window.end.plusDays(1).toString()),
-                                        Modifier.weight(3.5f),
-                                        style = MaterialTheme.typography.bodySmall
+                                        Modifier.weight(2.7f),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1
                                     )
                                     current.forEachIndexed { index, value ->
                                         Text(
                                             value,
-                                            Modifier.weight(1f),
+                                            Modifier.weight(colWeights[index]),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = when (index) {
                                                 0 -> WeatherTheme.colors.warm
                                                 1 -> WeatherTheme.colors.cool
                                                 else -> WeatherTheme.colors.text
-                                            }
+                                            },
+                                            textAlign = TextAlign.End,
+                                            maxLines = 1
                                         )
                                     }
                                 }
-                                Row(Modifier.padding(vertical = Dims.small)) {
+                                Row(Modifier.padding(vertical = Dims.small), verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         stringResource(R.string.design_compare_observed, window.end.toString()),
-                                        Modifier.weight(3.5f),
-                                        style = MaterialTheme.typography.bodySmall
+                                        Modifier.weight(2.7f),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1
                                     )
-                                    previous.forEach { Text(it, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall) }
+                                    previous.forEachIndexed { index, value ->
+                                        Text(
+                                            value,
+                                            Modifier.weight(colWeights[index]),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            textAlign = TextAlign.End,
+                                            maxLines = 1
+                                        )
+                                    }
                                 }
                             }
                         }
