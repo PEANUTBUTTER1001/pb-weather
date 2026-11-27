@@ -82,7 +82,7 @@ class WeatherWidget : GlanceAppWidget() {
     )
     val body: @Composable () -> Unit = {
         Column(
-            (if (largeText) GlanceModifier.fillMaxWidth() else GlanceModifier.fillMaxSize()).background(colors.surface)
+            GlanceModifier.fillMaxWidth().background(colors.surface)
                 .cornerRadius(Dims.widgetRadius - Dims.hairline).padding(Dims.gutter)
         ) {
             if (state.region == null) {
@@ -95,38 +95,71 @@ class WeatherWidget : GlanceAppWidget() {
                         ?: context.getString(R.string.missing)
                 val hour = state.forecast.hourly.data?.hours?.minByOrNull { kotlin.math.abs(it.at - (observed.meta?.observedAt ?: it.at)) }
                 val sky = WeatherCondition.from(hour?.sky, observed.data?.precipitationType)
-                Row(GlanceModifier.fillMaxWidth()) {
-                    Column(GlanceModifier.defaultWeight()) {
+                if (largeText) {
+                    Row(GlanceModifier.fillMaxWidth()) {
                         Text(
                             state.region.name,
+                            modifier = GlanceModifier.defaultWeight(),
                             style = TextStyle(
                                 color = ColorProvider(colors.text),
                                 fontSize = type.material.bodyMedium.fontSize,
                                 fontWeight = FontWeight.Bold
                             )
                         )
-                        Text(
-                            temperature,
-                            style = TextStyle(
-                                color = ColorProvider(colors.text),
-                                fontSize = type.material.headlineMedium.fontSize
-                            )
+                        Image(
+                            ImageProvider(
+                                when (sky) {
+                                    SkyCondition.CLEAR -> R.drawable.design_weather_clear
+                                    SkyCondition.RAIN -> R.drawable.design_weather_rain
+                                    SkyCondition.SLEET -> R.drawable.design_weather_sleet
+                                    SkyCondition.SNOW -> R.drawable.design_weather_snow
+                                    SkyCondition.PARTLY -> R.drawable.design_weather_partly
+                                    else -> R.drawable.design_weather_cloudy
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = GlanceModifier.size(Dims.touch)
                         )
                     }
-                    Image(
-                        ImageProvider(
-                            when (sky) {
-                                SkyCondition.CLEAR -> R.drawable.design_weather_clear
-                                SkyCondition.RAIN -> R.drawable.design_weather_rain
-                                SkyCondition.SLEET -> R.drawable.design_weather_sleet
-                                SkyCondition.SNOW -> R.drawable.design_weather_sleet
-                                SkyCondition.PARTLY -> R.drawable.design_weather_partly
-                                else -> R.drawable.design_weather_cloudy
-                            }
-                        ),
-                        contentDescription = null,
-                        modifier = GlanceModifier.size(Dims.touch)
+                    Text(
+                        temperature,
+                        modifier = GlanceModifier.fillMaxWidth(),
+                        style = TextStyle(color = ColorProvider(colors.text), fontSize = type.widgetAccessibleTemperature.fontSize)
                     )
+                } else {
+                    Row(GlanceModifier.fillMaxWidth()) {
+                        Column(GlanceModifier.defaultWeight()) {
+                            Text(
+                                state.region.name,
+                                style = TextStyle(
+                                    color = ColorProvider(colors.text),
+                                    fontSize = type.material.bodyMedium.fontSize,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
+                            Text(
+                                temperature,
+                                style = TextStyle(
+                                    color = ColorProvider(colors.text),
+                                    fontSize = type.material.headlineMedium.fontSize
+                                )
+                            )
+                        }
+                        Image(
+                            ImageProvider(
+                                when (sky) {
+                                    SkyCondition.CLEAR -> R.drawable.design_weather_clear
+                                    SkyCondition.RAIN -> R.drawable.design_weather_rain
+                                    SkyCondition.SLEET -> R.drawable.design_weather_sleet
+                                    SkyCondition.SNOW -> R.drawable.design_weather_snow
+                                    SkyCondition.PARTLY -> R.drawable.design_weather_partly
+                                    else -> R.drawable.design_weather_cloudy
+                                }
+                            ),
+                            contentDescription = null,
+                            modifier = GlanceModifier.size(Dims.touch)
+                        )
+                    }
                 }
                 val skyLabel = context.getString(
                     when (sky) {
@@ -144,8 +177,8 @@ class WeatherWidget : GlanceAppWidget() {
                     context.getString(
                         R.string.design_widget_summary,
                         skyLabel,
-                        number(day?.maximum) ?: "—",
-                        number(day?.minimum) ?: "—"
+                        number(day?.maximum, 0) ?: "—",
+                        number(day?.minimum, 0) ?: "—"
                     ),
                     style = meta
                 )
@@ -175,16 +208,12 @@ class WeatherWidget : GlanceAppWidget() {
         GlanceModifier.fillMaxSize().background(colors.border).cornerRadius(Dims.widgetRadius)
             .clickable(actionStartActivity(intent)).padding(if (mode == ThemeMode.HIGH_CONTRAST) Dims.strong else Dims.hairline)
     ) {
-        if (largeText) {
-            LazyColumn(
-                GlanceModifier.fillMaxSize().background(colors.surface).cornerRadius(Dims.widgetRadius - Dims.hairline)
-            ) {
-                item(itemId = 1L) {
-                    Box(GlanceModifier.fillMaxWidth().clickable(actionStartActivity(intent))) { body() }
-                }
+        LazyColumn(
+            GlanceModifier.fillMaxSize().background(colors.surface).cornerRadius(Dims.widgetRadius - Dims.hairline)
+        ) {
+            item(itemId = 1L) {
+                Box(GlanceModifier.fillMaxWidth().clickable(actionStartActivity(intent))) { body() }
             }
-        } else {
-            body()
         }
     }
 }

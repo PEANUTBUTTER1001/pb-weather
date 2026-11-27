@@ -93,10 +93,16 @@ fun dateLabel(date: String): String = runCatching {
     }
 )
 
-@Composable fun SectionCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+@Composable fun SectionCard(
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(Dims.radius),
+    gap: androidx.compose.ui.unit.Dp = Dims.medium,
+    verticalInset: androidx.compose.ui.unit.Dp = Dims.cardInset,
+    content: @Composable ColumnScope.() -> Unit
+) {
     Surface(
         modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(Dims.radius),
+        shape = shape,
         color = WeatherTheme.colors.surface,
         border = BorderStroke(
             if (WeatherTheme.mode ==
@@ -109,13 +115,20 @@ fun dateLabel(date: String): String = runCatching {
             WeatherTheme.colors.border
         )
     ) {
-        Column(Modifier.padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium), content = content)
+        Column(
+            Modifier.padding(horizontal = Dims.gutter, vertical = verticalInset),
+            verticalArrangement = Arrangement.spacedBy(gap),
+            content = content
+        )
     }
 }
 
-@Composable fun SectionTitle(title: String, action: (@Composable () -> Unit)? = null) {
+@Composable fun SectionTitle(title: String, caption: (@Composable () -> Unit)? = null, action: (@Composable () -> Unit)? = null) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Dims.tiny)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            caption?.invoke()
+        }
         action?.invoke()
     }
 }
@@ -164,17 +177,22 @@ fun dateLabel(date: String): String = runCatching {
     }
     val received = meta?.receivedAt
     val minutes = received?.let { ((now - it).coerceAtLeast(0) / 60000).toInt() }
-    val age = when {
-        minutes == null -> ""
-        minutes == 0 -> stringResource(R.string.received_now)
-        minutes < 60 -> stringResource(R.string.received_minutes, minutes)
-        else -> stringResource(R.string.received_hours, minutes / 60)
+    val age = if (meta?.kind != DataKind.NOWCAST) {
+        ""
+    } else {
+        when {
+            minutes == null -> ""
+            minutes == 0 -> stringResource(R.string.received_now)
+            minutes < 60 -> stringResource(R.string.received_minutes, minutes)
+            else -> stringResource(R.string.received_hours, minutes / 60)
+        }
     }
     val text = listOf(label, age, if (resource.isStale) stringResource(R.string.stale) else "")
         .filter { it.isNotEmpty() }.joinToString(" · ") + " ⓘ"
     Text(
         text,
-        Modifier.fillMaxWidth().heightIn(min = Dims.metaTouch).clickable(onClick = onClick).padding(vertical = Dims.segmentPad),
+        Modifier.fillMaxWidth().heightIn(min = if (meta?.kind == DataKind.NOWCAST) Dims.metaTouch else Dims.zero)
+            .clickable(onClick = onClick).padding(vertical = if (meta?.kind == DataKind.NOWCAST) Dims.segmentPad else Dims.zero),
         style = WeatherTheme.type.meta,
         color = WeatherTheme.colors.secondary
     )

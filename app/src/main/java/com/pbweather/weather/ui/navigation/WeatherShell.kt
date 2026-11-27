@@ -108,7 +108,9 @@ data class WeatherActions(
     val favorite: (Region) -> Unit = {},
     val deleteFavorite: (String) -> Unit = {},
     val primary: (String) -> Unit = {},
-    val clearCache: () -> Unit = {}
+    val clearCache: () -> Unit = {},
+    val refreshWidget: () -> Unit = {},
+    val openWidget: () -> Unit = {}
 )
 
 @Composable
@@ -235,7 +237,7 @@ fun WeatherShell(
                                 tab = WeatherTab.LOCATIONS
                             }.padding(vertical = Dims.small),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(Dims.small)
+                            horizontalArrangement = Arrangement.spacedBy(Dims.badgeInset)
                         ) {
                             AppIcon(UiIcon.PIN, null)
                             Column(Modifier.weight(1f)) {

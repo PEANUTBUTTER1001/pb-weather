@@ -60,6 +60,18 @@ class DesignFlowCaptureTest {
         compose.setContent {
             WeatherTheme(mode.value, Palette.INDIGO) {
                 Box(Modifier.fillMaxSize().background(WeatherTheme.colors.ground)) {
+                    val shell = when (scene.value) {
+                        "offline-source", "widget-offline" -> offline
+                        "widget-empty" -> base.copy(preferences = base.preferences.copy(primaryId = null))
+                        else -> base
+                    }
+                    com.pbweather.weather.ui.navigation.WeatherShell(
+                        shell.copy(preferences = shell.preferences.copy(theme = mode.value.name)),
+                        "", emptyList(), mode.value, Palette.INDIGO,
+                        com.pbweather.weather.ui.navigation.WeatherActions(), kotlinx.coroutines.flow.emptyFlow(),
+                        regionForecasts = PrototypeFixtures.favoriteForecasts(), primaryForecast = shell.data.forecast,
+                        cacheBytes = 13002342
+                    )
                     when (val target = scene.value) {
                         "closed" -> Unit
                         "help", "privacy", "licenses", "usage" -> LegalDocSheet(target, close)
@@ -100,6 +112,13 @@ class DesignFlowCaptureTest {
         for (theme in ThemeMode.entries) {
             compose.runOnUiThread { mode.value = theme }
             for (target in targets) {
+                val settingsTargets = listOf("help", "privacy", "licenses", "usage", "widget", "widget-empty", "widget-offline", "confirm")
+                val tab = if (target in settingsTargets) {
+                    "설정"
+                } else {
+                    "홈"
+                }
+                compose.onNodeWithContentDescription("$tab 탭 열기").performSemanticsAction(SemanticsActions.OnClick) { it() }
                 compose.runOnUiThread { scene.value = target }
                 compose.onNode(isDialog()).assertExists()
                 if (target == "summer") compose.onNodeWithText("31.3℃").assertExists()

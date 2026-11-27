@@ -22,6 +22,7 @@ import androidx.compose.ui.test.performTextReplacement
 import androidx.test.platform.app.InstrumentationRegistry
 import com.pbweather.weather.ui.navigation.WeatherActions
 import com.pbweather.weather.ui.navigation.WeatherShell
+import com.pbweather.weather.ui.theme.FontSize
 import com.pbweather.weather.ui.theme.Palette
 import com.pbweather.weather.ui.theme.ThemeMode
 import com.pbweather.weather.ui.theme.WeatherTheme
@@ -77,6 +78,15 @@ class PrototypeParityTest {
             }
         }
         compose.onNodeWithContentDescription("자료를 불러오는 중입니다.").assertExists()
+        compose.mainClock.autoAdvance = false
+        compose.mainClock.advanceTimeBy(32)
+        val loading = compose.onRoot().captureToImage().asAndroidBitmap()
+        compose.mainClock.advanceTimeBy(1000)
+        org.junit.Assert.assertTrue(
+            "Loading skeleton must remain static",
+            loading.sameAs(compose.onRoot().captureToImage().asAndroidBitmap())
+        )
+        compose.mainClock.autoAdvance = true
         capture("state-loading")
         compose.runOnUiThread {
             state.value =
@@ -95,6 +105,72 @@ class PrototypeParityTest {
         compose.onNodeWithText("지역 검색").assertIsDisplayed()
     }
 
+    @Test fun cachedWeatherSurvivesExceptionalStatesAndLongText() {
+        val base = PrototypeFixtures.state()
+        val state = mutableStateOf(base)
+        val mode = mutableStateOf(ThemeMode.LIGHT)
+        compose.setContent {
+            WeatherTheme(mode.value) {
+                WeatherShell(state.value, "", emptyList(), mode.value, Palette.INDIGO, WeatherActions(), emptyFlow())
+            }
+        }
+        val original = base.data.forecast.now
+        val cases = listOf(
+            "offline" to base.copy(
+                data = base.data.copy(
+                    forecast = base.data.forecast.copy(
+                        now = original.copy(isOffline = true, isStale = true, error = com.pbweather.weather.domain.DomainError.OFFLINE)
+                    )
+                )
+            ),
+            "quota" to base.copy(
+                data = base.data.copy(
+                    forecast = base.data.forecast.copy(
+                        now = original.copy(isStale = true, error = com.pbweather.weather.domain.DomainError.QUOTA)
+                    )
+                )
+            ),
+            "refreshing" to base.copy(
+                data = base.data.copy(
+                    forecast = base.data.forecast.copy(
+                        now = original.copy(isStale = true, isRefreshing = true)
+                    )
+                )
+            ),
+            "partial-air" to base.copy(
+                data = base.data.copy(
+                    air = base.data.air.copy(
+                        data = null,
+                        error = com.pbweather.weather.domain.DomainError.OFFLINE
+                    )
+                )
+            ),
+            "permission" to base.copy(
+                location = base.location.copy(
+                    granted = false,
+                    problem = com.pbweather.weather.domain.LocationProblem.PERMISSION_DENIED
+                )
+            ),
+            "longest" to base.copy(
+                preferences = base.preferences.copy(
+                    selected = PrototypeFixtures.region.copy(
+                        name = "제주특별자치도 서귀포시 대정읍 하모리 주변 관측 지역"
+                    )
+                )
+            )
+        )
+        for (theme in ThemeMode.entries) {
+            for ((name, fixture) in cases) {
+                compose.runOnUiThread {
+                    mode.value = theme
+                    state.value = fixture
+                }
+                compose.onNodeWithText("7.4°").assertExists()
+                capture("state-${theme.name}-$name")
+            }
+        }
+    }
+
     private fun capture(name: String) {
         val directory = InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(null)!!.resolve("design").apply {
             mkdirs()
@@ -108,10 +184,14 @@ class PrototypeParityTest {
         compose.mainClock.autoAdvance = false
         val mode = mutableStateOf(ThemeMode.LIGHT)
         val palette = mutableStateOf(Palette.INDIGO)
-        val fixture = PrototypeFixtures.state()
+        val appFont = FontSize.entries.firstOrNull {
+            it.name == InstrumentationRegistry.getArguments().getString("appFont")
+        } ?: FontSize.NORMAL
+        val fixture = PrototypeFixtures.state().let { it.copy(preferences = it.preferences.copy(font = appFont.name)) }
+        val measured = org.json.JSONArray()
         compose.setContent {
             Box(Modifier.consumeWindowInsets(WindowInsets.systemBars)) {
-                WeatherTheme(mode.value, palette.value) {
+                WeatherTheme(mode.value, palette.value, appFont) {
                     WeatherShell(
                         fixture.copy(preferences = fixture.preferences.copy(theme = mode.value.name, palette = palette.value.name)),
                         "",
@@ -142,6 +222,22 @@ class PrototypeParityTest {
                     SystemClock.sleep(350)
                     compose.waitForIdle()
                     compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
+                        val context = InstrumentationRegistry.getInstrumentation().targetContext
+                        val density = context.resources.displayMetrics.density
+                        measured.put(
+                            org.json.JSONObject().apply {
+                                put("screen", file)
+                                put("theme", theme.name)
+                                put("palette", color.name)
+                                put("appFont", appFont.name)
+                                put("systemFontScale", context.resources.configuration.fontScale)
+                                put("widthDp", context.resources.configuration.screenWidthDp)
+                                put("bitmapWidth", bitmap.width)
+                                put("bitmapHeight", bitmap.height)
+                                put("logicalWidth", bitmap.width / density)
+                                put("logicalHeight", bitmap.height / density)
+                            }
+                        )
                         directory.resolve("${theme.name}-${color.name}-$file.png").outputStream().use {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
                         }
@@ -149,5 +245,6 @@ class PrototypeParityTest {
                 }
             }
         }
+        directory.resolve("measurements.json").writeText(measured.toString(2))
     }
 }

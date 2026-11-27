@@ -79,6 +79,10 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
         target.startsWith("day:") -> stringResource(R.string.design_day_sheet_title, target.removePrefix("day:"))
         target.startsWith("air") -> stringResource(R.string.air_trend_title)
         target == "apparent" -> stringResource(R.string.design_apparent_title)
+        target == "sourceNow" -> stringResource(R.string.design_source_now_title)
+        target == "sourceHourly" -> stringResource(R.string.design_source_hourly_title)
+        target == "sourceWeekly" -> stringResource(R.string.design_source_weekly_title)
+        target == "sourceAir" -> stringResource(R.string.design_source_air_title)
         target == "help" -> stringResource(R.string.help)
         else -> stringResource(R.string.source_details)
     }

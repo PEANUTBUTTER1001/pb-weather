@@ -123,6 +123,9 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 }
 
 object Dims {
+    val cardInset = 15.dp
+    val hourlyWeather = 28.dp
+    val weeklyIcon = 22.dp
     val chip = 40.dp
     val badgeInset = 6.dp
     val dialogWidth = 340.dp
@@ -318,6 +321,10 @@ data class WeatherTypography(
     val meta: TextStyle,
     val material: Typography
 ) {
+    val widgetAccessibleTemperature: TextStyle get() = material.headlineMedium.copy(
+        fontSize = material.headlineMedium.fontSize * (26f / 36.8f)
+    )
+    val airUnit: TextStyle get() = airValue.copy(fontSize = airValue.fontSize * (9.3f / 17.2f))
     val groupTitle: TextStyle get() = material.bodyLarge.copy(
         fontSize = material.bodyLarge.fontSize * (12f / 13.2f),
         lineHeight = material.bodyLarge.lineHeight * (12f / 13.2f),

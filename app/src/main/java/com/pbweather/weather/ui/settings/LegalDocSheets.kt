@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
@@ -166,7 +167,15 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WidgetPreviewSheet(name: String?, forecast: ForecastState, onLocations: () -> Unit, onClose: () -> Unit) {
+fun WidgetPreviewSheet(
+    name: String?,
+    forecast: ForecastState,
+    onLocations: () -> Unit,
+    onClose: () -> Unit,
+    onRefresh: () -> Unit = {},
+    onOpen: () -> Unit = {},
+    failed: Boolean = false
+) {
     ModalBottomSheet(
         contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
         onDismissRequest = onClose,
@@ -178,65 +187,74 @@ fun WidgetPreviewSheet(name: String?, forecast: ForecastState, onLocations: () -
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(
-                max = LocalConfiguration.current.screenHeightDp.dp * .88f
-            ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
+            prototypeSheetBorder().fillMaxWidth().heightIn(max = LocalConfiguration.current.screenHeightDp.dp * .88f)
+                .verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
-            SheetHeader(stringResource(R.string.widget_preview), onClose)
+            SheetHeader(stringResource(R.string.design_widget_title), onClose)
             Box(
                 Modifier.fillMaxWidth().background(
                     Brush.linearGradient(WeatherTheme.colors.widgetWallpaper),
                     RoundedCornerShape(Dims.radius)
                 ).padding(horizontal = Dims.section, vertical = Dims.sheet)
             ) {
-                SectionCard {
-                    Text(name ?: stringResource(R.string.widget_no_primary), style = MaterialTheme.typography.titleSmall)
-                    if (name != null) {
+                SectionCard(
+                    Modifier.clickable(onClick = if (name == null) onLocations else onOpen).testTag("widget-preview-card"),
+                    shape = RoundedCornerShape(Dims.widgetRadius),
+                    gap = Dims.gridGap,
+                    verticalInset = Dims.gutter
+                ) {
+                    if (name == null) {
+                        Text(stringResource(R.string.widget_no_primary), style = MaterialTheme.typography.titleSmall)
+                        SecondaryButton(onLocations) { Text(stringResource(R.string.widget_choose_primary)) }
+                    } else {
                         val hour = forecast.hourly.data?.hours?.minByOrNull {
                             kotlin.math.abs(it.at - (forecast.now.meta?.observedAt ?: it.at))
                         }
-                        Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                            Text(
-                                temperature(forecast.now.data?.temperature),
-                                Modifier.weight(1f),
-                                style = MaterialTheme.typography.headlineMedium
-                            )
-                            Box(Modifier.size(Dims.touch)) {
-                                WeatherSymbol(
-                                    WeatherCondition.from(hour?.sky, forecast.now.data?.precipitationType),
-                                    Modifier.size(Dims.touch)
+                        val sky = WeatherCondition.from(hour?.sky, forecast.now.data?.precipitationType)
+                        val day = forecast.weekly.data?.firstOrNull()
+                        Row(Modifier.fillMaxWidth()) {
+                            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Dims.tiny)) {
+                                Text(name, style = MaterialTheme.typography.titleSmall)
+                                Text(temperature(forecast.now.data?.temperature), style = MaterialTheme.typography.headlineMedium)
+                                Text(
+                                    stringResource(
+                                        R.string.design_widget_summary,
+                                        skyLabel(sky),
+                                        com.pbweather.weather.ui.components.number(day?.maximum, 0) ?: "—",
+                                        com.pbweather.weather.ui.components.number(day?.minimum, 0) ?: "—"
+                                    ),
+                                    style = WeatherTheme.type.meta,
+                                    color = WeatherTheme.colors.secondary
                                 )
                             }
+                            WeatherSymbol(sky, Modifier.size(Dims.touch))
                         }
-                        val day = forecast.weekly.data?.firstOrNull()
-                        Text(
-                            stringResource(
-                                R.string.design_widget_summary,
-                                skyLabel(WeatherCondition.from(hour?.sky, forecast.now.data?.precipitationType)),
-                                com.pbweather.weather.ui.components.number(day?.maximum) ?: "—",
-                                com.pbweather.weather.ui.components.number(day?.minimum) ?: "—"
-                            ),
-                            style = MaterialTheme.typography.bodySmall
-                        )
                         Rule()
                         val observed = forecast.now
-                        Text(
-                            stringResource(
-                                when {
-                                    observed.data == null -> R.string.widget_loading
-                                    observed.isStale || observed.isOffline || observed.error != null -> R.string.widget_delayed
-                                    else -> R.string.widget_refresh_explanation
-                                }
-                            ),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                        Text(
-                            stringResource(R.string.preview_last_success, timeLabel(forecast.now.meta?.receivedAt) ?: "—"),
-                            style = WeatherTheme.type.meta
-                        )
-                    } else {
-                        SecondaryButton(onClick = onLocations) { Text(stringResource(R.string.widget_choose_primary)) }
+                        FlowRow(
+                            Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalArrangement = Arrangement.spacedBy(Dims.badgeInset)
+                        ) {
+                            Text(
+                                stringResource(
+                                    when {
+                                        observed.data == null -> R.string.widget_loading
+                                        failed || observed.isStale || observed.isOffline || observed.error != null ->
+                                            R.string.widget_delayed
+                                        else -> R.string.widget_frequency
+                                    }
+                                ),
+                                style = WeatherTheme.type.meta,
+                                color = WeatherTheme.colors.secondary
+                            )
+                            Text(
+                                stringResource(R.string.preview_last_success, timeLabel(observed.meta?.receivedAt) ?: "—"),
+                                style = WeatherTheme.type.meta,
+                                color = WeatherTheme.colors.secondary
+                            )
+                        }
                     }
                 }
             }
@@ -245,8 +263,8 @@ fun WidgetPreviewSheet(name: String?, forecast: ForecastState, onLocations: () -
                 horizontalArrangement = Arrangement.spacedBy(Dims.small, Alignment.End),
                 verticalArrangement = Arrangement.spacedBy(Dims.small)
             ) {
-                SecondaryButton(onClick = onLocations) { Text(stringResource(R.string.change_primary)) }
-                PrimaryButton(onClick = onClose) { Text(stringResource(R.string.document_confirm)) }
+                if (name != null) SecondaryButton(onRefresh) { Text(stringResource(R.string.refresh)) }
+                PrimaryButton(onClose) { Text(stringResource(R.string.document_confirm)) }
             }
         }
     }

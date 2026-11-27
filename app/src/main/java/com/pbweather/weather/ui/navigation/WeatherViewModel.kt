@@ -76,9 +76,23 @@ class WeatherViewModel @Inject constructor(
     private val findRegions: FindRegions,
     private val locations: LocationSource,
     private val clock: Clock,
+    private val widgets: com.pbweather.weather.data.repository.WidgetRepository,
     private val cache: com.pbweather.weather.data.local.CacheStore
 ) : ViewModel() {
     val widgetTab = MutableStateFlow<Pair<WeatherTab, Long>?>(null)
+    fun refreshWidget() {
+        viewModelScope.launch {
+            try {
+                widgets.refreshPrimary()
+            } catch (
+                cancelled: CancellationException
+            ) {
+                throw cancelled
+            } catch (_: Exception) {
+                preferences.update { it.copy(widgetError = true) }
+            }
+        }
+    }
     fun openWidget() {
         viewModelScope.launch {
             val prefs = preferences.preferences.first()

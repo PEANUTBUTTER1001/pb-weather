@@ -557,7 +557,9 @@ private fun HistoryDaySheet(date: String, day: DailyObservation?, state: Weather
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(max = LocalConfiguration.current.screenHeightDp.dp * .88f).verticalScroll(rememberScrollState()).padding(Dims.sheet),
+            prototypeSheetBorder().fillMaxWidth().heightIn(
+                max = LocalConfiguration.current.screenHeightDp.dp * .88f
+            ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
             SheetHeader(date, onClose)
@@ -585,7 +587,7 @@ private fun HistoryDaySheet(date: String, day: DailyObservation?, state: Weather
                                 ?: stringResource(R.string.history_missing)
                             )
                 ),
-                LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f
+                LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || LocalConfiguration.current.screenWidthDp <= 320
             )
             SourceInfo(day?.meta, state.preferences.selected?.asosStationName, state.data.history)
             PrimaryButton(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.confirm)) }

@@ -117,7 +117,7 @@ fun HomeScreen(
         com.pbweather.weather.ui.components.EmptyWeather(onRetry, onSelectRegion)
         return
     }
-    LazyColumn(state = list, modifier = Modifier.focusRestorer().focusGroup(), verticalArrangement = Arrangement.spacedBy(Dims.gutter)) {
+    LazyColumn(state = list, modifier = Modifier.focusRestorer().focusGroup(), verticalArrangement = Arrangement.spacedBy(Dims.zero)) {
         val resource = state.data.forecast.now
         if (resource.error != null || resource.isOffline || resource.isStale || resource.data == null) {
             item(key = "status") {
@@ -128,7 +128,7 @@ fun HomeScreen(
             Box(Modifier.fillMaxWidth().testTag("home-hero")) {
                 HeroWeather(currentSky(state), mode, palette, Modifier.matchParentSize())
                 Column(
-                    Modifier.padding(horizontal = Dims.gutter, vertical = Dims.small),
+                    Modifier.padding(start = Dims.gutter, end = Dims.gutter, top = Dims.small, bottom = Dims.gutter),
                     verticalArrangement = Arrangement.spacedBy(Dims.small)
                 ) {
                     HeroContent(state, onDetails)
@@ -138,12 +138,12 @@ fun HomeScreen(
             }
         }
         item(key = "comparison") {
-            Box(Modifier.padding(horizontal = Dims.gutter)) {
+            Box(Modifier.padding(start = Dims.gutter, end = Dims.gutter, top = Dims.badgeInset, bottom = Dims.section)) {
                 ComparisonStrip(state, onHistory)
             }
         }
         item(key = "hourly") {
-            Box(Modifier.padding(horizontal = Dims.gutter)) {
+            Box(Modifier.padding(start = Dims.gutter, end = Dims.gutter, bottom = Dims.section)) {
                 HourlySection(state, hoursList, selectedHour, onHour, onDetails, onRetry)
             }
         }
@@ -188,8 +188,8 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyMedium
         )
     }
-    BoxWithConstraints {
-        if (large || maxWidth <= Dims.heroThreshold) {
+    Box {
+        if (large) {
             Column {
                 values()
                 Box(Modifier.size(Dims.heroSymbolBox), contentAlignment = Alignment.Center) { WeatherSymbol(sky) }
@@ -285,15 +285,33 @@ fun HomeScreen(
                     )
                     Surface(shape = RoundedCornerShape(Dims.pill), color = tokens.first, contentColor = tokens.second) {
                         Text(
-                            gradeLabel(grade),
+                            stringResource(
+                                when (grade) {
+                                    1 -> R.string.design_grade_good
+                                    2 -> R.string.design_grade_normal
+                                    3 -> R.string.design_grade_bad
+                                    4 -> R.string.design_grade_very_bad
+                                    else -> R.string.grade_unknown
+                                }
+                            ),
                             Modifier.padding(horizontal = Dims.small, vertical = Dims.segmentGap),
                             style = MaterialTheme.typography.labelSmall
                         )
                     }
                 }
+                val concentration = value?.let { number(it, 0).orEmpty() } ?: stringResource(R.string.not_provided)
+                val unit = stringResource(R.string.design_air_unit)
+                val unitSize = WeatherTheme.type.airUnit.fontSize
                 Text(
-                    value?.let { stringResource(R.string.air_unit, number(it, 0).orEmpty()) }
-                        ?: stringResource(R.string.not_provided),
+                    buildAnnotatedString {
+                        append(concentration)
+                        if (value != null) {
+                            withStyle(SpanStyle(fontSize = unitSize)) {
+                                append(" ")
+                                append(unit)
+                            }
+                        }
+                    },
                     style = WeatherTheme.type.airValue
                 )
                 if (flag != null) Text(flag, style = MaterialTheme.typography.bodySmall, color = WeatherTheme.colors.warning)
@@ -417,7 +435,9 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val hours = resource.data?.hours.orEmpty().filter { it.at > state.now && it.at <= state.now + 48 * 3600000L }.take(48)
     SectionCard {
-        SectionTitle(stringResource(R.string.hourly_title)) {
+        SectionTitle(stringResource(R.string.hourly_title), caption = {
+            SourceLine(resource.meta, resource, state.now) { onDetails("sourceHourly") }
+        }) {
             Row {
                 MiniScrollButton(enabled = list.canScrollBackward, onClick = {
                     scope.launch { list.scrollToItem((list.firstVisibleItemIndex - 4).coerceAtLeast(0)) }
@@ -433,7 +453,6 @@ fun HomeScreen(
                 }
             }
         }
-        SourceLine(resource.meta, resource, state.now) { onDetails("sourceHourly") }
         if (resource.data == null || resource.error != null || resource.isOffline) StatusBlock(resource, onRetry)
         val summary = ForecastSummary.select(resource.data?.hours.orEmpty(), state.now)
         Surface(
@@ -525,7 +544,7 @@ fun HomeScreen(
                             },
                             style = MaterialTheme.typography.labelSmall
                         )
-                        WeatherSymbol(WeatherCondition.from(hour.sky, hour.precipitationType), Modifier.size(Dims.weatherSmall))
+                        WeatherSymbol(WeatherCondition.from(hour.sky, hour.precipitationType), Modifier.size(Dims.hourlyWeather))
                         Text(temperature(hour.temperature, 0), style = MaterialTheme.typography.titleMedium)
                     }
                     val color = WeatherTheme.colors.accent
@@ -609,7 +628,7 @@ fun HomeScreen(
                                 SkyCondition.entries.firstOrNull {
                                     it.name == weather
                                 } ?: SkyCondition.UNKNOWN,
-                                Modifier.size(Dims.weatherSmall)
+                                Modifier.size(Dims.weeklyIcon)
                             )
                             Text(
                                 (if (day.wholeDayWeather != null) stringResource(R.string.whole_day) + " " else "") +

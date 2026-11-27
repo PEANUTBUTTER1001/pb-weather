@@ -1,10 +1,5 @@
 package com.pbweather.weather.ui.components
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,12 +38,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
@@ -151,7 +143,7 @@ import com.pbweather.weather.ui.theme.WeatherTheme
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
         OutlinedButton(
             onClick,
-            modifier.heightIn(min = Dims.action),
+            modifier.widthIn(min = Dims.hairline).heightIn(min = Dims.action),
             enabled,
             shape = RoundedCornerShape(Dims.small),
             colors = colors,
@@ -199,7 +191,9 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
 @Composable fun SheetHeader(title: String, onClose: () -> Unit) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(title, Modifier.weight(1f), style = WeatherTheme.type.sheetTitle)
-        IconButton(onClick = onClose) { AppIcon(UiIcon.CLOSE, stringResource(R.string.close)) }
+        IconButton(onClick = onClose, modifier = Modifier.size(Dims.field).offset(x = Dims.gridGap)) {
+            AppIcon(UiIcon.CLOSE, stringResource(R.string.close))
+        }
     }
 }
 
@@ -262,7 +256,13 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
                                 if (value.isEmpty() &&
                                     placeholder != null
                                 ) {
-                                    Text(placeholder, style = MaterialTheme.typography.bodyLarge, color = colors.tertiary, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                                    Text(
+                                        placeholder,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = colors.tertiary,
+                                        maxLines = 1,
+                                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                    )
                                 }
                                 inner()
                             }

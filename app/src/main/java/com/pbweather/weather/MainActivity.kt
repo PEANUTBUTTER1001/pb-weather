@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                     model::updatePermission, model::undo, model::theme, model::palette, model::font,
                     range = model::setRange,
                     favorite = model::favorite, deleteFavorite = model::deleteFavorite, primary = model::primary,
-                    clearCache = model::clearCache
+                    clearCache = model::clearCache, refreshWidget = model::refreshWidget, openWidget = model::openWidget
                 )
             }
             WeatherTheme(mode, palette, font) {

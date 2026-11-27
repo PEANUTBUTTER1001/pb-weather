@@ -48,6 +48,8 @@ import androidx.compose.ui.unit.Constraints
 import com.pbweather.weather.BuildConfig
 import com.pbweather.weather.R
 import com.pbweather.weather.domain.ForecastState
+import com.pbweather.weather.ui.components.AppIcon
+import com.pbweather.weather.ui.components.CompactOutlinedButton as OutlinedButton
 import com.pbweather.weather.ui.components.PrototypeConfirmDialog
 import com.pbweather.weather.ui.components.Rule
 import com.pbweather.weather.ui.components.UiIcon
@@ -309,7 +311,10 @@ fun SettingsScreen(
         WidgetPreviewSheet(primary?.name, data, onLocations = {
             preview = false
             onLocations()
-        }) { preview = false }
+        }, onClose = { preview = false }, onRefresh = actions.refreshWidget, failed = state.preferences.widgetError, onOpen = {
+            preview = false
+            actions.openWidget()
+        })
     }
 }
 

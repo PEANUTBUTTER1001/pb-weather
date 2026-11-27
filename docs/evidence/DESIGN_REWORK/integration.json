@@ -1,0 +1,26 @@
+{
+  "clientDate": "2026-11-27",
+  "unit": "integration",
+  "branch": "fix/design-integration",
+  "gateAttempts": 5,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS (post-calibration final full suite)",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 34,
+      "skipped": 1,
+      "failures": 0
+    }
+  },
+  "scope": "Design implementation and regression after matrix/widget calibration; visual review separate from automatic checks",
+  "limits": [
+    "Location invocation held by user; S25 Ultra user-owned; release excluded",
+    "Winter WSD input specification unresolved",
+    "No claim of pixel identity from test success"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read"
+}

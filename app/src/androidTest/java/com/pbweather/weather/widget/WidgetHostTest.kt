@@ -59,7 +59,8 @@ class WidgetHostTest {
                 host.startListening()
                 view = host.createView(context, id, manager.getAppWidgetInfo(id))
             }
-            compose.setContent { AndroidView(factory = { view }, modifier = Modifier.width(240.dp).height(200.dp)) }
+            val width = InstrumentationRegistry.getArguments().getString("widgetWidthDp")?.toIntOrNull()?.coerceIn(180, 400) ?: 240
+            compose.setContent { AndroidView(factory = { view }, modifier = Modifier.width(width.dp).height(200.dp)) }
             WeatherWidget().updateAll(context)
             compose.waitUntil(20000) { text(view).contains("대표 지역이 지정되지 않았습니다") }
             val region = Region("1100000000", "서울특별시", 60, 127, 37.5635694, 126.9800083, "108", "서울", 1.0)
@@ -72,9 +73,27 @@ class WidgetHostTest {
             if (context.resources.configuration.fontScale >= 1.8f) {
                 compose.runOnIdle {
                     assertVisibleTextFits(view, checkViewport = false)
+                    descendants(view).filterIsInstance<TextView>().filter {
+                        it.text.matches(Regex("-?[0-9]+[.][0-9]°"))
+                    }.forEach { value ->
+                        assertTrue("Temperature must remain on one line", value.layout.lineCount == 1)
+                        assertTrue(
+                            "Negative temperature needs the full numeric row",
+                            value.paint.measureText("-99.9°") <= value.width - value.compoundPaddingLeft - value.compoundPaddingRight
+                        )
+                    }
                     val list = descendants(view).filterIsInstance<ListView>().single()
                     assertTrue("Large font widget must allow scrolling", list.canScrollVertically(1))
-                    list.scrollListBy(view.height * 8)
+                }
+                for (step in 0 until 16) {
+                    val reached = compose.runOnIdle {
+                        descendants(view).filterIsInstance<TextView>().any {
+                            it.text.startsWith("마지막 성공") && fullyVisible(it)
+                        }
+                    }
+                    if (reached) break
+                    compose.runOnIdle { descendants(view).filterIsInstance<ListView>().single().scrollListBy(view.height / 2) }
+                    android.os.SystemClock.sleep(60)
                 }
                 compose.waitUntil(10000) {
                     descendants(view).filterIsInstance<TextView>().any {

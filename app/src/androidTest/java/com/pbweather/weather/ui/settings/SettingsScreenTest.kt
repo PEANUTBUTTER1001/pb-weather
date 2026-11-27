@@ -29,6 +29,33 @@ import org.junit.Test
 class SettingsScreenTest {
     @get:Rule val compose = createComposeRule()
 
+    @Test fun widgetPreviewRefreshesPrimaryAndOpensItsHome() {
+        val base = com.pbweather.weather.ui.design.PrototypeFixtures.state()
+        var refreshed = 0
+        var opened = 0
+        compose.setContent {
+            WeatherTheme {
+                SettingsScreen(
+                    base,
+                    13002342,
+                    false,
+                    base.data.forecast,
+                    WeatherActions(refreshWidget = { refreshed++ }, openWidget = { opened++ }),
+                    {},
+                    {},
+                    {}
+                )
+            }
+        }
+        compose.onNodeWithText("열기").performScrollTo().performClick()
+        compose.onNodeWithText("홈 화면 위젯").assertExists()
+        compose.onNodeWithText("새로고침").performScrollTo().performClick()
+        compose.runOnIdle { org.junit.Assert.assertEquals(1, refreshed) }
+        compose.onNodeWithTag("widget-preview-card").performScrollTo().performClick()
+        compose.runOnIdle { org.junit.Assert.assertEquals(1, opened) }
+        compose.onNodeWithText("홈 화면 위젯").assertDoesNotExist()
+    }
+
     @Test fun highContrastDisablesPaletteAndDeletionRequiresConfirmation() {
         val prefs = mutableStateOf(AppPreferences())
         var deleted = false
