@@ -204,6 +204,7 @@
     <string name="widget_no_primary">대표 지역이 지정되지 않았습니다</string>
     <string name="widget_choose_primary">대표 지역 선택 ›</string>
     <string name="widget_extremes">최고 %1$s° · 최저 %2$s°</string>
+    <string name="design_widget_summary">%1$s · 최고 %2$s° · 최저 %3$s°</string>
     <string name="widget_frequency">약 1시간마다 갱신 · 절전 시 지연 가능</string>
     <string name="widget_delayed">갱신 지연 · 마지막 성공 자료 유지</string>
     <string name="widget_loading">저장된 자료 없음 · 앱에서 조회</string>
@@ -312,4 +313,22 @@
         <item>서울</item><item>부산</item><item>대구</item><item>인천</item><item>광주</item><item>대전</item><item>울산</item><item>세종</item><item>경기</item><item>강원</item><item>충북</item><item>충남</item><item>전북</item><item>전남</item><item>경북</item><item>경남</item><item>제주</item>
     </string-array>
     <string name="design_using_current">사용 중</string>
+    <string name="design_previous">이전</string><string name="design_next">다음</string>
+    <string name="design_whole_weather">종일 날씨</string><string name="design_whole_probability">종일 강수확률</string>
+    <string name="design_calculation_result">계산 결과</string><string name="design_calculation_basis">적용 기준</string>
+    <string name="design_summer_basis">여름철 (5~9월)</string><string name="design_winter_basis">겨울철 (10~4월)</string>
+    <string name="design_observed_temperature">기온 (실황)</string><string name="design_apparent_celsius">%1$s℃</string>
+    <string name="design_hour_sheet_title">%1$s 예보</string>
+    <string name="design_day_sheet_title">%1$s 주간 예보</string>
+    <string name="design_apparent_title">계산 체감온도 상세</string>
+    <string name="design_data_kind">자료 성격</string><string name="design_data_status">상태</string><string name="design_data_reason">사유</string>
+    <string name="design_last_success">마지막 성공 자료</string><string name="design_data_ok">정상</string>
+    <string name="design_kind_now">현재 실황 관측</string><string name="design_kind_ultra">초단기 예보</string><string name="design_kind_short">단기 예보</string>
+    <string name="design_kind_land">중기 날씨 예보</string><string name="design_kind_temperature">중기 기온 예보</string><string name="design_kind_air">대기질 1시간 측정</string>
+    <string name="design_kind_history">일별 관측</string><string name="design_kind_extremes">최고·최저 보조 자료</string><string name="design_kind_stations">관측소 정보</string>
+    <string name="design_data_refreshing">갱신 중 · 마지막 자료 표시</string>
+    <string name="design_data_failed">자료 없음 · 조회 실패</string>
+    <string name="design_air_header">%1$s 측정소 · %2$s · µg/m³</string>
+    <string name="design_air_point">%1$s 대기질 지점 선택</string>
+    <string name="design_grade_basis">등급 기준</string><string name="design_original_time">원본 측정 시각</string>
 </resources>

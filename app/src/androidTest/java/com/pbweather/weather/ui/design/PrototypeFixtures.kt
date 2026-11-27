@@ -38,8 +38,16 @@ object PrototypeFixtures {
         kind,
         region.key,
         now - 120000,
-        issuedAt = now - 1200000,
-        observedAt = now - if (kind == DataKind.AIR) 4800000 else 1200000
+        issuedAt = when (kind) {
+            DataKind.MID_LAND, DataKind.MID_TA -> now - 30000000
+            DataKind.ULTRA, DataKind.SHORT -> now - 1200000
+            else -> null
+        },
+        observedAt = when (kind) {
+            DataKind.NOWCAST -> now - 1200000
+            DataKind.AIR -> now - 4800000
+            else -> null
+        }
     )
     fun favoriteForecasts(): Map<String, ForecastState> {
         val base = state().data.forecast
@@ -500,7 +508,17 @@ object PrototypeFixtures {
                 mapOf("temperature" to meta(DataKind.SHORT))
             ),
             ForecastHour(first + 48 * 3600000L, 7.2, 4, 0, 30, Precipitation("강수 없음", PrecipitationKind.NONE))
-        )
+        ).map { hour ->
+            hour.copy(
+                origins = hour.origins.mapValues { (_, source) ->
+                    source.copy(
+                        validFrom = hour.at,
+                        validTo =
+                        hour.at + 3600000
+                    )
+                }
+            )
+        }
         val days = listOf(
             DailyForecast(
                 "2026-11-24",
@@ -623,7 +641,20 @@ object PrototypeFixtures {
                 wholeDayWeather = "RAIN",
                 wholeDayProbability = 60
             )
-        )
+        ).mapIndexed { index, day ->
+            val from = java.time.LocalDate.parse(
+                day.date
+            ).atStartOfDay(com.pbweather.weather.core.time.ReleaseTimeCalculator.KST).toInstant().toEpochMilli()
+            val temperature = meta(if (index <= 2) DataKind.SHORT else DataKind.MID_TA).copy(validFrom = from, validTo = from + 86400000)
+            val weather = meta(if (index <= 2) DataKind.SHORT else DataKind.MID_LAND).copy(validFrom = from, validTo = from + 86400000)
+            day.copy(
+                origins = mapOf(
+                    "minimum" to temperature,
+                    "maximum" to temperature,
+                    (if (day.wholeDayWeather != null) "wholeDay" else "morning") to weather
+                )
+            )
+        }
         val observations = listOf(
             DailyObservation("108", "2026-11-14", 10.2, 14.5, 5.8, 13.4, 3.1, 66.0, meta(DataKind.HISTORY)),
             DailyObservation("108", "2026-11-15", 10.1, 14.4, 5.7, 0.0, 1.7, 59.0, meta(DataKind.HISTORY)),
@@ -637,18 +668,33 @@ object PrototypeFixtures {
             DailyObservation("108", "2026-11-23", 7.3, 11.7, 3.0, 0.0, 2.6, 63.0, meta(DataKind.HISTORY))
         )
         val air = AirQualityData(
-            "종로구 측정소",
-            (0..23).map { index ->
-                AirMeasurement(
-                    "종로구 측정소",
-                    first - (24 - index) * 3600000L,
-                    "2026-11-24 13:00",
-                    34.0,
-                    17.0,
-                    2,
-                    2
-                )
-            }
+            "종로구",
+            listOf(
+                AirMeasurement("종로구", 1795410000000L, "2026-11-23 14:00", 31.0, 15.0, 2, 1),
+                AirMeasurement("종로구", 1795413600000L, "2026-11-23 15:00", 36.0, 18.0, 2, 2),
+                AirMeasurement("종로구", 1795417200000L, "2026-11-23 16:00", 41.0, 21.0, 2, 2),
+                AirMeasurement("종로구", 1795420800000L, "2026-11-23 17:00", 44.0, 22.0, 2, 2),
+                AirMeasurement("종로구", 1795424400000L, "2026-11-23 18:00", 45.0, 23.0, 2, 2),
+                AirMeasurement("종로구", 1795428000000L, "2026-11-23 19:00", 44.0, 22.0, 2, 2),
+                AirMeasurement("종로구", 1795431600000L, "2026-11-23 20:00", 41.0, 21.0, 2, 2),
+                AirMeasurement("종로구", 1795435200000L, "2026-11-23 21:00", 37.0, 18.0, 2, 2),
+                AirMeasurement("종로구", 1795438800000L, "2026-11-23 22:00", 32.0, 16.0, 2, 2),
+                AirMeasurement("종로구", 1795442400000L, "2026-11-23 23:00", 27.0, 13.0, 1, 1),
+                AirMeasurement("종로구", 1795446000000L, "2026-11-24 00:00", 24.0, 12.0, 1, 1),
+                AirMeasurement("종로구", 1795449600000L, "2026-11-24 01:00", 23.0, 11.0, 1, 1),
+                AirMeasurement("종로구", 1795453200000L, "2026-11-24 02:00", 24.0, 12.0, 1, 1),
+                AirMeasurement("종로구", 1795456800000L, "2026-11-24 03:00", 27.0, 13.0, 1, 1),
+                AirMeasurement("종로구", 1795460400000L, "2026-11-24 04:00", 31.0, 16.0, 2, 2),
+                AirMeasurement("종로구", 1795464000000L, "2026-11-24 05:00", 36.0, 18.0, 2, 2),
+                AirMeasurement("종로구", 1795467600000L, "2026-11-24 06:00", 41.0, 21.0, 2, 2),
+                AirMeasurement("종로구", 1795471200000L, "2026-11-24 07:00", 44.0, 22.0, 2, 2),
+                AirMeasurement("종로구", 1795474800000L, "2026-11-24 08:00", 45.0, 23.0, 2, 2),
+                AirMeasurement("종로구", 1795478400000L, "2026-11-24 09:00", 44.0, 22.0, 2, 2),
+                AirMeasurement("종로구", 1795482000000L, "2026-11-24 10:00", 41.0, 21.0, 2, 2),
+                AirMeasurement("종로구", 1795485600000L, "2026-11-24 11:00", 37.0, 18.0, 2, 2),
+                AirMeasurement("종로구", 1795489200000L, "2026-11-24 12:00", 32.0, 16.0, 2, 2),
+                AirMeasurement("종로구", 1795492800000L, "2026-11-24 13:00", 34.0, 17.0, 2, 2)
+            )
         )
         return WeatherUiState(
             preferences = AppPreferences(region, favorites, region.id),

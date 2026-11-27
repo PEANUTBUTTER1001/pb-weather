@@ -6,23 +6,31 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -41,12 +49,16 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.pbweather.weather.R
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.ThemeMode
@@ -90,7 +102,7 @@ import com.pbweather.weather.ui.theme.WeatherTheme
 
     @Composable fun actions() {
         PrimaryButton(onRetry) { Text(stringResource(R.string.retry)) }
-        CompactOutlinedButton(onSelect) { Text(stringResource(R.string.select_region)) }
+        SecondaryButton(onSelect) { Text(stringResource(R.string.select_region)) }
     }
     Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Dims.gutter, vertical = Dims.weatherSmall)) {
         Surface(
@@ -191,15 +203,23 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
     }
 }
 
-@Composable fun KeyValueGrid(values: List<Pair<String, String>>, expanded: Boolean) {
+@Composable fun KeyValueGrid(values: List<Pair<String, String>>, expanded: Boolean, tones: List<Color?> = emptyList()) {
     Column(verticalArrangement = Arrangement.spacedBy(Dims.gridGap)) {
-        values.chunked(if (expanded) 1 else 2).forEach { row ->
+        values.chunked(if (expanded) 1 else 2).forEachIndexed { rowIndex, row ->
             Row(horizontalArrangement = Arrangement.spacedBy(Dims.gridGap)) {
-                row.forEach { (label, value) ->
+                row.forEachIndexed { columnIndex, (label, value) ->
                     Surface(Modifier.weight(1f), shape = RoundedCornerShape(Dims.small), color = WeatherTheme.colors.tonal) {
-                        Column(Modifier.padding(horizontal = Dims.medium, vertical = Dims.gridGap)) {
-                            Text(label, style = MaterialTheme.typography.bodySmall, color = WeatherTheme.colors.secondary)
-                            Text(value, style = MaterialTheme.typography.titleMedium)
+                        Column(
+                            Modifier.padding(horizontal = Dims.medium, vertical = Dims.gridGap),
+                            verticalArrangement = Arrangement.spacedBy(Dims.segmentGap)
+                        ) {
+                            Text(label, style = WeatherTheme.type.kvLabel, color = WeatherTheme.colors.secondary)
+                            Text(
+                                value,
+                                style = WeatherTheme.type.kvValue,
+                                color =
+                                tones.getOrNull(rowIndex * (if (expanded) 1 else 2) + columnIndex) ?: WeatherTheme.colors.text
+                            )
                         }
                     }
                 }
@@ -254,3 +274,120 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
         )
     }
 }
+
+@Composable
+fun SecondaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true, content: @Composable RowScope.() -> Unit) {
+    OutlinedButton(
+        onClick,
+        modifier.heightIn(min = Dims.field),
+        enabled = enabled,
+        shape = RoundedCornerShape(Dims.pill),
+        border = BorderStroke(Dims.hairline, WeatherTheme.colors.borderStrong),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = WeatherTheme.colors.text),
+        contentPadding = PaddingValues(horizontal = Dims.gutter, vertical = Dims.small),
+        content = content
+    )
+}
+
+@Composable fun PrototypeConfirmDialog(
+    title: String,
+    body: String,
+    confirmLabel: String,
+    cancelLabel: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    destructive: Boolean = false
+) {
+    androidx.compose.ui.window.Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier.padding(horizontal = Dims.gutter).widthIn(max = Dims.dialogWidth).fillMaxWidth(),
+            shape = RoundedCornerShape(Dims.sheetRadius),
+            color = WeatherTheme.colors.surface,
+            border = BorderStroke(
+                if (WeatherTheme.mode == ThemeMode.HIGH_CONTRAST) Dims.strong else Dims.hairline,
+                WeatherTheme.colors.border
+            )
+        ) {
+            Column(
+                Modifier.heightIn(max = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp.dp * .88f)
+                    .verticalScroll(rememberScrollState()).padding(Dims.gutter),
+                verticalArrangement = Arrangement.spacedBy(Dims.medium)
+            ) {
+                Text(title, style = WeatherTheme.type.sheetTitle)
+                Text(body, style = MaterialTheme.typography.bodyLarge, color = WeatherTheme.colors.secondary)
+                androidx.compose.foundation.layout.FlowRow(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.small, Alignment.End),
+                    verticalArrangement = Arrangement.spacedBy(Dims.small)
+                ) {
+                    SecondaryButton(onDismiss) { Text(cancelLabel) }
+                    if (destructive) {
+                        Button(
+                            onClick = onConfirm,
+                            modifier = Modifier.heightIn(min = Dims.field),
+                            shape = RoundedCornerShape(Dims.pill),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = WeatherTheme.colors.destructive,
+                                contentColor = WeatherTheme.colors.onAccent
+                            )
+                        ) {
+                            Text(confirmLabel)
+                        }
+                    } else {
+                        PrimaryButton(onConfirm) { Text(confirmLabel) }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable fun MetaRow(label: String, value: String, tone: Color = WeatherTheme.colors.text) {
+    val style = WeatherTheme.type.metaRow
+    val secondary = WeatherTheme.colors.secondary
+    val primary = tone
+    Column {
+        Rule()
+        SubcomposeLayout(Modifier.fillMaxWidth().padding(vertical = Dims.small)) { constraints ->
+            val key = subcompose("key") {
+                Text(label, style = style, color = secondary)
+            }.single().measure(Constraints(maxWidth = constraints.maxWidth))
+            val data = subcompose("value") {
+                Text(value, style = style, color = primary)
+            }.single().measure(Constraints(maxWidth = constraints.maxWidth))
+            val inline = key.width + Dims.gridGap.roundToPx() + data.width <= constraints.maxWidth
+            val height = if (inline) maxOf(key.height, data.height) else key.height + Dims.segmentGap.roundToPx() + data.height
+            layout(constraints.maxWidth, height) {
+                key.placeRelative(0, if (inline) (height - key.height) / 2 else 0)
+                data.placeRelative(
+                    if (inline) constraints.maxWidth - data.width else 0,
+                    if (inline) {
+                        (height - data.height) / 2
+                    } else {
+                        key.height +
+                            Dims.segmentGap.roundToPx()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable fun prototypeSheetModifier(): Modifier = Modifier
+    .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
+    .padding(start = Dims.medium, end = Dims.medium, bottom = Dims.medium)
+
+@Composable fun prototypeSheetBorder(): Modifier = Modifier.border(
+    if (WeatherTheme.mode ==
+        ThemeMode.HIGH_CONTRAST
+    ) {
+        Dims.strong
+    } else {
+        Dims.hairline
+    },
+    WeatherTheme.colors.border,
+    RoundedCornerShape(Dims.sheetRadius)
+)

@@ -49,12 +49,12 @@ data class WeatherColors(
         Color(0xFF303644) -> Color(0xFF5A6376)
         else -> border
     }
-    val sunFill: Color get() = Color(0xFFF59E0B)
     val destructive: Color get() = when (text) {
         Color.White -> Color(0xFFFF6B6B)
         Color(0xFFF1F5F9) -> Color(0xFFF87171)
         else -> Color(0xFFB91C1C)
     }
+    val sunFill: Color get() = Color(0xFFF59E0B)
     val sunIcon: Color get() = when (text) {
         Color.White -> Color(0xFFFFE600)
         Color(0xFFF1F5F9) -> Color(0xFFFBBF24)
@@ -65,6 +65,7 @@ data class WeatherColors(
         Color(0xFFF1F5F9) -> Color(0xFFA5B4FC)
         else -> Color(0xFF4F46E5)
     }
+    val widgetWallpaper: List<Color> get() = listOf(Color(0xFF274472), Color(0xFF41729F), Color(0xFF5885AF))
     val tonalStrong: Color get() = when (tonal) {
         Color(0xFFE7EEF9) -> Color(0xFFDAE4F5)
         Color(0xFFEFEAE1) -> Color(0xFFE4DCCD)
@@ -124,6 +125,7 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 object Dims {
     val chip = 40.dp
     val badgeInset = 6.dp
+    val dialogWidth = 340.dp
     val control = 34.dp
     val emptyPadding = 28.dp
     val skeletonTemperatureWidth = 136.dp
@@ -164,6 +166,11 @@ object Dims {
     val historyHighDot = 4.2.dp
     val historyLowDot = 3.6.dp
     val chart = 210.dp
+    val trendMinimumWidth = 320.dp
+    val trendLeft = 34.dp
+    val trendRight = 14.dp
+    val trendTop = 18.dp
+    val trendBottom = 28.dp
     val trend = 184.dp
     val spline = 44.dp
     val symbol = 66.dp
@@ -317,6 +324,23 @@ data class WeatherTypography(
         fontWeight = FontWeight.SemiBold
     )
     val caption: TextStyle get() = meta.copy(fontSize = meta.fontSize * (10.2f / 11.4f), lineHeight = meta.lineHeight * (10.2f / 11.4f))
+    val chartAxis: TextStyle get() = meta.copy(fontSize = 10.sp, lineHeight = 12.sp, fontWeight = FontWeight.Normal)
+    val kvLabel: TextStyle get() = material.bodySmall.copy(
+        fontSize = material.bodySmall.fontSize * (11.25f / 11.7f),
+        lineHeight =
+        material.bodySmall.fontSize * (11.25f / 11.7f) * 1.5f
+    )
+    val kvValue: TextStyle get() = material.titleMedium.copy(
+        fontSize = material.titleMedium.fontSize * (14.4f / 14.3f),
+        lineHeight =
+        material.titleMedium.fontSize * (14.4f / 14.3f) * 1.5f
+    )
+    val metaRow: TextStyle get() = material.bodyLarge.copy(
+        fontSize = material.bodyLarge.fontSize * (12.45f / 13.2f),
+        lineHeight =
+        material.bodyLarge.fontSize * (12.45f / 13.2f) * 1.5f,
+        fontWeight = FontWeight.SemiBold
+    )
 }
 private val LocalWeatherType = staticCompositionLocalOf { weatherTypography(FontSize.NORMAL) }
 private val LocalWeatherMode = staticCompositionLocalOf { ThemeMode.LIGHT }

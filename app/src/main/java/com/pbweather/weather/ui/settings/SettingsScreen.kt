@@ -48,8 +48,7 @@ import androidx.compose.ui.unit.Constraints
 import com.pbweather.weather.BuildConfig
 import com.pbweather.weather.R
 import com.pbweather.weather.domain.ForecastState
-import com.pbweather.weather.ui.components.AppIcon
-import com.pbweather.weather.ui.components.CompactOutlinedButton as OutlinedButton
+import com.pbweather.weather.ui.components.PrototypeConfirmDialog
 import com.pbweather.weather.ui.components.Rule
 import com.pbweather.weather.ui.components.UiIcon
 import com.pbweather.weather.ui.components.temperature
@@ -292,27 +291,17 @@ fun SettingsScreen(
         }
     }
     if (confirmDelete) {
-        AlertDialog(
-            shape = RoundedCornerShape(Dims.sheetRadius),
-            containerColor = WeatherTheme.colors.surface,
-            onDismissRequest = { confirmDelete = false },
-            title = { Text(stringResource(R.string.clear_weather_title)) },
-            text = { Text(stringResource(R.string.clear_weather_explanation)) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        confirmDelete = false
-                        actions.clearCache()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = WeatherTheme.colors.destructive,
-                        contentColor = WeatherTheme.colors.onAccent
-                    )
-                ) {
-                    Text(stringResource(R.string.delete))
-                }
+        PrototypeConfirmDialog(
+            stringResource(R.string.clear_weather_title),
+            stringResource(R.string.clear_weather_explanation),
+            stringResource(R.string.delete),
+            stringResource(R.string.cancel),
+            onConfirm = {
+                confirmDelete = false
+                actions.clearCache()
             },
-            dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text(stringResource(R.string.cancel)) } }
+            onDismiss = { confirmDelete = false },
+            destructive = true
         )
     }
     if (preview) {

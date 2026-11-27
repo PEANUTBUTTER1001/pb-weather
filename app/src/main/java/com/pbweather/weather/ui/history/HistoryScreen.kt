@@ -61,6 +61,8 @@ import com.pbweather.weather.ui.components.SheetHeader
 import com.pbweather.weather.ui.components.SourceInfo
 import com.pbweather.weather.ui.components.StatusBlock
 import com.pbweather.weather.ui.components.number
+import com.pbweather.weather.ui.components.prototypeSheetBorder
+import com.pbweather.weather.ui.components.prototypeSheetModifier
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.navigation.WeatherUiState
 import com.pbweather.weather.ui.theme.Dims
@@ -545,18 +547,17 @@ fun HistoryScreen(state: WeatherUiState, onRange: (DateRange) -> Unit, onRefresh
 @Composable
 private fun HistoryDaySheet(date: String, day: DailyObservation?, state: WeatherUiState, onClose: () -> Unit) {
     ModalBottomSheet(
+        contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
         onDismissRequest = onClose,
         containerColor = WeatherTheme.colors.surface,
         scrimColor = modalScrim(WeatherTheme.mode),
+        modifier = prototypeSheetModifier(),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(Dims.sheetRadius),
         dragHandle = null,
-        modifier = Modifier.padding(horizontal = Dims.medium),
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            Modifier.fillMaxWidth().heightIn(
-                max = LocalConfiguration.current.screenHeightDp.dp * .88f
-            ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
+            prototypeSheetBorder().fillMaxWidth().heightIn(max = LocalConfiguration.current.screenHeightDp.dp * .88f).verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
             SheetHeader(date, onClose)
