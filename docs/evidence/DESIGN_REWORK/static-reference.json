@@ -1,0 +1,20 @@
+{
+  "source": "outputs\\pb-weather-prototype.html",
+  "sha256": "2091370997e80f5f5003453b353d272534e8871bd8a508120a364d6ff2726e2f",
+  "frame": {
+    "width": 375,
+    "height": 833,
+    "unit": "CSS px; Android capture normalized by density"
+  },
+  "changes": [
+    "simulator/device chrome only",
+    "built-in A lightweight static gradient mode selected per 2026-11-27 user instruction",
+    "native browser scrollbar gutter hidden"
+  ],
+  "unmodified": [
+    "source file",
+    "app component CSS",
+    "prototype data/formatting rules",
+    "event handlers"
+  ]
+}

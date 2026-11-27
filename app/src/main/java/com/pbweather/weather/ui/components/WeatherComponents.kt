@@ -1,6 +1,7 @@
 package com.pbweather.weather.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -36,7 +37,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 fun number(value: Double?, digits: Int = 1): String? = value?.takeIf { it.isFinite() }?.let {
-    String.format(Locale.KOREA, "%.${digits}f", if (kotlin.math.abs(it) < 0.00001) 0.0 else it)
+    val rounded = java.math.BigDecimal.valueOf(it).setScale(digits, java.math.RoundingMode.HALF_UP)
+    (if (rounded.signum() == 0) rounded.abs() else rounded).toPlainString()
 }
 fun timeLabel(at: Long?): String? = at?.let {
     Instant.ofEpochMilli(it).atZone(ReleaseTimeCalculator.KST).format(DateTimeFormatter.ofPattern("HH:mm"))
@@ -91,15 +93,42 @@ fun dateLabel(date: String): String = runCatching {
     }
 )
 
-@Composable fun SectionCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Surface(modifier.fillMaxWidth(), shape = RoundedCornerShape(Dims.radius), color = WeatherTheme.colors.surface) {
-        Column(Modifier.padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium), content = content)
+@Composable fun SectionCard(
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(Dims.radius),
+    gap: androidx.compose.ui.unit.Dp = Dims.medium,
+    verticalInset: androidx.compose.ui.unit.Dp = Dims.cardInset,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Surface(
+        modifier.fillMaxWidth(),
+        shape = shape,
+        color = WeatherTheme.colors.surface,
+        border = BorderStroke(
+            if (WeatherTheme.mode ==
+                com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST
+            ) {
+                Dims.strong
+            } else {
+                Dims.hairline
+            },
+            WeatherTheme.colors.border
+        )
+    ) {
+        Column(
+            Modifier.padding(horizontal = Dims.gutter, vertical = verticalInset),
+            verticalArrangement = Arrangement.spacedBy(gap),
+            content = content
+        )
     }
 }
 
-@Composable fun SectionTitle(title: String, action: (@Composable () -> Unit)? = null) {
+@Composable fun SectionTitle(title: String, caption: (@Composable () -> Unit)? = null, action: (@Composable () -> Unit)? = null) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Dims.tiny)) {
+            Text(title, style = MaterialTheme.typography.titleMedium)
+            caption?.invoke()
+        }
         action?.invoke()
     }
 }
@@ -124,11 +153,16 @@ fun dateLabel(date: String): String = runCatching {
         resource.isStale -> stringResource(R.string.stale)
         else -> return
     }
-    Surface(color = WeatherTheme.colors.tonal, shape = RoundedCornerShape(Dims.small)) {
-        Column(Modifier.fillMaxWidth().padding(Dims.medium)) {
-            Text(text, color = if (resource.error != null) WeatherTheme.colors.error else WeatherTheme.colors.secondary)
+    val tokens = com.pbweather.weather.ui.theme.statusColors(WeatherTheme.mode, resource.error != null && !resource.isOffline)
+    Surface(color = tokens.background, shape = RoundedCornerShape(Dims.groupRadius), border = BorderStroke(Dims.hairline, tokens.border)) {
+        Row(
+            Modifier.fillMaxWidth().padding(Dims.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dims.small)
+        ) {
+            Text(text, Modifier.weight(1f), color = tokens.foreground, style = MaterialTheme.typography.bodySmall)
             if (onRetry != null && resource.error != DomainError.QUOTA && !resource.isRefreshing) {
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.retry)) }
+                CompactOutlinedButton(onClick = onRetry) { Text(stringResource(R.string.retry)) }
             }
         }
     }
@@ -143,30 +177,34 @@ fun dateLabel(date: String): String = runCatching {
     }
     val received = meta?.receivedAt
     val minutes = received?.let { ((now - it).coerceAtLeast(0) / 60000).toInt() }
-    val age = when {
-        minutes == null -> ""
-        minutes == 0 -> stringResource(R.string.received_now)
-        minutes < 60 -> stringResource(R.string.received_minutes, minutes)
-        else -> stringResource(R.string.received_hours, minutes / 60)
+    val age = if (meta?.kind != DataKind.NOWCAST) {
+        ""
+    } else {
+        when {
+            minutes == null -> ""
+            minutes == 0 -> stringResource(R.string.received_now)
+            minutes < 60 -> stringResource(R.string.received_minutes, minutes)
+            else -> stringResource(R.string.received_hours, minutes / 60)
+        }
     }
     val text = listOf(label, age, if (resource.isStale) stringResource(R.string.stale) else "")
         .filter { it.isNotEmpty() }.joinToString(" · ") + " ⓘ"
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth().heightIn(min = Dims.touch),
-        contentPadding = PaddingValues(Dims.zero)
-    ) {
-        Text(text, Modifier.fillMaxWidth(), style = WeatherTheme.type.meta, color = WeatherTheme.colors.secondary)
-    }
+    Text(
+        text,
+        Modifier.fillMaxWidth().heightIn(min = if (meta?.kind == DataKind.NOWCAST) Dims.metaTouch else Dims.zero)
+            .clickable(onClick = onClick).padding(vertical = if (meta?.kind == DataKind.NOWCAST) Dims.segmentPad else Dims.zero),
+        style = WeatherTheme.type.meta,
+        color = WeatherTheme.colors.secondary
+    )
 }
 
 @Composable fun ChoiceChip(text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Surface(
         onClick = onClick,
-        modifier = modifier.heightIn(min = Dims.touch),
+        modifier = modifier.heightIn(min = Dims.chip),
         shape = RoundedCornerShape(Dims.pill),
-        color = if (selected) WeatherTheme.colors.accentSoft else WeatherTheme.colors.surface,
-        contentColor = if (selected) WeatherTheme.colors.accentOnSoft else WeatherTheme.colors.text,
+        color = if (selected) WeatherTheme.colors.accent else WeatherTheme.colors.tonal,
+        contentColor = if (selected) WeatherTheme.colors.onAccent else WeatherTheme.colors.text,
         border = BorderStroke(Dims.hairline, if (selected) WeatherTheme.colors.accent else WeatherTheme.colors.border)
     ) { Text(text, Modifier.padding(horizontal = Dims.medium, vertical = Dims.small), style = MaterialTheme.typography.labelLarge) }
 }

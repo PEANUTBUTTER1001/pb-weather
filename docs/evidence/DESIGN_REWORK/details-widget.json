@@ -1,0 +1,73 @@
+{
+  "clientDate": "2026-11-27",
+  "unit": "details-widget",
+  "branch": "fix/design-details-widget",
+  "gateAttempts": 7,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 30,
+      "skipped": 1,
+      "failures": 0
+    }
+  },
+  "scope": "DR-009 details/documents/confirmation and DR-010 widget; state/provenance/permissions preserved",
+  "limits": [
+    "Location invocation held by user; S25 Ultra user-owned; release excluded",
+    "Winter WSD input specification unresolved",
+    "No claim of pixel identity from test success",
+    "Widget 180dp resize and Samsung launcher behavior require user-owned device validation"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read",
+  "status": "IMPLEMENTED: automatic checks PASS; final cross-branch source comparison pending integration",
+  "verificationRounds": [
+    {
+      "round": 1,
+      "result": "Full gate PASS; sheet border defect found in visual inspection"
+    },
+    {
+      "round": 2,
+      "result": "Full gate PASS"
+    },
+    {
+      "round": 3,
+      "result": "Code gates and 60 modal captures/close PASS; widget 200% clipped"
+    },
+    {
+      "round": 4,
+      "result": "ktlint long line FAIL; Android NOT_RUN"
+    },
+    {
+      "round": 5,
+      "result": "Code gates and 60 modal captures/close PASS; widget 200% clipped"
+    },
+    {
+      "round": 6,
+      "result": "User approved extra 3 rounds; code gates/unit31 and actual 240x200dp/font200 widget scroll-to-success-time PASS"
+    },
+    {
+      "round": 7,
+      "result": "Normal-font full gate PASS; 60 modal captures across light/dark/high-contrast and close PASS"
+    }
+  ],
+  "extraVerification": {
+    "authorization": "2026-11-27 user: widget item additional diagnostics/verification up to 3 rounds",
+    "used": 2,
+    "remaining": 1
+  },
+  "widgetAdaptation": {
+    "minimumHostDp": [
+      240,
+      200
+    ],
+    "fontScale": 2.0,
+    "layout": "Full-size original text in vertical Glance collection; scroll reaches last-success timestamp",
+    "dependencyChange": false,
+    "source": "https://developer.android.com/develop/ui/compose/glance/build-ui#use-scrollable-layouts"
+  }
+}

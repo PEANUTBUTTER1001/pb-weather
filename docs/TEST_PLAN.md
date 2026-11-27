@@ -6,7 +6,7 @@
 | --- | --- |
 | 문서 역할 | 요구사항 검증 절차·기대 결과·실제 증거 SSOT |
 | 작성일 | 2026-11-16 |
-| 상태 | 계획 수립, 실행 이력 없음(모든 TEST `NOT_RUN`) |
+| 상태 | 2026-11-26 자동·에뮬레이터 검증 기록 반영, 전체·부분·미실행 구분 |
 | 근거 | [ENHANCEMENT_GUIDELINE.md](ENHANCEMENT_GUIDELINE.md) 11절, [REQUIREMENTS.md](REQUIREMENTS.md) 16절 추적표, [ARCHITECTURE.md](ARCHITECTURE.md) 14절 오류 처리 |
 
 ## 2. 테스트 목적과 범위
@@ -38,28 +38,28 @@
 
 | TEST | 요구사항 | 유형 | 케이스 | 상태 |
 | --- | --- | --- | --- | --- |
-| TEST-001 | FR-001, FR-002 | 자동 | boundary | NOT_RUN |
-| TEST-002 | FR-001 | 자동 | normal | NOT_RUN |
-| TEST-003 | FR-002 | 자동 | normal | NOT_RUN |
-| TEST-004 | FR-003 | 자동 | boundary | NOT_RUN |
-| TEST-005 | FR-004, DATA-002 | 자동 | failure | NOT_RUN |
-| TEST-006 | FR-005 | 자동 | boundary | NOT_RUN |
-| TEST-007 | FR-006 | 자동 | boundary | NOT_RUN |
-| TEST-008 | FR-007 | 자동 | normal | NOT_RUN |
-| TEST-009 | FR-007, SEC-001 | 수동 | failure | NOT_RUN |
-| TEST-010 | FR-008 | 자동 | boundary | NOT_RUN |
-| TEST-011 | FR-009, NFR-PERF-002 | 수동 | normal | NOT_RUN |
-| TEST-012 | FR-010, DATA-001 | 자동 | failure | NOT_RUN |
-| TEST-013 | NFR-A11Y-001 | 수동 | normal | NOT_RUN |
-| TEST-014 | BIZ-001 | 자동 | normal | NOT_RUN |
-| TEST-015 | BIZ-002 | 수동 | normal | NOT_RUN |
-| TEST-016 | FR-001, NFR-PERF-001 | 자동 | failure | NOT_RUN |
-| TEST-PERF-001 | NFR-PERF-001 | 수동 | normal | NOT_RUN |
-| TEST-PERF-002 | NFR-PERF-002 | 수동 | boundary | NOT_RUN |
-| TEST-DATA-001 | DATA-001 | 자동 | boundary | NOT_RUN |
-| TEST-DATA-002 | DATA-002 | 수동 | normal | NOT_RUN |
-| TEST-SEC-001 | SEC-001 | 자동 | normal | NOT_RUN |
-| TEST-SEC-002 | SEC-002 | 자동 | normal | NOT_RUN |
+| TEST-001 | FR-001, FR-002 | 자동 | boundary | PASS |
+| TEST-002 | FR-001 | 자동 | normal | PASS |
+| TEST-003 | FR-002 | 자동 | normal | PASS |
+| TEST-004 | FR-003 | 자동 | boundary | PASS |
+| TEST-005 | FR-004, DATA-002 | 자동 | failure | PASS |
+| TEST-006 | FR-005 | 자동 | boundary | PARTIAL (윤년 경계 별도 미검증) |
+| TEST-007 | FR-006 | 자동 | boundary | PASS |
+| TEST-008 | FR-007 | 자동 | normal | PARTIAL (ASSET-001) |
+| TEST-009 | FR-007, SEC-001 | 수동 | failure | PARTIAL (위치 호출 보류) |
+| TEST-010 | FR-008 | 자동 | boundary | PASS |
+| TEST-011 | FR-009, NFR-PERF-002 | 수동 | normal | PARTIAL (호스트·작업 검증, S25 미실행) |
+| TEST-012 | FR-010, DATA-001 | 자동 | failure | PARTIAL (캐시 자동 검증, 오프라인 화면 미검증) |
+| TEST-013 | NFR-A11Y-001 | 수동 | normal | PARTIAL (TalkBack·실기기 미실행) |
+| TEST-014 | BIZ-001 | 자동 | normal | PARTIAL (의존성 정적 확인·탭 이동, 전 정보 탭 수 미계측) |
+| TEST-015 | BIZ-002 | 수동 | normal | NOT_RUN (출시 제외) |
+| TEST-016 | FR-001, NFR-PERF-001 | 자동 | failure | PARTIAL (오류 분류·공유 검증, 모든 재시도 시나리오 미검증) |
+| TEST-PERF-001 | NFR-PERF-001 | 수동 | normal | FAIL (debug 콜드 p90 4867ms > 1000ms) |
+| TEST-PERF-002 | NFR-PERF-002 | 수동 | boundary | PASS (UID 최대 376225B) |
+| TEST-DATA-001 | DATA-001 | 자동 | boundary | PASS |
+| TEST-DATA-002 | DATA-002 | 수동 | normal | PARTIAL (화면 증거, S25 미실행) |
+| TEST-SEC-001 | SEC-001 | 자동 | normal | PARTIAL (COARSE 확인, 실사용 로그·DB 미검증) |
+| TEST-SEC-002 | SEC-002 | 자동 | normal | PARTIAL (소스 패턴 검사·R8, 실제 키 대조 미실행) |
 
 ## 6. 정상 시나리오
 
@@ -143,7 +143,7 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 | TEST-013 | 접근성 · 히어로 C안 폴백 · 미세먼지 1안 200% 리플로 | 체크리스트 + 스크린샷 |
 | TEST-015 | 내부 테스트 업로드·설치 | Play Console 화면 캡처 |
 | TEST-PERF-001 | 콜드 스타트 10회 시간 측정 | 측정 표(ms) |
-| TEST-PERF-002 | 전송량 측정 | OkHttp 로그 합계 |
+| TEST-PERF-002 | 전송량 측정 | HTTP 본문 합계 + UID RX/TX 차이(JSON 수치만 기록, URL·본문 로깅 금지) |
 | TEST-DATA-002 | 출처·안내 문구(히어로 통합 미세먼지 띠의 측정소·측정 시각·확정 전 안내 포함) | 스크린샷 |
 
 ## 16. 테스트 품질 게이트
@@ -157,10 +157,10 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 
 | TEST | 상태 | 실행일 | 실행자 | 증거 |
 | --- | --- | --- | --- | --- |
-| TEST-001 ~ TEST-016 | NOT_RUN | — | — | — |
-| TEST-PERF-001, TEST-PERF-002 | NOT_RUN | — | — | — |
-| TEST-DATA-001, TEST-DATA-002 | NOT_RUN | — | — | — |
-| TEST-SEC-001, TEST-SEC-002 | NOT_RUN | — | — | — |
+| TEST-001 ~ TEST-016 | 5절 항목별 PASS/PARTIAL, TEST-015 NOT_RUN | 2026-11-27 | Agent(에뮬레이터) | TASK-004~013*.json, TASK-009-013-integration.json, DESIGN_REWORK/integration.json |
+| TEST-PERF-001, TEST-PERF-002 | 콜드 FAIL(4653ms, debug 에뮬레이터) / 갱신·전송 PASS | 2026-11-27 | Agent(에뮬레이터) | INTEGRATION/cold-start.json, refresh-metrics.json |
+| TEST-DATA-001, TEST-DATA-002 | PASS / PARTIAL | 2026-11-26 | Agent(에뮬레이터) | TASK-003·006·013*.json, INTEGRATION/*.png |
+| TEST-SEC-001, TEST-SEC-002 | PARTIAL (정적 검사 PASS, 실사용 로그/DB·키 직접 대조 미실행) | 2026-11-27 | Agent | TASK-009-013-integration.json, DESIGN_REWORK/integration.json |
 
 - 결과는 실제 실행 증거 경로로 기록. 과거 생성 Run과 현재 계약이 다르면 현재 명세 기준으로 연결, MCP 기록 가능 여부는 별도 확인.
 
@@ -174,5 +174,19 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - TASK-004: TEST-001 발표 경계, TEST-002 실황, TEST-003 단기/초단기 실제 48시간, TEST-016 캐시 추가 전송 0·동시 실패 공유 하위 기준 PASS. 전체 성능 p90·UI·오프라인 화면은 미실행. 증거 docs/evidence/TASK-004.json.
 
 - TEST-004 PASS(실제 제공 범위 기준): 중기육상/기온 실제 응답·11개 날짜·자정 기준 발표일 유지·종일 자료 복제 금지. docs/evidence/TASK-005.json. 새벽 +10일은 미제공 슬롯으로 명시.
-- TASK-006: TEST-005 API/캐시/파싱 하위 기준 PASS, ENH-005 정규화·공백·PM별 플래그 단위 기준 PASS. 추이 UI 조작·200%·시트는 TASK-009에서 검증 예정. docs/evidence/TASK-006.json.
-- TASK-007: TEST-006 비교 도메인·TEST-007 최근 창/검증/파싱/ASOS 실 API·TEST-016 누락 날짜 및 LRU 복구 하위 기준 PASS. 화면·차트·200% 조작은 TASK-010에서 검증 예정. docs/evidence/TASK-007.json.
+- TASK-006: TEST-005 API/캐시/파싱 하위 기준 PASS, ENH-005 정규화·공백·PM별 플래그 단위 기준 PASS. 당시 추이 UI 검증 예정. 이후 통합 DetailNavigationTest에서 PM10/PM2.5 동시 표시·독립 결측 이유 검증, 확대 화면 증거 확보. 실기기 검증은 미실행. docs/evidence/TASK-006.json.
+- TASK-007: TEST-006 비교 도메인·TEST-007 최근 창/검증/파싱/ASOS 실 API·TEST-016 누락 날짜 및 LRU 복구 하위 기준 PASS. 당시 화면 검증 예정. 이후 TASK-010 입력·기간 UI 검사와 확대 화면 확인. 윤년 전용 경계는 별도 미검증. docs/evidence/TASK-007.json.
+
+- TASK-009 보완 검증: 상세 날짜→실제 시간 연결·이전/다음 경계 UI 검사 포함 전체 자동 게이트 PASS. 위치 호출 1건 SKIPPED 유지. docs/evidence/TASK-009-completion.json. TalkBack 실제 낭독·프레임 할당 프로파일 미실행.
+
+- TASK-010: 전체 자동 검사 PASS, 기간 입력 오류·1주 7일 선택 UI 검사 PASS. 실제 검색→홈 실 API→과거 화면 확인, 375dp/200%·다크·고대비 캡처. S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-010-completion.json 및 TASK-010/*.png.
+
+- TASK-011: 전체 자동 게이트 PASS. 저장·저장됨 비활성·대표 지정·마지막 삭제 후 대표 null 및 일반 선택 유지 UI 검사 PASS. 검색→실 API 홈 기존 회귀 재실행 PASS. 375dp·200%·다크·고대비 캡처, S25 Ultra·TalkBack 실제 낭독 미실행. docs/evidence/TASK-011-completion.json 및 TASK-011/*.png.
+
+- TASK-012: 첫 전체 자동 게이트 PASS(단위30, 계측15·위치1 보류), WidgetIntegrationTest의 대표 삭제/Undo·오류 시 수신 시각 보존·단일 주기 작업 PASS. 추가 호스트 검사 초기 바인딩 거부 1건 → 테스트 전용 BIND_APPWIDGET 권한 위임 방식으로 수정 후 WidgetHostTest 단독 PASS. 제품 Manifest 권한 추가 없음. 당시 최종 캡처는 기기 소실로 환경 차단. 2026-11-26 통합 검사에서 실제 RemoteViews 캡처 회수·확인(`INTEGRATION/widget-host.png`), S25 검증은 미실행. docs/evidence/TASK-012-completion.json.
+
+- TASK-013: 고대비 팔레트 비활성·삭제 확인 UI, 캐시 삭제 도중 지연된 스냅샷/일자료 쓰기 차단 및 새 요청 허용 Room 검사 PASS. 장치 선택 --serial 옵션 경로의 UnsupportedOperationException을 내장 ANDROID_SERIAL=emulator-5554 필터로 우회, 실기기 테스트 미실행. 증거 docs/evidence/TASK-013-completion.json.
+- 2026-11-26 통합 최종: `ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest` PASS. 최종 JUnit XML 기준 단위 31 PASS·계측 25 PASS·위치 1 SKIPPED. Gradle 진행 메시지의 Finished 27과 XML 집계가 달라 TEST 수는 XML testcase 기준 기록. 최초 5회 중 1~4회 실패 원인과 수정, 5차 PASS, 사용자 승인 후 설정 스크롤 1줄의 추가 검증 PASS는 `TASK-009-013-integration.json` 기록.
+- 실 API 갱신 10회씩 2세트 p90 2592/2580ms, UID 송수신 최대 375240/376225B(전체 앱 UID 배경 트래픽 포함 가능). 갱신 3초·500KB 목표 PASS. HTTP 본문만의 합계는 모두 301858B이며 헤더/TLS 제외. 프로세스 콜드 스타트 10회 p90 4867ms는 1초 목표 FAIL. `INTEGRATION/refresh-metrics.json`, `refresh-metrics-final.json`, `cold-start.json` 참조, 전체 NFR-PERF-001 PASS 주장 없음.
+- 히어로 자동 화면 비교: 활성 상태 프레임 변화·비활성/고대비 정적 픽셀 PASS. 앱 Canvas draw lambda의 직접 JVM new/배열 할당 명령 0개 정적 확인(`INTEGRATION/hero-bytecode.json`). 호출된 프레임워크·런타임 전체 할당량 프로파일 NOT_RUN, 시스템 애니메이션 배율 0·TalkBack 실제 낭독·물리 기기 절전은 별도 미검증.
+- 2026-11-27 디자인 통합·기동 경로 최적화 후 최종 게이트: `ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest` PASS(JUnit XML 단위 31 PASS, 계측 34 중 33 PASS·위치 1 SKIPPED). 사용자 정정(애니메이션 제외)에 따라 기존 C안 프레임 루프·런타임 할당량 검증은 현 수용 대상에서 제외, 정적 배경 전환 검증은 `DESIGN_REWORK/static.json` 및 `DESIGN_REWORK/integration.json` 참조. `WeatherApp`/`WidgetSync` 지연 초기화 적용 후 debug 에뮬레이터 10회 콜드 스타트 `fullyDrawnMs` p90 4867ms→4653ms(`firstDisplayP90Ms` 3184ms)로 개선되었으나 1000ms 목표 `targetMet: false` 유지(`INTEGRATION/cold-start.json`).

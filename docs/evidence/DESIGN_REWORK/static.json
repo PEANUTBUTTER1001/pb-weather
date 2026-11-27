@@ -1,0 +1,36 @@
+{
+  "clientDate": "2026-11-27",
+  "unit": "static",
+  "branch": "fix/design-static",
+  "gateAttempts": 2,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug PASS; affected Android HeroAnimationTest and PrototypeParityTest PASS",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 2,
+      "skipped": 0,
+      "failures": 0
+    }
+  },
+  "scope": "User 2026-11-27: exclude animation; static weather gradients, separate snow symbol, immediate hourly scroll",
+  "limits": [
+    "Loading shimmer removed when controls branch is integrated",
+    "Final cross-branch full suite and visual comparison pending",
+    "Location invocation held; S25 Ultra user-owned; release excluded"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read",
+  "rounds": [
+    {
+      "round": 1,
+      "result": "Static assertion failed before changed-state first frame was drawn; other full-suite tests passed"
+    },
+    {
+      "round": 2,
+      "result": "First-frame synchronization fixed; unit31 and affected Android2 PASS; 21 static sky/theme captures plus 36 tab/color captures"
+    }
+  ]
+}

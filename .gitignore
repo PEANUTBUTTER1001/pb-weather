@@ -15,6 +15,7 @@
 **/build/
 .gradle-user-home/
 .android-user-home/
+/gradle/gradle-daemon-jvm.properties
 .tools/
 captures/
 .cxx/

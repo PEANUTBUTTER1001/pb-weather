@@ -1,0 +1,34 @@
+{
+  "clientDate": "2026-11-27",
+  "unit": "settings-locations",
+  "branch": "fix/design-settings-locations",
+  "gateAttempts": 5,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 30,
+      "skipped": 1,
+      "failures": 0
+    }
+  },
+  "scope": "Design implementation and regression; visual review separate from automatic checks",
+  "limits": [
+    "Location invocation held by user; S25 Ultra user-owned; release excluded",
+    "Winter WSD input specification unresolved",
+    "No claim of pixel identity from test success"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read",
+  "attempts": {
+    "1": "FAIL: fixture station distance Int instead of Double; corrected",
+    "2": "NOT_RUN Android: package service unavailable while owned emulator was shutting down; code/lint/unit/build passed",
+    "3": "PASS full gates: 31 unit, 28 Android pass + 1 location skip",
+    "4": "PASS full gates: 31 unit, 29 Android pass + 1 location skip; star vectors visibly rendered",
+    "5": "PASS: 375dp/system font 200%, 7 affected Android tests and all code gates"
+  },
+  "visualReview": "All five settings groups, 4 favorite rows, signature segments, current-location guide, colored theme icons, selected and empty star, destructive action outline restored. Emulator child shutdown/snapshot lock recovered by keeping owning execution session alive."
+}

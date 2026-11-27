@@ -167,6 +167,8 @@
 
 ## 6. 모션 · 히어로 C안 Canvas 파티클 파라미터
 
+> **2026-11-27 사용자 최종 정정**: 애니메이션 구현 제외. 히어로는 날씨별 정적 그라데이션·심볼만 사용, 파티클·회전·맥동·프레임 루프·시스템 모션 관찰자 제거. 로딩 표시는 정적 스켈레톤, 시간 이동은 즉시 스크롤. 아래 C안 수치는 설계 이력이며 현재 구현·검증 대상 제외. 기존 원본 HTML은 보존, 검수 사본은 내장 A 경량 모드로 비교.
+
 | 항목 | 값 | 규칙 |
 | --- | --- | --- |
 | `motionFast` / `motionMed` | `150ms` / `220ms` | 버튼 hover/pressed, 세그먼트 전환, 상단 바 배경색 전환 |
@@ -184,7 +186,7 @@
 
 ---
 
-## 7. Compose 토큰 파일 매핑 (`app/src/main/java/com/example/weather/ui/theme/`)
+## 7. Compose 토큰 파일 매핑 (`app/src/main/java/com/pbweather/weather/ui/theme/`)
 
 | 파일 | 책임 |
 | --- | --- |
@@ -192,6 +194,8 @@
 | `WeatherSpacingShapes.kt` | `WeatherSpacing`, `WeatherShapes` 및 `LocalWeatherSpacing` |
 | `WeatherTypography.kt` | `AppFontSizePref(NORMAL, LARGE, EXTRA_LARGE)`, `tabularNums` 텍스트 스타일, 배율 상속 `CompositionLocalProvider` |
 | `WeatherTheme.kt` | Material 3 `MaterialTheme` 래핑 + `LocalWeatherColors` 제공 + 시스템 바 대비(`enableEdgeToEdge` / `WindowInsetsControllerCompat`, `P14`) |
+
+- 현재 코드 매핑: 위 4개 설계 역할을 단일 `WeatherTheme.kt`에 통합. 색은 `ThemeMode`·`Palette`·`WeatherColors`·`weatherColors`, 간격·곡률은 `Dims`, 글씨는 `FontSize`·`WeatherTypography`·`weatherTypography`, 테마 래퍼는 `WeatherTheme` 사용. 별도 `WeatherColorTokens.kt`·`WeatherSpacingShapes.kt`·`WeatherTypography.kt` 파일 생성 없음.
 
 - 접근성 정정(2026-11-24): 강수 차트 rainColor는 유지. 작은 강수 텍스트는 별도 rainText 토큰(라이트 #0369A1, 다크 #7CB3FF, 고대비 #7AD7FF) 사용. 흰 표면 대비 기존 #0284C7은 4.095:1로 본문 기준 미달.
 

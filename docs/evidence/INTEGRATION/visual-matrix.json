@@ -1,0 +1,39 @@
+{
+  "clientDate": "2026-11-26",
+  "device": "emulator-5554 Pixel_9_Pro API35",
+  "scope": "First viewport of each of four tabs; additional content accessible by scrolling. Screenshots do not substitute for TalkBack, physical device, all dialog states or all palette combinations.",
+  "variants": [
+    "375dp light normal",
+    "375dp light system font 200%",
+    "375dp dark system font 200%",
+    "375dp high contrast system font 200%",
+    "320dp light system font 200%"
+  ],
+  "locationInvocation": "NOT_RUN user-deferred",
+  "files": [
+    "320-font200-history.png",
+    "320-font200-home.png",
+    "320-font200-locations.png",
+    "320-font200-settings.png",
+    "375-font200-contrast-history.png",
+    "375-font200-contrast-home.png",
+    "375-font200-contrast-locations.png",
+    "375-font200-contrast-settings.png",
+    "375-font200-dark-history.png",
+    "375-font200-dark-home.png",
+    "375-font200-dark-locations.png",
+    "375-font200-dark-settings.png",
+    "375-font200-history.png",
+    "375-font200-home.png",
+    "375-font200-locations.png",
+    "375-font200-settings.png",
+    "375-light-history.png",
+    "375-light-home.png",
+    "375-light-locations.png",
+    "375-light-settings.png",
+    "settings-location-entry.png",
+    "widget-host.png"
+  ],
+  "observed": "Readable tab content and adaptive settings reflow checked; 200% long labels may wrap. First high-contrast history capture had a blank top region; stationary recapture confirmed app header and content. System bar/compositor artifacts on headless emulator do not establish physical-device rendering.",
+  "settingsLocationEntry": "PASS; settings-location-entry.png shows location section immediately after locations permission-settings shortcut; no device location invocation"
+}

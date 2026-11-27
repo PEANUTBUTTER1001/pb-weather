@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
@@ -67,9 +69,12 @@ import com.pbweather.weather.ui.components.SectionTitle
 import com.pbweather.weather.ui.components.UiIcon
 import com.pbweather.weather.ui.components.WeatherDetails
 import com.pbweather.weather.ui.components.temperature
+import com.pbweather.weather.ui.history.HistoryScreen
 import com.pbweather.weather.ui.home.HomeScreen
 import com.pbweather.weather.ui.home.currentSky
+import com.pbweather.weather.ui.locations.LocationsScreen
 import com.pbweather.weather.ui.permission.LocationPermissionAction
+import com.pbweather.weather.ui.settings.SettingsScreen
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.FontSize
 import com.pbweather.weather.ui.theme.Palette
@@ -86,7 +91,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 enum class WeatherTab(val title: Int, val icon: UiIcon) {
     HOME(R.string.home, UiIcon.HOME),
     HISTORY(R.string.history, UiIcon.HISTORY),
-    LOCATIONS(R.string.locations, UiIcon.PIN),
+    LOCATIONS(R.string.locations, UiIcon.SEARCH),
     SETTINGS(R.string.settings, UiIcon.SETTINGS)
 }
 data class WeatherActions(
@@ -98,7 +103,14 @@ data class WeatherActions(
     val undo: () -> Unit = {},
     val theme: (ThemeMode) -> Unit = {},
     val palette: (Palette) -> Unit = {},
-    val font: (FontSize) -> Unit = {}
+    val font: (FontSize) -> Unit = {},
+    val range: (com.pbweather.weather.domain.DateRange) -> Unit = {},
+    val favorite: (Region) -> Unit = {},
+    val deleteFavorite: (String) -> Unit = {},
+    val primary: (String) -> Unit = {},
+    val clearCache: () -> Unit = {},
+    val refreshWidget: () -> Unit = {},
+    val openWidget: () -> Unit = {}
 )
 
 @Composable
@@ -109,8 +121,15 @@ fun WeatherShell(
     mode: ThemeMode,
     palette: Palette,
     actions: WeatherActions,
-    notices: Flow<Notice>
+    notices: Flow<Notice>,
+    regionForecasts: Map<String, com.pbweather.weather.domain.ForecastState> = emptyMap(),
+    widgetTab: Pair<WeatherTab, Long>? = null,
+    cacheBytes: Long? = null,
+    clearingCache: Boolean = false,
+    primaryForecast: com.pbweather.weather.domain.ForecastState = com.pbweather.weather.domain.ForecastState()
 ) {
+    var userNavigated by rememberSaveable { mutableStateOf(false) }
+    var showSettingsLocation by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableStateOf(WeatherTab.HOME) }
     var details by rememberSaveable(state.preferences.selected?.key) { mutableStateOf<String?>(null) }
     var selectedHour by rememberSaveable(state.preferences.selected?.key) { mutableLongStateOf(0L) }
@@ -133,19 +152,23 @@ fun WeatherShell(
     }
     val focus = LocalFocusManager.current
     val owner = LocalLifecycleOwner.current
-    var resumed by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) }
-    var wasEmpty by remember { mutableStateOf(true) }
-    LaunchedEffect(state.preferences.selected?.id) {
-        if (state.preferences.selected == null) {
+    var wasEmpty by rememberSaveable { mutableStateOf(state.preferences.selected == null) }
+    var lastWidgetRequest by rememberSaveable { mutableLongStateOf(-1L) }
+    LaunchedEffect(state.preferences.selected?.id, state.preferencesLoaded, widgetTab) {
+        if (!state.preferencesLoaded) return@LaunchedEffect
+        if (widgetTab != null && widgetTab.second != lastWidgetRequest) {
+            tab = widgetTab.first
+            details = null
+            lastWidgetRequest = widgetTab.second
+        } else if (state.preferences.selected == null && !userNavigated) {
             tab = WeatherTab.LOCATIONS
-        } else if (wasEmpty) {
+        } else if (wasEmpty && !userNavigated) {
             tab = WeatherTab.HOME
         }
         wasEmpty = state.preferences.selected == null
     }
     DisposableEffect(owner) {
         val observer = LifecycleEventObserver { _, event ->
-            resumed = owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
             if (event == Lifecycle.Event.ON_RESUME) actions.permissionChanged()
         }
         owner.lifecycle.addObserver(observer)
@@ -155,11 +178,15 @@ fun WeatherShell(
     val restored = stringResource(R.string.favorite_restored)
     val limit = stringResource(R.string.favorite_limit)
     val undo = stringResource(R.string.undo)
+    val cleared = stringResource(R.string.cache_cleared)
+    val clearFailed = stringResource(R.string.cache_clear_failed)
     LaunchedEffect(notices) {
         notices.collectLatest { notice ->
             val message = when (notice) {
                 Notice.DELETED -> deleted
                 Notice.RESTORED -> restored
+                Notice.CACHE_CLEARED -> cleared
+                Notice.CACHE_CLEAR_FAILED -> clearFailed
                 else -> limit
             }
             val result = withTimeoutOrNull(6000) {
@@ -177,6 +204,7 @@ fun WeatherShell(
         context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null)))
     }
     val pick: (Region) -> Unit = { region ->
+        userNavigated = true
         focus.clearFocus()
         actions.select(region)
         tab = WeatherTab.HOME
@@ -186,7 +214,13 @@ fun WeatherShell(
     Scaffold(
         containerColor = WeatherTheme.colors.ground,
         topBar = {
-            val background = if (tab == WeatherTab.HOME && state.preferences.selected != null) {
+            val background = if (tab == WeatherTab.HOME && state.preferences.selected != null &&
+                (
+                    !state.data.forecast.now.isOffline || state.data.forecast.now.data != null ||
+                        !state.data.forecast.hourly.data?.hours.isNullOrEmpty() ||
+                        !state.data.forecast.weekly.data.isNullOrEmpty()
+                    )
+            ) {
                 heroColor(mode, palette, currentSky(state))
             } else {
                 WeatherTheme.colors.ground
@@ -196,13 +230,14 @@ fun WeatherShell(
                     Modifier.fillMaxWidth().heightIn(min = Dims.topBar).padding(horizontal = Dims.gutter),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (tab == WeatherTab.SETTINGS) {
-                        Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
-                    } else {
+                    run {
                         Row(
-                            Modifier.weight(1f).clickable { tab = WeatherTab.LOCATIONS }.padding(vertical = Dims.small),
+                            Modifier.weight(1f).clickable {
+                                userNavigated = true
+                                tab = WeatherTab.LOCATIONS
+                            }.padding(vertical = Dims.small),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(Dims.small)
+                            horizontalArrangement = Arrangement.spacedBy(Dims.badgeInset)
                         ) {
                             AppIcon(UiIcon.PIN, null)
                             Column(Modifier.weight(1f)) {
@@ -227,19 +262,27 @@ fun WeatherShell(
                                 )
                             }
                         }
+                        if (tab == WeatherTab.SETTINGS) Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
                         IconButton(onClick = {
                             details = "help"
-                        }, modifier = Modifier.offset(x = Dims.section)) { AppIcon(UiIcon.HELP, stringResource(R.string.help)) }
+                        }, modifier = Modifier.size(Dims.field).offset(x = Dims.medium)) {
+                            AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                        }
                         IconButton(
                             onClick = actions.refresh,
                             enabled = state.preferences.selected != null && !loading,
-                            modifier = Modifier.offset(x = Dims.section)
+                            modifier = Modifier.size(Dims.field).offset(x = Dims.medium)
                         ) {
                             AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
                         }
                     }
                 }
-                if (loading && state.preferences.selected != null) {
+                if (loading && state.preferences.selected != null &&
+                    (
+                        state.data.forecast.now.data != null || !state.data.forecast.hourly.data?.hours.isNullOrEmpty() ||
+                            !state.data.forecast.weekly.data.isNullOrEmpty()
+                        )
+                ) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                 } else if (tab != WeatherTab.HOME) {
                     Rule()
@@ -254,15 +297,37 @@ fun WeatherShell(
                         val title = stringResource(item.title)
                         val description = stringResource(R.string.nav_description, title)
                         Column(
-                            Modifier.weight(1f).clickable { tab = item }.semantics { contentDescription = description }
-                                .padding(vertical = Dims.small),
+                            Modifier.weight(1f).clickable {
+                                userNavigated = true
+                                showSettingsLocation = false
+                                tab = item
+                            }.semantics {
+                                contentDescription =
+                                    description
+                                selected = tab == item
+                            }
+                                .heightIn(min = Dims.navBar).padding(vertical = Dims.tiny),
+                            verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Box(
                                 Modifier.background(
                                     if (tab == item) WeatherTheme.colors.accentSoft else WeatherTheme.colors.surface,
                                     androidx.compose.foundation.shape.RoundedCornerShape(Dims.pill)
-                                ).padding(horizontal = Dims.gutter, vertical = Dims.tiny)
+                                ).then(
+                                    if (mode == ThemeMode.HIGH_CONTRAST &&
+                                        tab == item
+                                    ) {
+                                        Modifier.border(
+                                            Dims.strong,
+                                            WeatherTheme.colors.accent,
+                                            androidx.compose.foundation.shape.RoundedCornerShape(Dims.pill)
+                                        )
+                                    } else {
+                                        Modifier
+                                    }
+                                ).size(Dims.navPillWidth, Dims.navPillHeight),
+                                contentAlignment = Alignment.Center
                             ) {
                                 AppIcon(
                                     item.icon,
@@ -304,146 +369,52 @@ fun WeatherShell(
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
             Box(Modifier.widthIn(max = Dims.maxWidth).fillMaxWidth()) {
-                when (tab) {
-                    WeatherTab.HOME -> if (state.preferences.selected ==
-                        null
-                    ) {
-                        RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
-                    } else {
-                        HomeScreen(
-                            state, mode, palette, homeList, hoursList, resumed, selectedHour.takeIf { it != 0L },
-                            { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
-                        )
-                    }
-                    WeatherTab.LOCATIONS -> RegionLanding(state, query, results, actions, pick, openSettings, locationsList)
-                    WeatherTab.HISTORY -> HistoryLanding(state, { details = it }, { tab = WeatherTab.LOCATIONS })
-                    WeatherTab.SETTINGS -> SettingsLanding(state, actions) { details = "help" }
-                }
-            }
-        }
-    }
-    details?.let { WeatherDetails(it, state) { details = null } }
-}
-
-@Composable private fun RegionLanding(
-    state: WeatherUiState,
-    query: String,
-    results: List<Region>,
-    actions: WeatherActions,
-    onSelect: (Region) -> Unit,
-    onSettings: () -> Unit,
-    list: androidx.compose.foundation.lazy.LazyListState
-) {
-    LazyColumn(
-        state = list,
-        modifier = Modifier.padding(horizontal = Dims.gutter),
-        verticalArrangement = Arrangement.spacedBy(Dims.medium)
-    ) {
-        item {
-            SectionTitle(stringResource(R.string.search_region)) {
-                Text(stringResource(R.string.offline_search), style = MaterialTheme.typography.bodySmall)
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(query, actions.search, Modifier.weight(1f), placeholder = { Text(stringResource(R.string.search_hint)) })
-                if (query.isNotEmpty()) TextButton(onClick = { actions.search("") }) { Text(stringResource(R.string.clear)) }
-            }
-            Text(
-                stringResource(
-                    if (query.length < 2) {
-                        R.string.search_minimum
-                    } else if (results.isEmpty()) {
-                        R.string.search_empty
-                    } else {
-                        R.string.offline_search
-                    }
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = WeatherTheme.colors.secondary
-            )
-        }
-        items(results, key = { it.id }) { region ->
-            Column(
-                Modifier.fillMaxWidth().heightIn(min = Dims.touch).clickable { onSelect(region) }.padding(vertical = Dims.medium)
-                    .semantics { contentDescription = region.name }
-            ) {
-                Text(region.name, style = MaterialTheme.typography.titleMedium)
-                Rule()
-            }
-        }
-        item {
-            SectionTitle(stringResource(R.string.current_location))
-            Text(stringResource(R.string.choose_without_location), style = MaterialTheme.typography.bodySmall)
-            state.location.problem?.let {
-                Text(
-                    stringResource(
-                        when (it) {
-                            LocationProblem.PERMISSION_DENIED -> R.string.location_denied
-                            LocationProblem.DISABLED -> R.string.location_disabled
-                            LocationProblem.TIMEOUT -> R.string.location_timeout
-                            LocationProblem.UNAVAILABLE -> R.string.location_unavailable
-                            LocationProblem.OUTSIDE_COVERAGE -> R.string.location_outside
+                if (!state.preferencesLoaded) {
+                    Text(stringResource(R.string.loading), Modifier.padding(Dims.gutter))
+                } else {
+                    when (tab) {
+                        WeatherTab.HOME -> if (state.preferences.selected ==
+                            null
+                        ) {
+                            LocationsScreen(state, query, results, regionForecasts, actions, pick, {
+                                showSettingsLocation = true
+                                tab =
+                                    WeatherTab.SETTINGS
+                            }, locationsList)
+                        } else {
+                            HomeScreen(
+                                state, mode, palette, homeList, hoursList, selectedHour.takeIf { it != 0L },
+                                { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh,
+                                onSelectRegion = { tab = WeatherTab.LOCATIONS }
+                            )
                         }
-                    ),
-                    color = WeatherTheme.colors.warning
-                )
-            }
-            if (state.location.working) Text(stringResource(R.string.locating))
-            LocationPermissionAction(onResult = { granted ->
-                actions.permissionChanged()
-                if (granted) actions.locate()
-            }) { request ->
-                TextButton(onClick = if (state.location.granted) actions.locate else request, enabled = !state.location.working) {
-                    Text(stringResource(R.string.use_location))
-                }
-            }
-            if (!state.location.granted) TextButton(onClick = onSettings) { Text(stringResource(R.string.open_settings)) }
-        }
-        if (state.preferences.favorites.isNotEmpty()) {
-            item {
-                SectionTitle(stringResource(R.string.favorites))
-                state.preferences.favorites.forEach { region ->
-                    TextButton(onClick = { onSelect(region) }) { Text(region.name) }
-                }
-            }
-        }
-    }
-}
-
-@Composable private fun HistoryLanding(state: WeatherUiState, onDetails: (String) -> Unit, onSelect: () -> Unit) {
-    LazyColumn(Modifier.padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-        item { SectionTitle(stringResource(R.string.yesterday_compare)) }
-        if (state.preferences.selected == null) {
-            item { TextButton(onClick = onSelect) { Text(stringResource(R.string.select_region)) } }
-        } else {
-            item { com.pbweather.weather.ui.components.StatusBlock(state.data.history) }
-            items(state.data.history.data.orEmpty(), key = { it.date }) { day ->
-                SectionCard {
-                    Text(com.pbweather.weather.ui.components.dateLabel(day.date), style = MaterialTheme.typography.titleMedium)
-                    Text(stringResource(R.string.today_extrema, temperature(day.maximum), temperature(day.minimum)))
-                }
-            }
-        }
-    }
-}
-
-@Composable private fun SettingsLanding(state: WeatherUiState, actions: WeatherActions, onHelp: () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(Dims.gutter), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-        SectionCard {
-            SectionTitle(stringResource(R.string.settings))
-            ThemeMode.entries.forEach { mode ->
-                TextButton(onClick = { actions.theme(mode) }) {
-                    Text(
-                        stringResource(
-                            when (mode) {
-                                ThemeMode.LIGHT -> R.string.theme_light
-                                ThemeMode.DARK -> R.string.theme_dark
-                                ThemeMode.HIGH_CONTRAST -> R.string.theme_contrast
-                            }
+                        WeatherTab.LOCATIONS -> LocationsScreen(state, query, results, regionForecasts, actions, pick, {
+                            showSettingsLocation =
+                                true
+                            tab = WeatherTab.SETTINGS
+                        }, locationsList)
+                        WeatherTab.HISTORY -> HistoryScreen(state, actions.range, actions.refresh) { tab = WeatherTab.LOCATIONS }
+                        WeatherTab.SETTINGS -> SettingsScreen(
+                            state, cacheBytes, clearingCache, primaryForecast, actions,
+                            {
+                                showSettingsLocation = false
+                                tab = WeatherTab.LOCATIONS
+                            }, openSettings,
+                            onDocument = { details = it }, showLocation = showSettingsLocation
                         )
-                    )
+                    }
                 }
             }
-            TextButton(onClick = onHelp) { Text(stringResource(R.string.help)) }
+        }
+    }
+    details?.let { target ->
+        if (target in setOf("help", "privacy", "licenses", "usage")) {
+            com.pbweather.weather.ui.settings.LegalDocSheet(target) { details = null }
+        } else {
+            WeatherDetails(target, state, onNavigate = { next ->
+                details = next
+                next.removePrefix("hour:").toLongOrNull()?.let { selectedHour = it }
+            }) { details = null }
         }
     }
 }

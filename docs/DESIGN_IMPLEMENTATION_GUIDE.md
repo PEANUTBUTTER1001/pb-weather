@@ -2,6 +2,8 @@
 
 확정 프로토타입([pb-weather-prototype.html](../outputs/pb-weather-prototype.html))의 화면 구조·정렬선·컴포넌트 경계·차트·인터랙션·접근성·설정 시그니처를 Jetpack Compose + Material 3 + Glance로 **100% 동일하게 구현**하기 위한 화면 설계·구현 명세.
 
+> 2026-11-27 사용자 최종 정정: 애니메이션 제외. 아래 C안 파티클·회전·맥동·정지 조건은 설계 이력이며 현재 구현 대상 제외. 날씨별 정적 그라데이션·심볼·정적 로딩 표시 적용, 원본 검수 사본의 A 경량 모드로 비교. 실 API·출처·결측 계약은 유지하며 원본의 임의 체감온도·서로 불일치하는 예시 수치를 운영 값으로 강제하지 않음.
+
 - 문서 ID: `DOC-DESIGN-GUIDE-001` · 버전 `1.0` · 작성일 `2026-11-24`
 - 기준 프로토타입: [pb-weather-prototype.html](../outputs/pb-weather-prototype.html)
 - 디자인 토큰: [DESIGN_TOKENS.md](DESIGN_TOKENS.md) (모든 색·간격·곡률·글꼴 수치는 해당 문서 토큰만 참조)
@@ -12,6 +14,9 @@
 ## 1. 앱 셸 · 내비게이션 골격
 
 ### 1.1 Scaffold 구조
+
+- **2026-11-26 DR-004 원본 렌더링 우선 정정**: 실제 원본 앱바 높이 `60px`, 설정 탭에서도 지역 트리거·`설정` 제목·도움말·새로고침 동시 노출 확인. 아래 초기 명세의 `58.dp`·설정 액션 숨김과 충돌. 사용자 승인한 원본 시각 재현 기준에 따라 `60.dp` 및 실제 노출 구조 적용. 원본 HTML 수정 없음. 시스템 상태 표시줄·내비게이션 바는 Android 운영 영역으로 별도 유지.
+
 - **단일 열 Compact 셸**: 기본 모바일 전체 폭, 폴더블 펼침(Medium) 시 중앙 정렬 최대 폭 `760.dp`.
 - **상단 앱바 (`minHeight = 58.dp`, `paddingH = 16.dp`)**:
   - **홈 · 과거 · 지역 탭**:
@@ -165,6 +170,9 @@
    - `radiusWidget(22.dp)`, `padding = 16.dp`, `surface`, `1.dp borderSubtle`.
    - 대표 지역 지정 시: 지역명 + `widgetTemp` 기온 + 하늘/최고/최저 + 우측 `48.dp` 아이콘 + 하단 구분선 아래 상태(`약 1시간마다 자동 갱신` 또는 `갱신 지연 · 마지막 성공 자료 유지`) 및 `마지막 성공 HH:mm`. 탭 시 **위젯 대표 지역 홈**으로 이동.
    - 대표 지역 미지정 시: `"대표 지역이 지정되지 않았습니다"` + `"대표 지역 선택 ›"` → `지역` 탭 이동.
+   - 시스템 글자 배율 180% 이상: 동일 글자 역할·전체 정보를 유지하는 세로 스크롤 배치. 최소 240×200dp에서 마지막 성공 시각까지 도달 가능해야 하며, 잘림을 숨기기 위한 글자 축소 제외. 기존 Glance `LazyColumn` 사용([Android 공식 스크롤 위젯 안내](https://developer.android.com/develop/ui/compose/glance/build-ui#use-scrollable-layouts)), 라이브러리·갱신 정책·딥링크 변경 없음. 기본 배율은 고정 요약 카드 유지.
+   - 최종 통합 보완: 배율 조건 없이 스크롤 가능한 컨테이너 사용. 기본 크기·배율에서는 같은 요약 카드 배치, 콘텐츠 초과 시 스크롤 가능. 시스템 글자 배율 변경 직후에도 기존 RemoteViews의 전체 정보에 접근 가능하도록 앞선 180% 분기 방식 대체. 미리보기의 새로고침은 기존 `WidgetRepository.refreshPrimary`, 카드 탭은 기존 대표 지역 홈 이동에 연결.
+   - 큰 글자 기온: 본문·출처의 시스템 배율 유지, 기온만 별도 접근성 역할(`26sp` 기준에 시스템 확대 적용)과 전체 폭 행 사용. 180dp 리사이즈에서 음수 기온까지 한 줄 표시할 공간 확보. 위젯 하단 도달은 여러 번의 실제 스크롤 이동으로 확인하며 단일 이동만으로 최하단 도달을 가정하지 않음.
 
 ---
 
@@ -187,13 +195,13 @@
 | 경로 (`com.pbweather.weather.ui.*`) | 대응 화면·컴포넌트 |
 | --- | --- |
 | `ui/theme/` | [DESIGN_TOKENS.md](DESIGN_TOKENS.md) 7절 참조 (4종 팔레트 · 3종 테마 · 글씨 배율) |
-| `ui/navigation/WeatherScaffold.kt` | 상단 앱바(일반/설정 분기 · `?` 도움말) · 3dp 진행바 · 4탭 하단 바 · 스낵바 |
-| `ui/home/HeroWeatherStage.kt` | C안 `Canvas` 파티클 · 스크림 · 현재 실황 · 2×2 보조 지표 · 미세먼지 1안 통합 띠 |
-| `ui/home/HourlyForecastCard.kt` | ENH-004 한 줄 요약 · 60dp 선택 칸 · 44dp 기온 곡선 `Canvas` |
-| `ui/home/WeeklyForecastCard.kt` | 11일 비례 온도 막대 · 종일/오전·오후 해상도 · 중기 오류 독립 복구 |
-| `ui/home/HomeDetailSheets.kt` | 자료 출처(ENH-001) · 시간/일자(ENH-003) · 미세먼지 추이(ENH-005) · 계산 체감온도(ENH-006) |
+| `ui/navigation/WeatherShell.kt` | 상단 앱바(일반/설정 분기 · `?` 도움말) · 3dp 진행바 · 4탭 하단 바 · 스낵바 |
+| `ui/home/HeroWeather.kt · HomeScreen.kt` | C안 `Canvas` 파티클 · 스크림 · 현재 실황 · 2×2 보조 지표 · 미세먼지 1안 통합 띠 |
+| `ui/home/HomeScreen.kt (시간별 컴포넌트)` | ENH-004 한 줄 요약 · 60dp 선택 칸 · 44dp 기온 곡선 `Canvas` |
+| `ui/home/HomeScreen.kt (주간 컴포넌트)` | 11일 비례 온도 막대 · 종일/오전·오후 해상도 · 중기 오류 독립 복구 |
+| `ui/components/WeatherDetails.kt` | 자료 출처(ENH-001) · 시간/일자(ENH-003) · 미세먼지 추이(ENH-005) · 계산 체감온도(ENH-006) |
 | `ui/history/HistoryScreen.kt` | 어제 비교 표 · 최근 10일 칩/입력 · 210dp 복합 그래프 · `FlatDividerList` 일별 목록 |
 | `ui/locations/LocationsScreen.kt` | 외부 분리 검색 행 · `FlatDividerList` · `-12.dp` 아이콘 끝 정렬 · 연속 삭제 Undo |
-| `ui/settings/SettingsScreen.kt` | 5슬롯 시그니처 섹션 · `AdaptiveSettingRow`(실측 1줄/2줄) · `SignatureSegmented` · 4색 팔레트 |
+| `ui/settings/SettingsScreen.kt` | 5슬롯 시그니처 섹션 · `AdaptiveSettingRow`(실측 1줄/2줄) · `SignatureSegments` · 4색 팔레트 |
 | `ui/settings/LegalDocSheets.kt` | 도움말 · 개인정보 처리방침 · 접이식 오픈소스 라이선스 · 이용 안내 문서 창 |
 | `widget/WeatherWidget.kt` | Glance 위젯(대표 지정/미지정/지연 상태 · 대표 지역 딥링크) |

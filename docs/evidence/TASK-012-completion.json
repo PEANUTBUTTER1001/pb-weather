@@ -1,0 +1,115 @@
+{
+  "task": "TASK-012",
+  "branch": "feat/task-012-widget",
+  "clientDate": "2026-11-25",
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug PASS; latest connectedDebugAndroidTest targeted WidgetHostTest PASS",
+  "results": {
+    "unit": [
+      {
+        "name": "com.pbweather.weather.core.geo.GeoTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:27.570Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.local.LocalRulesTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:27.626Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.location.RegionResolverTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:27.697Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.AirContractTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:27.718Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.ForecastContractTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:27.765Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.HistoryContractTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:28.165Z"
+      },
+      {
+        "name": "com.pbweather.weather.data.remote.MidForecastTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:28.189Z"
+      },
+      {
+        "name": "com.pbweather.weather.domain.HomeRulesTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:28.205Z"
+      },
+      {
+        "name": "com.pbweather.weather.ui.theme.WeatherThemeTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:48:28.213Z"
+      }
+    ],
+    "android": [
+      {
+        "name": null,
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "timestamp": "2026-11-25T03:52:01"
+      }
+    ]
+  },
+  "secretScan": {
+    "changedFiles": 23,
+    "suspectLocations": []
+  },
+  "limits": [
+    "Location invocation remains user-deferred; S25 Ultra tests user-owned; release excluded",
+    "Final PNG retrieval blocked: adb device offline then no devices; no image verification claimed",
+    "S25 Ultra launcher resizing and power-saving checks user-owned"
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "result": "Full gate PASS, unit30; instrumentation tests15 failures0 skipped1"
+    },
+    {
+      "attempt": 2,
+      "result": "Host bind assertion failed; other tests passed"
+    },
+    {
+      "attempt": 3,
+      "result": "Test-only shell permission identity; targeted WidgetHostTest PASS"
+    }
+  ]
+}

@@ -53,7 +53,7 @@
 | 설정 | debug | release |
 | --- | --- | --- |
 | 서비스 키 | local.properties | local.properties(빌드 머신) |
-| HTTP 로깅 | BODY(키 마스킹) | 없음 |
+| HTTP 로깅 | API 종류·응답 상태·전송량 메타데이터만(전체 URL·BODY 금지) | 없음 |
 | R8 | off | on(`isMinifyEnabled`, `isShrinkResources`) |
 | applicationId 접미사 | `.debug` | 없음(OPEN-003 확정값) |
 

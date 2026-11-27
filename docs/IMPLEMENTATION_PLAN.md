@@ -6,7 +6,7 @@
 | --- | --- |
 | 문서 역할 | TASK·순서·상태·인수인계 관리(살아 있는 문서) |
 | 작성일 | 2026-11-16 |
-| 현재 단계 | TASK-004~007 데이터 완료, TASK-009 화면 통합 중 |
+| 현재 단계 | TASK-009~013 구현·통합 자동 게이트 검증, 성능·미검증 예외 정리 |
 | 근거 | [ENHANCEMENT_GUIDELINE.md](ENHANCEMENT_GUIDELINE.md), [REQUIREMENTS.md](REQUIREMENTS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [TEST_PLAN.md](TEST_PLAN.md) |
 
 ## 2. 구현 목표
@@ -27,17 +27,17 @@
 | TASK-006 | 에어코리아 미세먼지 클라이언트 | FR-004, DATA-002 | TASK-002, TASK-003 | DONE |
 | TASK-007 | ASOS 일자료 클라이언트와 과거 날씨 Repository | FR-005, FR-006, NFR-PERF-001 | TASK-002, TASK-003 | DONE |
 | TASK-008 | 위치 권한·현재 위치 제공자 | FR-007, SEC-001 | TASK-002 | PARTIAL (사용자 위치 계측 보류) |
-| TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | IN_PROGRESS |
-| TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | TODO |
-| TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | TODO |
-| TASK-012 | 홈 화면 위젯·백그라운드 갱신 | FR-009, NFR-PERF-002 | TASK-003, TASK-004 | TODO |
-| TASK-013 | 정보·설정 화면 | DATA-002, SEC-001, DATA-001 | TASK-003 | TODO |
+| TASK-009 | 홈 화면 UI | BIZ-001, FR-001~005, FR-010, NFR-A11Y-001 | TASK-004~008 | PARTIAL (화면 구현·자동 검증, 겨울 입력 규격 미확인) |
+| TASK-010 | 과거 날씨 화면·그래프 | FR-005, FR-006, NFR-A11Y-001 | TASK-007 | IMPLEMENTED (에뮬레이터 검증, 실기기 사용자 담당) |
+| TASK-011 | 지역 검색·즐겨찾기 화면 | FR-008, FR-007 | TASK-003, TASK-008 | IMPLEMENTED (에뮬레이터 검증, 위치 호출 보류) |
+| TASK-012 | 홈 화면 위젯·백그라운드 갱신 | FR-009, NFR-PERF-002 | TASK-003, TASK-004 | IMPLEMENTED (호스트·통합 검증 PASS, 실기기 사용자 담당) |
+| TASK-013 | 정보·설정 화면 | DATA-002, SEC-001, DATA-001 | TASK-003 | IMPLEMENTED (설정·삭제·복원 통합 검증, 실기기 사용자 담당) |
 | TASK-014 | 릴리스 준비(서명·AAB·내부 테스트) | BIZ-002, SEC-002 | TASK-009~013 | TODO |
 
 ### 완료 조건(Done When) 상세
 
 - **TASK-001**: `./gradlew assembleDebug` 성공 / light·dark·high_contrast → Compose ColorScheme 매핑 / `KMA_SERVICE_KEY`·`AIRKOREA_SERVICE_KEY` BuildConfig 주입, local.properties `.gitignore` 포함 / release `isMinifyEnabled=true`.
-- **TASK-002**: 격자 변환이 기상청 격자표 샘플 10개와 일치 / 최근접 ASOS·중기 regId 매핑 단위 테스트 통과 / TM 좌표 변환 구현(좌표계는 API 명세 확인).
+- **TASK-002**: 격자 변환이 기상청 격자표 샘플 10개와 일치 / 최근접 ASOS·중기 regId 매핑 단위 테스트 통과 / 원계획 TM 좌표 변환은 공식 공개 측정소 목록의 로컬 최근접 탐색으로 대체(API_CONTRACT). 사용자 좌표 외부 전송 금지 유지.
 - **TASK-003**: WeatherSnapshot·DailyObservation·RegionGrid·AsosStation 엔티티·DAO / 만료(30분·3시간·12시간·1시간)·50MB LRU 테스트 통과 / 즐겨찾기·대표 위치 DataStore.
 - **TASK-004**: base_time 경계 테스트 통과 / 실황·초단기·단기 파싱·병합(6시간 이내 초단기 우선) / resultCode 03·22·30·XML 오류 → 도메인 오류 / 캐시 유효 시 호출 0회.
 - **TASK-005**: tmFc 06/18시 계산 / 오늘~+10일 11개 날짜 병합 테스트 통과(실제 미제공은 null 유지, 새벽 +10일 포함).
@@ -115,7 +115,7 @@
 ## 10. 검증 증거
 
 - 증거 SSOT: [TEST_PLAN.md](TEST_PLAN.md) 17절 테스트 결과.
-- 현재 기록된 증거: 없음(구현 전). 모든 TEST `NOT_RUN`.
+- 현재 증거: `docs/evidence/TASK-001~013*.json`, `docs/evidence/TASK-009-013-integration.json`, `docs/evidence/INTEGRATION/`. 각 TEST의 전체·부분·미실행 판정은 TEST_PLAN 5·17절 기준.
 - PASS 판정은 실제 실행 로그·스크린샷 경로가 있을 때만 기록.
 
 ## 11. 차단 요소와 미해결 질문
@@ -137,9 +137,9 @@
 
 ## 13. 현재 상태
 
-- 단계: TASK-001·003~007 완료. TASK-002 공식 원본 불일치, TASK-008 사용자 위치 계측 보류로 PARTIAL.
-- 다음 작업: 홈·과거·지역·설정 화면 → 위젯 → 통합·접근성 검증.
-- 완료 TASK: 6 / 14 (TASK-001 기반 검증, TASK-014 출시 별도).
+- 단계: TASK-001·003~007 완료, DR-001~012 디자인 전면 재작업·정적 전환 및 통합 완료(`fix/design-integration`). TASK-002 공식 원본 불일치, TASK-008 사용자 위치 계측 보류, TASK-ENH-006 겨울 WSD 입력 규격 미확인(`API_CONTRACT.md` 근거 유지)으로 PARTIAL.
+- 다음 작업: `fix/design-integration` 기준 `/git` PR 제출 및 `develop` 통합 후 후속 보급형 대응 AGSL 셰이더 단계 진입 여부 결정. 잔여 과제는 릴리스 빌드 기반 기동 프로파일링(debug p90 4653ms로 1초 목표 미달)·S25 Ultra·TalkBack·절전/리사이즈 사용자 수동 검증. /execute 경계는 작업 브랜치 푸시 후 PR 생성 전.
+- 완료 TASK: DONE 6 / 14, IMPLEMENTED 4 / 14(TASK-010~013), PARTIAL 3 / 14(TASK-002·008·009), 출시 TODO 1 / 14(TASK-014). 구현과 전체 수용 기준 완료를 구분.
 
 ## 14. 인수인계
 
@@ -172,3 +172,13 @@
 - TASK-009 화면 후속 확인: 200% 시간 칸 폭 보정 후 assembleDebug PASS 및 실제 화면 확인. 증거 docs/evidence/TASK-009/*.png. 에뮬레이터 font_scale=1.0·wm size 기본값 복원. 홈 최종 QA·커밋/푸시와 TASK-010~013는 미완료 상태 유지.
 
 - 2026-11-25 /git 체크포인트: 홈 200% 폭 보정 포함 빌드·단위 30개·린트 PASS. 저장 지역명 중복으로 발생한 UI 테스트 선택자 실패를 고유 접근성 설명으로 수정, 해당 검사 재실행 PASS. 위치 호출 1개 보류 유지. 사용자 지시로 현재 작업 Draft PR 제출, TASK-009 IN_PROGRESS·TASK-010~013 미완료 유지. 증거 docs/evidence/GIT_REVIEW.json.
+
+- 2026-11-25 TASK-009 보완: 상세 이전/다음 실제 시간 탐색, 48시간 내 실제 원자료가 있는 날짜의 시간별 연결, 가로 스크롤 보조 버튼, 홈 focusRestorer 추가. S25 Ultra·TalkBack 실제 낭독·프레임 할당 프로파일은 별도 미검증. 겨울 WSD 입력 규격 미확인 유지. PR 생성 전 작업 브랜치 푸시 경계 적용.
+- TASK-010: 최근 10일·1주·직접 입력, 입력별 오류, 오늘 예보/어제 관측 비교, 결측 단절 복합 그래프·유효일수/극값/누적강수, 날짜 6지표 상세 구현. 전체 최근 10일 Room 관측 공유로 기간 전환 후 홈 어제 비교 보존. 실기기 검증은 사용자 담당.
+- TASK-011: 검색 결과 저장/저장됨, 대표·표시 중·최대 10개, 삭제/연속 Undo, COARSE 안내와 오류 표시 연결. 목록 보조 날씨는 캐시 Flow만 구독. 복원 불가 시 성공 메시지 방지·Undo 항목 보존. 실제 위치 호출은 재검증하지 않음.
+- TASK-012: Glance 위젯·60분 네트워크 제약 단일 주기 작업·대표 변경 즉시 반영·캐시 공유·대표 홈/미지정 지역 탭 진입 구현. 기본 전체 게이트 PASS. 실제 AppWidgetHost 바인딩은 테스트 전용 권한 위임으로 검증 PASS(제품 권한 추가 없음), 대표 변경·마지막 삭제 실제 RemoteViews 확인. 당시 PNG 수집은 에뮬레이터 소실로 보류. 2026-11-26 통합 검사에서 호스트 이미지 회수·확인 완료(`INTEGRATION/widget-host.png`). S25 Ultra 런처/리사이즈/절전 실측은 사용자 담당.
+- TASK-013: 화면/홈 위젯/위치/정리/앱 정보 시그니처, 실측 기반 1줄·2줄 배치·4색 2x2, DataStore 설정·캐시 용량/확인 삭제·안내 문서·오픈소스 이용 조건 연결. 캐시 삭제 세대 이후에만 쓰기 허용하여 삭제 이전 요청의 지연 응답(스냅샷·일자료) 재저장 차단. 서비스 키·위치 권한·스키마 버전 변경 없음. RELEASE_RUNBOOK의 debug BODY 허용 문구를 보안 상위 계약으로 정정.
+- 2026-11-26 최종 통합: 홈·과거·지역·위젯·설정의 공유 셸/상태 연결, 초기 설정 로드와 사용자 탭 선택 경쟁, Activity 재생성 탭 복원, 위젯 SINGLE_TOP 진입, PM10/PM2.5 동시 추이·독립 결측, HALF_UP 반올림·음수 0 방지, 위치 설정 바로가기 스크롤 연결 보완. 5차 자동 게이트 PASS 후 스크롤 상태 1줄 누락 발견·수정, 사용자 명시 승인으로 추가 1회 전체 게이트 PASS. JUnit XML: 단위 31 PASS, 계측 25 PASS·위치 1 SKIPPED. lint 오류 0·경고 36(전체 무경고 판정 아님).
+- 통합 성능: 전체 캐시 삭제 후 실 API 갱신 10회씩 2세트 p90 2592/2580ms, UID 송수신 최대 375240/376225B로 갱신 3초·500KB 충족. 프로세스 콜드 스타트 10회 p90 4867ms로 캐시 1초 목표 미달. debug 에뮬레이터 측정이며 최적화·실기기/릴리스 성능 확인 전 완료 판정 제외. 증거 `docs/evidence/INTEGRATION/*.json`.
+- 검토 경계: 기능 5개는 각각 origin/develop@8001da1 독립 기반, 통합 브랜치는 모든 기능 커밋과 공통 호출부 충돌 해결을 포함. PR 생성·Ready·Merge는 /git 후속 영역. TASK-002 원본 격자 불일치·TASK-008 보류·겨울 WSD 규격·캐시 시작 성능·실기기/TalkBack·런타임 할당 프로파일·TASK-014는 잔여 항목으로 유지.
+- 2026-11-27 디자인 통합·기동 최적화 마감: `fix/design-integration`에서 2026-11-27 사용자 정정(애니메이션 제외·정적 배경 전환) 반영 및 320/375/412dp·앱 글씨 3종·시스템 200%·180dp 위젯 보정 후 전체 자동 게이트(`ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest`) 재검증 PASS(단위 31 PASS, 계측 34 중 33 PASS·위치 1 SKIPPED, 시크릿 스캔 0건, 증거 `docs/evidence/DESIGN_REWORK/integration.json`). `WeatherApp` `Lazy<WidgetSync>`·`WidgetSync` 백그라운드 IO 초기화 분리 후 전체 게이트 재통과(단위 31 PASS, 계측 33 PASS·위치 1 SKIPPED). debug 에뮬레이터 10회 콜드 스타트 재측정 `fullyDrawnMs` p90 4867ms→4653ms(`firstDisplayP90Ms` 3184ms)로 개선되었으나 1000ms 목표 미달(`targetMet: false`, 증거 `docs/evidence/INTEGRATION/cold-start.json`). ENH-006 겨울 WSD는 `API_CONTRACT.md` 2026-11-25 확인 근거(10분 간격 수집 ≠ 10분 평균풍속)에 따라 `INPUT_SPEC_UNCONFIRMED` 유지.

@@ -25,11 +25,13 @@ import com.pbweather.weather.ui.theme.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +40,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -58,9 +61,10 @@ data class WeatherUiState(
     val data: WeatherData = WeatherData(),
     val range: DateRange,
     val location: LocationUi = LocationUi(),
-    val now: Long = 0
+    val now: Long = 0,
+    val preferencesLoaded: Boolean = true
 )
-enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED }
+enum class Notice { FAVORITE_LIMIT, DELETED, RESTORED, CACHE_CLEARED, CACHE_CLEAR_FAILED }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
@@ -71,8 +75,55 @@ class WeatherViewModel @Inject constructor(
     private val history: ObserveHistory,
     private val findRegions: FindRegions,
     private val locations: LocationSource,
-    private val clock: Clock
+    private val clock: Clock,
+    private val widgets: com.pbweather.weather.data.repository.WidgetRepository,
+    private val cache: com.pbweather.weather.data.local.CacheStore
 ) : ViewModel() {
+    val widgetTab = MutableStateFlow<Pair<WeatherTab, Long>?>(null)
+    fun refreshWidget() {
+        viewModelScope.launch {
+            try {
+                widgets.refreshPrimary()
+            } catch (
+                cancelled: CancellationException
+            ) {
+                throw cancelled
+            } catch (_: Exception) {
+                preferences.update { it.copy(widgetError = true) }
+            }
+        }
+    }
+    fun openWidget() {
+        viewModelScope.launch {
+            val prefs = preferences.preferences.first()
+            val primary = prefs.favorites.firstOrNull { it.id == prefs.primaryId }
+            if (primary != null) preferences.select(primary)
+            widgetTab.value = (if (primary == null) WeatherTab.LOCATIONS else WeatherTab.HOME) to ((widgetTab.value?.second ?: 0L) + 1L)
+        }
+    }
+    val cacheBytes = cache.dao.observeCacheBytes().map<Long, Long?> {
+        it
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+    val clearingCache = MutableStateFlow(false)
+    fun clearCache() {
+        if (clearingCache.value) return
+        clearingCache.value = true
+        viewModelScope.launch {
+            try {
+                refreshJob?.cancelAndJoin()
+                cache.clearWeather()
+                notices.emit(Notice.CACHE_CLEARED)
+            } catch (
+                cancelled: CancellationException
+            ) {
+                throw cancelled
+            } catch (_: Exception) {
+                notices.emit(Notice.CACHE_CLEAR_FAILED)
+            } finally {
+                clearingCache.value = false
+            }
+        }
+    }
     val query = MutableStateFlow("")
     private val range = MutableStateFlow(HistoryWindow.recent(clock))
     private val location = MutableStateFlow(LocationUi(granted = locations.permissionGranted()))
@@ -88,7 +139,7 @@ class WeatherViewModel @Inject constructor(
             combine(
                 forecast(region),
                 air(region),
-                history(region, dates)
+                history(region, HistoryWindow.recent(clock))
             ) { f, a, h -> WeatherData(region.key, f, a, h) }
         }
     }
@@ -100,11 +151,33 @@ class WeatherViewModel @Inject constructor(
             delay(60000)
         }
     }
-    val ui: StateFlow<WeatherUiState> = combine(saved, weather, range, location, ticks) { prefs, data, dates, permission, now ->
+    val ui: StateFlow<WeatherUiState> = combine(preferences.preferences, weather, range, location, ticks) {
+            prefs,
+            data,
+            dates,
+            permission,
+            now
+        ->
         WeatherUiState(prefs, if (data.key == prefs.selected?.key) data else WeatherData(), dates, permission, now)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), WeatherUiState(range = range.value, preferencesLoaded = false))
     val results = query.debounce(100).flatMapLatest { text -> flow { emit(findRegions(text)) } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val locationForecasts: StateFlow<Map<String, ForecastState>> = combine(results, saved) { matches, prefs ->
+        (matches + prefs.favorites).distinctBy { it.id }
+    }.flatMapLatest { regions ->
+        if (regions.isEmpty()) {
+            flowOf(emptyMap())
+        } else {
+            combine(
+                regions.map { region ->
+                    forecast(region).map { region.id to it }
+                }
+            ) { entries -> entries.toMap() }
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
+    val primaryForecast = saved.map { prefs -> prefs.favorites.firstOrNull { it.id == prefs.primaryId } }
+        .distinctUntilChanged().flatMapLatest { region -> region?.let { forecast(it) } ?: flowOf(ForecastState()) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ForecastState())
     init {
         viewModelScope.launch { locations.prepare() }
         viewModelScope.launch {
@@ -115,7 +188,7 @@ class WeatherViewModel @Inject constructor(
     }
     fun refresh() {
         val region = saved.value.selected ?: return
-        val dates = range.value
+        val dates = HistoryWindow.recent(clock)
         refreshJob?.cancel()
         refreshJob = viewModelScope.launch {
             supervisorScope {
@@ -176,9 +249,13 @@ class WeatherViewModel @Inject constructor(
     }
     fun undo() {
         viewModelScope.launch {
-            deleted.removeLastOrNull()?.let {
-                preferences.restore(it)
-                notices.emit(Notice.RESTORED)
+            deleted.lastOrNull()?.let {
+                if (preferences.restore(it)) {
+                    deleted.removeLast()
+                    notices.emit(Notice.RESTORED)
+                } else {
+                    notices.emit(Notice.FAVORITE_LIMIT)
+                }
             }
         }
     }
