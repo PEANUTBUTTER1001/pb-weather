@@ -157,7 +157,7 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 
 | TEST | 상태 | 실행일 | 실행자 | 증거 |
 | --- | --- | --- | --- | --- |
-| TEST-001 ~ TEST-016 | 5절 항목별 PASS/PARTIAL, TEST-015 NOT_RUN | 2026-11-27 | Agent(에뮬레이터) | TASK-004~013*.json, TASK-009-013-integration.json, DESIGN_REWORK/integration.json |
+| TEST-001 ~ TEST-016 | 5절 항목별 PASS/PARTIAL, TEST-015 NOT_RUN | 2026-11-27 | Agent(에뮬레이터) | TASK-004~013*.json, TASK-009-013-integration.json, DESIGN_REWORK/integration.json, AGSL_SHADER/verification.json |
 | TEST-PERF-001, TEST-PERF-002 | 콜드 FAIL(4653ms, debug 에뮬레이터) / 갱신·전송 PASS | 2026-11-27 | Agent(에뮬레이터) | INTEGRATION/cold-start.json, refresh-metrics.json |
 | TEST-DATA-001, TEST-DATA-002 | PASS / PARTIAL | 2026-11-26 | Agent(에뮬레이터) | TASK-003·006·013*.json, INTEGRATION/*.png |
 | TEST-SEC-001, TEST-SEC-002 | PARTIAL (정적 검사 PASS, 실사용 로그/DB·키 직접 대조 미실행) | 2026-11-27 | Agent | TASK-009-013-integration.json, DESIGN_REWORK/integration.json |
@@ -190,3 +190,4 @@ git grep -n -I -e "<서비스키 일부 문자열>" -- . ':!local.properties'
 - 실 API 갱신 10회씩 2세트 p90 2592/2580ms, UID 송수신 최대 375240/376225B(전체 앱 UID 배경 트래픽 포함 가능). 갱신 3초·500KB 목표 PASS. HTTP 본문만의 합계는 모두 301858B이며 헤더/TLS 제외. 프로세스 콜드 스타트 10회 p90 4867ms는 1초 목표 FAIL. `INTEGRATION/refresh-metrics.json`, `refresh-metrics-final.json`, `cold-start.json` 참조, 전체 NFR-PERF-001 PASS 주장 없음.
 - 히어로 자동 화면 비교: 활성 상태 프레임 변화·비활성/고대비 정적 픽셀 PASS. 앱 Canvas draw lambda의 직접 JVM new/배열 할당 명령 0개 정적 확인(`INTEGRATION/hero-bytecode.json`). 호출된 프레임워크·런타임 전체 할당량 프로파일 NOT_RUN, 시스템 애니메이션 배율 0·TalkBack 실제 낭독·물리 기기 절전은 별도 미검증.
 - 2026-11-27 디자인 통합·기동 경로 최적화 후 최종 게이트: `ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest` PASS(JUnit XML 단위 31 PASS, 계측 34 중 33 PASS·위치 1 SKIPPED). 사용자 정정(애니메이션 제외)에 따라 기존 C안 프레임 루프·런타임 할당량 검증은 현 수용 대상에서 제외, 정적 배경 전환 검증은 `DESIGN_REWORK/static.json` 및 `DESIGN_REWORK/integration.json` 참조. `WeatherApp`/`WidgetSync` 지연 초기화 적용 후 debug 에뮬레이터 10회 콜드 스타트 `fullyDrawnMs` p90 4867ms→4653ms(`firstDisplayP90Ms` 3184ms)로 개선되었으나 1000ms 목표 `targetMet: false` 유지(`INTEGRATION/cold-start.json`).
+- 2026-11-27 AGSL 기상 셰이더(`feat/hero-agsl-shader`): `ktlintFormat ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest` PASS(JUnit XML 단위 37 PASS, 계측 38 중 37 PASS·위치 1 SKIPPED). `HeroMotionTierTest`(티어 판정·프레임 캡·풍속/시간대 정규화·셰이더 실패 폴백·레거시 JSON 하위 호환), `HeroAnimationTest`(`HIGH`/`MEDIUM` 활성 프레임 변화·`STATIC`/고대비/설정 끄기/비가시 정지·7종×3테마·홈 가독성 캡처), `SettingsScreenTest`(`배경 움직임` 토글 및 고대비 비활성) PASS. 증거 `docs/evidence/AGSL_SHADER/`. 보급형 실기기 체감·S25 Ultra 검증은 사용자 담당.

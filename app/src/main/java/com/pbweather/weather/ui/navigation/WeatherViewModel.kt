@@ -271,4 +271,7 @@ class WeatherViewModel @Inject constructor(
     fun font(value: FontSize) {
         viewModelScope.launch { preferences.update { it.copy(font = value.name) } }
     }
+    fun weatherMotion(enabled: Boolean) {
+        viewModelScope.launch { preferences.update { it.copy(weatherMotion = enabled) } }
+    }
 }

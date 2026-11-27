@@ -84,4 +84,33 @@ class SettingsScreenTest {
         compose.onNode(hasText("삭제") and hasAnyAncestor(isDialog())).performClick()
         compose.runOnIdle { assertTrue(deleted) }
     }
+
+    @Test fun weatherMotionToggleSavesAndDisablesInHighContrast() {
+        val prefs = mutableStateOf(AppPreferences())
+        val range = DateRange(LocalDate.parse("2026-11-15"), LocalDate.parse("2026-11-24"))
+        compose.setContent {
+            WeatherTheme(ThemeMode.valueOf(prefs.value.theme), Palette.valueOf(prefs.value.palette), FontSize.valueOf(prefs.value.font)) {
+                SettingsScreen(
+                    WeatherUiState(preferences = prefs.value, range = range),
+                    1024,
+                    false,
+                    ForecastState(),
+                    WeatherActions(
+                        theme = { prefs.value = prefs.value.copy(theme = it.name) },
+                        weatherMotion = { prefs.value = prefs.value.copy(weatherMotion = it) }
+                    ),
+                    {},
+                    {},
+                    {}
+                )
+            }
+        }
+        compose.onNodeWithText("끄기").performScrollTo().performClick()
+        compose.runOnIdle { assertFalse(prefs.value.weatherMotion) }
+        compose.onNodeWithText("켜기").performScrollTo().performClick()
+        compose.runOnIdle { assertTrue(prefs.value.weatherMotion) }
+        compose.onNodeWithText("고대비").performScrollTo().performClick()
+        compose.onNodeWithText("끄기").performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithText("고대비 모드에서는 정적 배경을 유지합니다.").assertExists()
+    }
 }

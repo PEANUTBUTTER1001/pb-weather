@@ -20,6 +20,7 @@ data class AppPreferences(
     val theme: String = "LIGHT",
     val palette: String = "INDIGO",
     val font: String = "NORMAL",
+    val weatherMotion: Boolean = true,
     val permissionExplained: Boolean = false,
     val widgetError: Boolean = false,
     val quotaDates: Map<String, String> = emptyMap()

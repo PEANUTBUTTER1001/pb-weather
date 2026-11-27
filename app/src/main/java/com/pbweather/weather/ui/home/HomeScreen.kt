@@ -125,8 +125,26 @@ fun HomeScreen(
             }
         }
         item(key = "hero") {
+            val heroVisible by remember(list) {
+                derivedStateOf {
+                    val items = list.layoutInfo.visibleItemsInfo
+                    items.isEmpty() || items.any { it.key == "hero" }
+                }
+            }
+            val hourOfDay = remember(state.now) {
+                if (state.now > 0L) Instant.ofEpochMilli(state.now).atZone(ReleaseTimeCalculator.KST).hour else null
+            }
             Box(Modifier.fillMaxWidth().testTag("home-hero")) {
-                HeroWeather(currentSky(state), mode, palette, Modifier.matchParentSize())
+                HeroWeather(
+                    currentSky(state),
+                    mode,
+                    palette,
+                    Modifier.matchParentSize(),
+                    windMs = state.data.forecast.now.data?.windMs,
+                    hourOfDay = hourOfDay,
+                    motionEnabled = state.preferences.weatherMotion,
+                    isVisible = heroVisible
+                )
                 Column(
                     Modifier.padding(start = Dims.gutter, end = Dims.gutter, top = Dims.small, bottom = Dims.gutter),
                     verticalArrangement = Arrangement.spacedBy(Dims.small)

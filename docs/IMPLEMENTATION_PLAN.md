@@ -137,8 +137,8 @@
 
 ## 13. 현재 상태
 
-- 단계: TASK-001·003~007 완료, DR-001~012 디자인 전면 재작업·정적 전환 및 통합 완료(`fix/design-integration`). TASK-002 공식 원본 불일치, TASK-008 사용자 위치 계측 보류, TASK-ENH-006 겨울 WSD 입력 규격 미확인(`API_CONTRACT.md` 근거 유지)으로 PARTIAL.
-- 다음 작업: `fix/design-integration` 기준 `/git` PR 제출 및 `develop` 통합 후 후속 보급형 대응 AGSL 셰이더 단계 진입 여부 결정. 잔여 과제는 릴리스 빌드 기반 기동 프로파일링(debug p90 4653ms로 1초 목표 미달)·S25 Ultra·TalkBack·절전/리사이즈 사용자 수동 검증. /execute 경계는 작업 브랜치 푸시 후 PR 생성 전.
+- 단계: TASK-001·003~007 완료, DR-001~012 디자인 통합 완료(`develop` 병합 `a6474ba`), `feat/hero-agsl-shader`에서 보급형 대응 `AGSL RuntimeShader` 히어로 배경·3단계 자동 티어링(`HIGH`/`MEDIUM`/`STATIC`)·설정 `배경 움직임` 토글 구현 및 전체 게이트 PASS. TASK-002 공식 원본 불일치, TASK-008 사용자 위치 계측 보류, TASK-ENH-006 겨울 WSD 입력 규격 미확인(`API_CONTRACT.md` 근거 유지)으로 PARTIAL.
+- 다음 작업: `feat/hero-agsl-shader` `/git` PR 제출·`develop` 통합. 잔여 과제는 릴리스 빌드 기반 기동 프로파일링(debug p90 4653ms로 1초 목표 미달)·S25 Ultra 및 보급형 실기기 체감·TalkBack·절전/리사이즈 사용자 수동 검증. /execute 경계는 작업 브랜치 푸시 후 PR 생성 전.
 - 완료 TASK: DONE 6 / 14, IMPLEMENTED 4 / 14(TASK-010~013), PARTIAL 3 / 14(TASK-002·008·009), 출시 TODO 1 / 14(TASK-014). 구현과 전체 수용 기준 완료를 구분.
 
 ## 14. 인수인계
@@ -182,3 +182,4 @@
 - 통합 성능: 전체 캐시 삭제 후 실 API 갱신 10회씩 2세트 p90 2592/2580ms, UID 송수신 최대 375240/376225B로 갱신 3초·500KB 충족. 프로세스 콜드 스타트 10회 p90 4867ms로 캐시 1초 목표 미달. debug 에뮬레이터 측정이며 최적화·실기기/릴리스 성능 확인 전 완료 판정 제외. 증거 `docs/evidence/INTEGRATION/*.json`.
 - 검토 경계: 기능 5개는 각각 origin/develop@8001da1 독립 기반, 통합 브랜치는 모든 기능 커밋과 공통 호출부 충돌 해결을 포함. PR 생성·Ready·Merge는 /git 후속 영역. TASK-002 원본 격자 불일치·TASK-008 보류·겨울 WSD 규격·캐시 시작 성능·실기기/TalkBack·런타임 할당 프로파일·TASK-014는 잔여 항목으로 유지.
 - 2026-11-27 디자인 통합·기동 최적화 마감: `fix/design-integration`에서 2026-11-27 사용자 정정(애니메이션 제외·정적 배경 전환) 반영 및 320/375/412dp·앱 글씨 3종·시스템 200%·180dp 위젯 보정 후 전체 자동 게이트(`ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest`) 재검증 PASS(단위 31 PASS, 계측 34 중 33 PASS·위치 1 SKIPPED, 시크릿 스캔 0건, 증거 `docs/evidence/DESIGN_REWORK/integration.json`). `WeatherApp` `Lazy<WidgetSync>`·`WidgetSync` 백그라운드 IO 초기화 분리 후 전체 게이트 재통과(단위 31 PASS, 계측 33 PASS·위치 1 SKIPPED). debug 에뮬레이터 10회 콜드 스타트 재측정 `fullyDrawnMs` p90 4867ms→4653ms(`firstDisplayP90Ms` 3184ms)로 개선되었으나 1000ms 목표 미달(`targetMet: false`, 증거 `docs/evidence/INTEGRATION/cold-start.json`). ENH-006 겨울 WSD는 `API_CONTRACT.md` 2026-11-25 확인 근거(10분 간격 수집 ≠ 10분 평균풍속)에 따라 `INPUT_SPEC_UNCONFIRMED` 유지.
+- 2026-11-27 AGSL 기상 셰이더 고도화(`feat/hero-agsl-shader`): Android 13+(API 33+) 네이티브 `RuntimeShader` + `Choreographer` 기반 `HeroShaderView` 구현(`HIGH` 60fps / `MEDIUM` 0.5x·30fps / `STATIC` 폴백, 실황 풍속·KST 시간대 연동, 설정 `배경 움직임` 토글 `AppPreferences.weatherMotion`). 전체 자동 게이트 PASS(단위 37 PASS, 계측 38 중 37 PASS·위치 1 SKIPPED, 7종×3테마·홈 가독성 캡처 `docs/evidence/AGSL_SHADER/`). 보급형/S25 Ultra 실기기 체감 확인은 사용자 담당.

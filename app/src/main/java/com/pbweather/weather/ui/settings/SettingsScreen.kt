@@ -1,5 +1,6 @@
 package com.pbweather.weather.ui.settings
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,6 +56,7 @@ import com.pbweather.weather.ui.components.Rule
 import com.pbweather.weather.ui.components.UiIcon
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.components.timeLabel
+import com.pbweather.weather.ui.home.HeroMotionPolicy
 import com.pbweather.weather.ui.navigation.WeatherActions
 import com.pbweather.weather.ui.navigation.WeatherUiState
 import com.pbweather.weather.ui.theme.Dims
@@ -165,6 +167,34 @@ fun SettingsScreen(
                                 { actions.font(font) }
                             )
                         }
+                    )
+                }
+                Rule()
+                val motionAvailable = !contrast && Build.VERSION.SDK_INT >= HeroMotionPolicy.MIN_AGSL_SDK
+                val motionDisabledReason = stringResource(
+                    if (contrast) R.string.motion_disabled_contrast else R.string.motion_disabled_sdk
+                )
+                AdaptiveSettingRow(
+                    stringResource(R.string.settings_motion),
+                    if (motionAvailable) null else motionDisabledReason,
+                    enabled = motionAvailable
+                ) { expanded ->
+                    SignatureSegments(
+                        expanded,
+                        listOf(
+                            SettingChoice(
+                                stringResource(R.string.motion_on),
+                                state.preferences.weatherMotion,
+                                { actions.weatherMotion(true) }
+                            ),
+                            SettingChoice(
+                                stringResource(R.string.motion_off),
+                                !state.preferences.weatherMotion,
+                                { actions.weatherMotion(false) }
+                            )
+                        ),
+                        enabled = motionAvailable,
+                        disabledReason = motionDisabledReason
                     )
                 }
             }
@@ -408,16 +438,20 @@ private data class SettingChoice(
     val icon: UiIcon? = null
 )
 
-@Composable private fun SignatureSegments(expanded: Boolean, choices: List<SettingChoice>, enabled: Boolean = true) {
+@Composable private fun SignatureSegments(
+    expanded: Boolean,
+    choices: List<SettingChoice>,
+    enabled: Boolean = true,
+    disabledReason: String = stringResource(R.string.palette_disabled)
+) {
     val contrast = WeatherTheme.mode == ThemeMode.HIGH_CONTRAST
     val grid = expanded && choices.size == 4 && (
         LocalConfiguration.current.screenWidthDp <= 320 ||
             LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || WeatherTheme.fontScale >= 1.42f
         )
-    val reason = stringResource(R.string.palette_disabled)
     Surface(
         modifier = Modifier.alpha(if (enabled) 1f else .55f).semantics {
-            if (!enabled) stateDescription = reason
+            if (!enabled) stateDescription = disabledReason
         },
         shape = RoundedCornerShape(Dims.groupRadius),
         color = WeatherTheme.colors.tonal
