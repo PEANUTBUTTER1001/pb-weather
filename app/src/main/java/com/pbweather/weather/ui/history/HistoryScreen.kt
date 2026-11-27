@@ -47,6 +47,8 @@ import com.pbweather.weather.ui.components.SectionTitle
 import com.pbweather.weather.ui.components.SourceInfo
 import com.pbweather.weather.ui.components.StatusBlock
 import com.pbweather.weather.ui.components.number
+import com.pbweather.weather.ui.components.prototypeSheetBorder
+import com.pbweather.weather.ui.components.prototypeSheetModifier
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.navigation.WeatherUiState
 import com.pbweather.weather.ui.theme.Dims
@@ -296,9 +298,18 @@ fun HistoryScreen(state: WeatherUiState, onRange: (DateRange) -> Unit, onRefresh
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HistoryDaySheet(date: String, day: DailyObservation?, state: WeatherUiState, onClose: () -> Unit) {
-    ModalBottomSheet(onDismissRequest = onClose, containerColor = WeatherTheme.colors.surface, scrimColor = modalScrim(WeatherTheme.mode)) {
+    ModalBottomSheet(
+        contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
+        onDismissRequest = onClose,
+        containerColor = WeatherTheme.colors.surface,
+        scrimColor = modalScrim(WeatherTheme.mode),
+        modifier = prototypeSheetModifier(),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(Dims.sheetRadius),
+        dragHandle = null,
+        sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
         Column(
-            Modifier.verticalScroll(rememberScrollState()).padding(Dims.sheet),
+            prototypeSheetBorder().verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
             Text(date, style = WeatherTheme.type.sheetTitle)

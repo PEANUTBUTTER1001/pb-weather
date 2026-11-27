@@ -3,6 +3,7 @@ package com.pbweather.weather.ui.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -41,7 +42,7 @@ class DetailNavigationTest {
             )
         )
         compose.setContent { WeatherTheme { WeatherDetails("apparent", state) {} } }
-        compose.onNodeWithText("31.3°").fetchSemanticsNode()
+        compose.onNodeWithText("31.3℃").fetchSemanticsNode()
         compose.onNodeWithText("5.0 m/s · 18.0 km/h").performScrollTo().fetchSemanticsNode()
     }
 
@@ -88,10 +89,10 @@ class DetailNavigationTest {
         )
         compose.setContent { WeatherTheme { WeatherDetails(target.value, state, { target.value = it }) {} } }
         compose.onNodeWithText("시간별 보기").performScrollTo().performClick()
-        compose.onNodeWithText("앞 시간으로 이동").performScrollTo().assertIsNotEnabled()
-        compose.onNodeWithText("다음 시간으로 이동").performClick()
-        compose.onNodeWithText("다음 시간으로 이동").assertIsNotEnabled()
-        compose.onNodeWithText("앞 시간으로 이동").performClick()
-        compose.onNodeWithText("앞 시간으로 이동").assertIsNotEnabled()
+        compose.onNodeWithContentDescription("앞 시간으로 이동").performScrollTo().assertIsNotEnabled()
+        compose.onNodeWithContentDescription("다음 시간으로 이동").performClick()
+        compose.onNodeWithContentDescription("다음 시간으로 이동").assertIsNotEnabled()
+        compose.onNodeWithContentDescription("앞 시간으로 이동").performClick()
+        compose.onNodeWithContentDescription("앞 시간으로 이동").assertIsNotEnabled()
     }
 }

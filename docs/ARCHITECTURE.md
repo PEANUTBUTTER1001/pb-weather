@@ -76,7 +76,7 @@
 
 ## 7. 디렉터리 구조
 
-2026-11-26 디자인 재구현 승인: `res/drawable/design_icon_*.xml`, `res/drawable/design_weather_*.xml`, `res/values/design_colors.xml`은 확정 HTML의 SVG를 변환한 역할별 자산. `ui/components/PrototypeComponents.kt`는 조밀한 컨트롤·비교 배지·KV 격자·시트 헤더, `androidTest/.../ui/design/PrototypeFixtures.kt`, `PrototypeParityTest.kt`는 운영 자료와 분리한 고정 UI 상태와 시각 증거. 증거 경로 `docs/evidence/DESIGN_REWORK/`. 기존 API·DB·권한·원본 HTML 변경 없음.
+2026-11-26 디자인 재구현 승인: `res/drawable/design_icon_*.xml`, `res/drawable/design_weather_*.xml`, `res/values/design_colors.xml`은 확정 HTML의 SVG를 변환한 역할별 자산. `ui/components/PrototypeComponents.kt`는 조밀한 컨트롤·비교 배지·KV 격자·메타 행·부유 시트·확인 창, `androidTest/.../ui/design/PrototypeFixtures.kt`, `PrototypeParityTest.kt`, `DesignFlowCaptureTest.kt`는 운영 자료와 분리한 고정 UI 상태·상세/문서 흐름·시각 증거. 증거 경로 `docs/evidence/DESIGN_REWORK/`. 기존 API·DB·권한·원본 HTML 변경 없음.
 
 2026-11-26 통합 QA: `androidTest/.../ui/home/IntegratedFlowTest.kt`, `HeroAnimationTest.kt`, `androidTest/.../ui/home/RefreshMetricsTest.kt`, `docs/evidence/TASK-009-013-integration.json`, `docs/evidence/INTEGRATION/`. 설정 로드 완료 전 지역 자동 전환 보류, 캐시 크기 로딩과 실제 0바이트 구분.
 

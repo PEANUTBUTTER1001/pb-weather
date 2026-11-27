@@ -1,12 +1,19 @@
 package com.pbweather.weather.ui.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -21,14 +28,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
 import com.pbweather.weather.domain.ForecastState
+import com.pbweather.weather.domain.WeatherCondition
+import com.pbweather.weather.ui.components.AppIcon
+import com.pbweather.weather.ui.components.PrimaryButton
 import com.pbweather.weather.ui.components.Rule
+import com.pbweather.weather.ui.components.SecondaryButton
+import com.pbweather.weather.ui.components.SectionCard
+import com.pbweather.weather.ui.components.SheetHeader
+import com.pbweather.weather.ui.components.UiIcon
+import com.pbweather.weather.ui.components.WeatherSymbol
+import com.pbweather.weather.ui.components.prototypeSheetBorder
+import com.pbweather.weather.ui.components.prototypeSheetModifier
+import com.pbweather.weather.ui.components.skyLabel
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.components.timeLabel
 import com.pbweather.weather.ui.theme.Dims
@@ -49,14 +70,23 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
                 else -> R.string.help
             }
         )
-    ModalBottomSheet(onDismissRequest = onClose, containerColor = WeatherTheme.colors.surface, scrimColor = modalScrim(WeatherTheme.mode)) {
+    ModalBottomSheet(
+        contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
+        onDismissRequest = onClose,
+        containerColor = WeatherTheme.colors.surface,
+        scrimColor = modalScrim(WeatherTheme.mode),
+        shape = RoundedCornerShape(Dims.sheetRadius),
+        dragHandle = null,
+        modifier = prototypeSheetModifier(),
+        sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
         Column(
-            Modifier.fillMaxWidth().heightIn(
+            prototypeSheetBorder().fillMaxWidth().heightIn(
                 max = LocalConfiguration.current.screenHeightDp.dp * .88f
             ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
-            Text(title, style = WeatherTheme.type.sheetTitle)
+            SheetHeader(title, onClose)
             SelectionContainer {
                 Column(verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
                     when (target) {
@@ -90,7 +120,9 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = WeatherTheme.colors.secondary
             )
-            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.document_confirm)) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                PrimaryButton(onClick = onClose) { Text(stringResource(R.string.document_confirm)) }
+            }
         }
     }
 }
@@ -110,7 +142,10 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
         var expanded by remember { mutableStateOf(false) }
         Rule()
         Column(Modifier.fillMaxWidth().clickable { expanded = !expanded }.padding(vertical = Dims.medium)) {
-            Text(stringResource(entry) + if (expanded) " ⌄" else " ›", style = MaterialTheme.typography.titleMedium)
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(entry), Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
+                AppIcon(UiIcon.NEXT, null, Modifier.size(Dims.smallIcon).rotate(if (expanded) 90f else 0f))
+            }
             if (expanded) {
                 Text(
                     stringResource(
@@ -132,17 +167,87 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WidgetPreviewSheet(name: String?, forecast: ForecastState, onLocations: () -> Unit, onClose: () -> Unit) {
-    ModalBottomSheet(onDismissRequest = onClose, containerColor = WeatherTheme.colors.surface, scrimColor = modalScrim(WeatherTheme.mode)) {
-        Column(Modifier.fillMaxWidth().padding(Dims.sheet), verticalArrangement = Arrangement.spacedBy(Dims.medium)) {
-            Text(stringResource(R.string.widget_preview), style = WeatherTheme.type.sheetTitle)
-            Text(name ?: stringResource(R.string.primary_not_set), style = MaterialTheme.typography.titleMedium)
-            if (name != null) {
-                Text(temperature(forecast.now.data?.temperature), style = MaterialTheme.typography.headlineMedium)
-                Text(stringResource(R.string.preview_last_success, timeLabel(forecast.now.meta?.receivedAt) ?: "—"))
-                Text(stringResource(R.string.widget_refresh_explanation), style = MaterialTheme.typography.bodySmall)
+    ModalBottomSheet(
+        contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
+        onDismissRequest = onClose,
+        containerColor = WeatherTheme.colors.surface,
+        scrimColor = modalScrim(WeatherTheme.mode),
+        shape = RoundedCornerShape(Dims.sheetRadius),
+        dragHandle = null,
+        modifier = prototypeSheetModifier(),
+        sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
+        Column(
+            prototypeSheetBorder().fillMaxWidth().heightIn(
+                max = LocalConfiguration.current.screenHeightDp.dp * .88f
+            ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
+            verticalArrangement = Arrangement.spacedBy(Dims.medium)
+        ) {
+            SheetHeader(stringResource(R.string.widget_preview), onClose)
+            Box(
+                Modifier.fillMaxWidth().background(
+                    Brush.linearGradient(WeatherTheme.colors.widgetWallpaper),
+                    RoundedCornerShape(Dims.radius)
+                ).padding(horizontal = Dims.section, vertical = Dims.sheet)
+            ) {
+                SectionCard {
+                    Text(name ?: stringResource(R.string.widget_no_primary), style = MaterialTheme.typography.titleSmall)
+                    if (name != null) {
+                        val hour = forecast.hourly.data?.hours?.minByOrNull {
+                            kotlin.math.abs(it.at - (forecast.now.meta?.observedAt ?: it.at))
+                        }
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            Text(
+                                temperature(forecast.now.data?.temperature),
+                                Modifier.weight(1f),
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                            Box(Modifier.size(Dims.touch)) {
+                                WeatherSymbol(
+                                    WeatherCondition.from(hour?.sky, forecast.now.data?.precipitationType),
+                                    Modifier.size(Dims.touch)
+                                )
+                            }
+                        }
+                        val day = forecast.weekly.data?.firstOrNull()
+                        Text(
+                            stringResource(
+                                R.string.design_widget_summary,
+                                skyLabel(WeatherCondition.from(hour?.sky, forecast.now.data?.precipitationType)),
+                                com.pbweather.weather.ui.components.number(day?.maximum) ?: "—",
+                                com.pbweather.weather.ui.components.number(day?.minimum) ?: "—"
+                            ),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Rule()
+                        val observed = forecast.now
+                        Text(
+                            stringResource(
+                                when {
+                                    observed.data == null -> R.string.widget_loading
+                                    observed.isStale || observed.isOffline || observed.error != null -> R.string.widget_delayed
+                                    else -> R.string.widget_refresh_explanation
+                                }
+                            ),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Text(
+                            stringResource(R.string.preview_last_success, timeLabel(forecast.now.meta?.receivedAt) ?: "—"),
+                            style = WeatherTheme.type.meta
+                        )
+                    } else {
+                        SecondaryButton(onClick = onLocations) { Text(stringResource(R.string.widget_choose_primary)) }
+                    }
+                }
             }
-            TextButton(onClick = onLocations) { Text(stringResource(R.string.change_primary)) }
-            Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.document_confirm)) }
+            FlowRow(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dims.small, Alignment.End),
+                verticalArrangement = Arrangement.spacedBy(Dims.small)
+            ) {
+                SecondaryButton(onClick = onLocations) { Text(stringResource(R.string.change_primary)) }
+                PrimaryButton(onClick = onClose) { Text(stringResource(R.string.document_confirm)) }
+            }
         }
     }
 }

@@ -6,10 +6,11 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
@@ -58,7 +59,7 @@ class WidgetHostTest {
                 host.startListening()
                 view = host.createView(context, id, manager.getAppWidgetInfo(id))
             }
-            compose.setContent { AndroidView(factory = { view }, modifier = Modifier.fillMaxWidth().height(300.dp)) }
+            compose.setContent { AndroidView(factory = { view }, modifier = Modifier.width(240.dp).height(200.dp)) }
             WeatherWidget().updateAll(context)
             compose.waitUntil(20000) { text(view).contains("대표 지역이 지정되지 않았습니다") }
             val region = Region("1100000000", "서울특별시", 60, 127, 37.5635694, 126.9800083, "108", "서울", 1.0)
@@ -68,6 +69,24 @@ class WidgetHostTest {
             file.outputStream().use {
                 compose.onRoot().captureToImage().asAndroidBitmap().compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
             }
+            if (context.resources.configuration.fontScale >= 1.8f) {
+                compose.runOnIdle {
+                    assertVisibleTextFits(view, checkViewport = false)
+                    val list = descendants(view).filterIsInstance<ListView>().single()
+                    assertTrue("Large font widget must allow scrolling", list.canScrollVertically(1))
+                    list.scrollListBy(view.height * 8)
+                }
+                compose.waitUntil(10000) {
+                    descendants(view).filterIsInstance<TextView>().any {
+                        it.text.startsWith("마지막 성공") && fullyVisible(it)
+                    }
+                }
+                context.getExternalFilesDir(null)!!.resolve("widget-host-scrolled.png").outputStream().use {
+                    compose.onRoot().captureToImage().asAndroidBitmap().compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)
+                }
+            } else {
+                compose.runOnIdle { assertVisibleTextFits(view) }
+            }
             prefs.removeFavorite(region.id)
             compose.waitUntil(20000) { text(view).contains("대표 지역이 지정되지 않았습니다") && !text(view).contains("서울특별시") }
         } finally {
@@ -76,5 +95,35 @@ class WidgetHostTest {
             prefs.update { original }
             automation.dropShellPermissionIdentity()
         }
+    }
+
+    private fun descendants(root: View): List<View> = listOf(root) + if (root is ViewGroup) {
+        (0 until root.childCount).flatMap { descendants(root.getChildAt(it)) }
+    } else {
+        emptyList()
+    }
+
+    private fun fullyVisible(view: View): Boolean {
+        val bounds = android.graphics.Rect()
+        return view.getGlobalVisibleRect(bounds) && bounds.height() >= view.height
+    }
+
+    private fun assertVisibleTextFits(root: View, checkViewport: Boolean = true) {
+        if (root is TextView && root.visibility == View.VISIBLE && root.text.isNotBlank()) {
+            val bounds = android.graphics.Rect()
+            if (checkViewport) {
+                assertTrue("Hidden widget text: ${root.text}", root.getGlobalVisibleRect(bounds))
+                assertTrue("Clipped widget text: ${root.text}", bounds.height() >= root.height)
+            }
+            root.layout?.let { layout ->
+                assertTrue("Truncated widget text: ${root.text}", (0 until layout.lineCount).all { layout.getEllipsisCount(it) == 0 })
+                assertTrue(
+                    "Vertically clipped widget text: ${root.text}; layout=${layout.height}, view=${root.height}, " +
+                        "padding=${root.compoundPaddingTop + root.compoundPaddingBottom}",
+                    layout.height <= root.height - root.compoundPaddingTop - root.compoundPaddingBottom
+                )
+            }
+        }
+        if (root is ViewGroup) (0 until root.childCount).forEach { assertVisibleTextFits(root.getChildAt(it), checkViewport) }
     }
 }

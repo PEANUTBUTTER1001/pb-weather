@@ -168,6 +168,7 @@
    - `radiusWidget(22.dp)`, `padding = 16.dp`, `surface`, `1.dp borderSubtle`.
    - 대표 지역 지정 시: 지역명 + `widgetTemp` 기온 + 하늘/최고/최저 + 우측 `48.dp` 아이콘 + 하단 구분선 아래 상태(`약 1시간마다 자동 갱신` 또는 `갱신 지연 · 마지막 성공 자료 유지`) 및 `마지막 성공 HH:mm`. 탭 시 **위젯 대표 지역 홈**으로 이동.
    - 대표 지역 미지정 시: `"대표 지역이 지정되지 않았습니다"` + `"대표 지역 선택 ›"` → `지역` 탭 이동.
+   - 시스템 글자 배율 180% 이상: 동일 글자 역할·전체 정보를 유지하는 세로 스크롤 배치. 최소 240×200dp에서 마지막 성공 시각까지 도달 가능해야 하며, 잘림을 숨기기 위한 글자 축소 제외. 기존 Glance `LazyColumn` 사용([Android 공식 스크롤 위젯 안내](https://developer.android.com/develop/ui/compose/glance/build-ui#use-scrollable-layouts)), 라이브러리·갱신 정책·딥링크 변경 없음. 기본 배율은 고정 요약 카드 유지.
 
 ---
 
