@@ -30,8 +30,11 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.supervisorScope
 import kotlinx.serialization.encodeToString
@@ -47,12 +50,8 @@ class ForecastRepository @Inject constructor(
     private val clock: Clock,
     private val mid: MidForecastRepository
 ) : ForecastSource {
-    private val ticks = flow {
-        while (currentCoroutineContext().isActive) {
-            emit(clock.instant().toEpochMilli())
-            delay(60000)
-        }
-    }
+    private val ticker = SharedMinuteTicker(clock)
+    private val ticks: Flow<Long> get() = ticker.flow
     override fun observe(region: Region): Flow<ForecastState> = combine(
         combine(cache.dao.observeSnapshots(region.key), mid.snapshots(region)) { a, b -> a + b },
         coordinator.states,
@@ -187,6 +186,37 @@ class ForecastRepository @Inject constructor(
                     cache.json.encodeToString(ForecastData(days = data.days.filter { it.date == today.toString() })),
                     source,
                     expiry
+                )
+            }
+        }
+    }
+}
+
+internal class SharedMinuteTicker(private val clock: Clock, private val intervalMs: Long = 60_000L) {
+    private val nowState = MutableStateFlow(clock.instant().toEpochMilli())
+    private val active = MutableStateFlow(false)
+    val isLeaderActive: Boolean get() = active.value
+
+    val flow: Flow<Long> = flow {
+        while (currentCoroutineContext().isActive) {
+            if (active.compareAndSet(false, true)) {
+                try {
+                    while (currentCoroutineContext().isActive) {
+                        val now = clock.instant().toEpochMilli()
+                        nowState.value = now
+                        emit(now)
+                        delay(intervalMs)
+                    }
+                } finally {
+                    active.value = false
+                }
+            } else {
+                emitAll(
+                    combine(nowState, active) { now, leaderRunning -> now to leaderRunning }
+                        .transformWhile { (now, leaderRunning) ->
+                            if (leaderRunning) emit(now)
+                            leaderRunning
+                        }
                 )
             }
         }

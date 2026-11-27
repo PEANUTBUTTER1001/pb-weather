@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -47,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
+import com.pbweather.weather.domain.AirMeasurement
 import com.pbweather.weather.domain.AirQualityData
 import com.pbweather.weather.domain.AirTrend
 import com.pbweather.weather.domain.ApparentStatus
@@ -88,7 +88,7 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
     }
     val scroll = rememberScrollState()
     LaunchedEffect(target) { scroll.scrollTo(0) }
-    val expanded = LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || LocalConfiguration.current.screenWidthDp <= 320
+    val expanded = LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || windowWidthDp() <= Dims.heroThreshold
     ModalBottomSheet(
         contentWindowInsets = { androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0) },
         onDismissRequest = onClose,
@@ -96,11 +96,11 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
         containerColor = WeatherTheme.colors.surface,
         shape = RoundedCornerShape(Dims.sheetRadius),
         dragHandle = null,
-        modifier = prototypeSheetModifier(),
+        modifier = Modifier.prototypeSheetModifier(),
         scrimColor = modalScrim(WeatherTheme.mode)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(max = LocalConfiguration.current.screenHeightDp.dp * .88f)
+            Modifier.prototypeSheetBorder().fillMaxWidth().heightIn(max = windowHeightDp() * .88f)
                 .verticalScroll(scroll).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
@@ -445,18 +445,22 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
             for (index in 0..1) {
                 val fine = index == 1
                 val color = if (fine) colors.pm25 else colors.accent
+                val valueOf: (AirMeasurement) -> Double? = { if (fine) it.pm25 else it.pm10 }
                 for (segment in if (fine) pm25Segments else pm10Segments) {
                     for (i in 1 until segment.size) {
                         val a = segment[i - 1]
                         val b = segment[i]
+                        val av = valueOf(a) ?: continue
+                        val bv = valueOf(b) ?: continue
                         drawLine(
                             color,
-                            point(a.at, (if (fine) a.pm25 else a.pm10)!!),
-                            point(b.at, (if (fine) b.pm25 else b.pm10)!!),
+                            point(a.at, av),
+                            point(b.at, bv),
                             Dims.chartStroke.value * plotScale
                         )
                     }
                     for (row in segment) {
+                        val rv = valueOf(row) ?: continue
                         drawCircle(
                             color,
                             (
@@ -468,7 +472,7 @@ fun WeatherDetails(target: String, state: WeatherUiState, onNavigate: (String) -
                                     Dims.chartDot.value
                                 }
                                 ) * plotScale,
-                            point(row.at, (if (fine) row.pm25 else row.pm10)!!)
+                            point(row.at, rv)
                         )
                     }
                 }

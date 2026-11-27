@@ -45,13 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.pbweather.weather.R
 import com.pbweather.weather.ui.theme.Dims
@@ -320,7 +320,7 @@ fun SecondaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled:
             )
         ) {
             Column(
-                Modifier.heightIn(max = androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp.dp * .88f)
+                Modifier.heightIn(max = windowHeightDp() * .88f)
                     .verticalScroll(rememberScrollState()).padding(Dims.gutter),
                 verticalArrangement = Arrangement.spacedBy(Dims.medium)
             ) {
@@ -384,11 +384,15 @@ fun SecondaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled:
     }
 }
 
-@Composable fun prototypeSheetModifier(): Modifier = Modifier
+@Composable fun windowWidthDp(): Dp = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.width.toDp() }
+
+@Composable fun windowHeightDp(): Dp = with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+
+@Composable fun Modifier.prototypeSheetModifier(): Modifier = this
     .windowInsetsPadding(WindowInsets.navigationBars.only(WindowInsetsSides.Bottom))
     .padding(start = Dims.medium, end = Dims.medium, bottom = Dims.medium)
 
-@Composable fun prototypeSheetBorder(): Modifier = Modifier.border(
+@Composable fun Modifier.prototypeSheetBorder(): Modifier = this.border(
     if (WeatherTheme.mode ==
         ThemeMode.HIGH_CONTRAST
     ) {

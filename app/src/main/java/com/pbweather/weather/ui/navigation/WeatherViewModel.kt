@@ -126,20 +126,21 @@ class WeatherViewModel @Inject constructor(
     }
     val query = MutableStateFlow("")
     private val range = MutableStateFlow(HistoryWindow.recent(clock))
+    private val recentWindow = MutableStateFlow(HistoryWindow.recent(clock))
     private val location = MutableStateFlow(LocationUi(granted = locations.permissionGranted()))
     private val saved = preferences.preferences.stateIn(viewModelScope, SharingStarted.Eagerly, AppPreferences())
     private val selected = saved.map { it.selected }.distinctUntilChanged()
     val notices = MutableSharedFlow<Notice>()
     private val deleted = ArrayDeque<DeletedFavorite>()
     private var refreshJob: Job? = null
-    private val weather = combine(selected, range) { region, dates -> region to dates }.flatMapLatest { (region, dates) ->
+    private val weather = combine(selected, recentWindow) { region, window -> region to window }.flatMapLatest { (region, window) ->
         if (region == null) {
             flowOf(WeatherData())
         } else {
             combine(
                 forecast(region),
                 air(region),
-                history(region, HistoryWindow.recent(clock))
+                history(region, window)
             ) { f, a, h -> WeatherData(region.key, f, a, h) }
         }
     }
@@ -147,6 +148,7 @@ class WeatherViewModel @Inject constructor(
         while (true) {
             emit(clock.instant().toEpochMilli())
             val current = HistoryWindow.recent(clock)
+            if (recentWindow.value != current) recentWindow.value = current
             if (range.value.start < current.start || range.value.end > current.end) range.value = current
             delay(60000)
         }
@@ -181,7 +183,7 @@ class WeatherViewModel @Inject constructor(
     init {
         viewModelScope.launch { locations.prepare() }
         viewModelScope.launch {
-            combine(selected, range) { a, b -> a to b }.collect { (region, _) ->
+            combine(selected, recentWindow) { region, _ -> region }.collect { region ->
                 if (region != null) refresh()
             }
         }

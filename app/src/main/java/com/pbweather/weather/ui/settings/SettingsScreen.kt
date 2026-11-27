@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -57,6 +56,7 @@ import com.pbweather.weather.ui.components.Rule
 import com.pbweather.weather.ui.components.UiIcon
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.components.timeLabel
+import com.pbweather.weather.ui.components.windowWidthDp
 import com.pbweather.weather.ui.home.HeroMotionPolicy
 import com.pbweather.weather.ui.navigation.WeatherActions
 import com.pbweather.weather.ui.navigation.WeatherUiState
@@ -454,7 +454,7 @@ private data class SettingChoice(
 ) {
     val contrast = WeatherTheme.mode == ThemeMode.HIGH_CONTRAST
     val grid = expanded && choices.size == 4 && (
-        LocalConfiguration.current.screenWidthDp <= 320 ||
+        windowWidthDp() <= Dims.heroThreshold ||
             LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || WeatherTheme.fontScale >= 1.42f
         )
     Surface(
