@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -205,15 +206,21 @@ fun SettingsScreen(
                     stringResource(R.string.primary_location),
                     primary?.name ?: stringResource(R.string.primary_not_set)
                 ) { _ ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            stringResource(R.string.open),
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(Dims.tiny),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
                             Modifier.heightIn(min = Dims.metaTouch).clickable(role = Role.Button) {
-                                preview =
-                                    true
-                            }.padding(horizontal = Dims.small, vertical = Dims.tiny),
-                            style = MaterialTheme.typography.labelLarge
-                        )
+                                preview = true
+                            }.padding(horizontal = Dims.small),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                stringResource(R.string.open),
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
                         OutlinedButton(onClick = onLocations) { Text(stringResource(R.string.change)) }
                     }
                 }
@@ -253,7 +260,7 @@ fun SettingsScreen(
                 Row(
                     Modifier.padding(horizontal = Dims.gutter, vertical = Dims.medium),
                     horizontalArrangement = Arrangement.spacedBy(Dims.small),
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     AppIcon(UiIcon.SHIELD, null, Modifier.size(Dims.smallIcon), WeatherTheme.colors.statusOk)
                     Text(

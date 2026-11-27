@@ -133,7 +133,7 @@ fun LocationsScreen(
                             1f
                         ).clickable(enabled = !state.location.working, onClick = if (state.location.granted) actions.locate else request)
                     ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(Dims.small)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(Dims.small), verticalAlignment = Alignment.CenterVertically) {
                             Text(stringResource(R.string.design_current_auto), style = MaterialTheme.typography.titleSmall)
                             if (state.preferences.selected?.usingCurrentLocation ==
                                 true
@@ -190,23 +190,29 @@ fun LocationsScreen(
                     primary =
                     state.preferences.primaryId == region.id
                 )
-                IconButton(
-                    onClick = {
-                        actions.primary(region.id)
-                    },
-                    modifier = Modifier.size(Dims.field).offset(x = Dims.medium).semantics {
-                        selected =
-                            state.preferences.primaryId == region.id
-                    }
+                Row(
+                    Modifier.offset(x = Dims.small),
+                    horizontalArrangement = Arrangement.spacedBy(Dims.tiny),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AppIcon(
-                        if (state.preferences.primaryId == region.id) UiIcon.STAR_FILLED else UiIcon.STAR,
-                        stringResource(R.string.set_primary_named, region.name),
-                        tint = WeatherTheme.colors.text
-                    )
-                }
-                IconButton(onClick = { actions.deleteFavorite(region.id) }, modifier = Modifier.size(Dims.field).offset(x = Dims.medium)) {
-                    AppIcon(UiIcon.DELETE, stringResource(R.string.delete_named, region.name), tint = WeatherTheme.colors.destructive)
+                    IconButton(
+                        onClick = {
+                            actions.primary(region.id)
+                        },
+                        modifier = Modifier.size(Dims.action).semantics {
+                            selected =
+                                state.preferences.primaryId == region.id
+                        }
+                    ) {
+                        AppIcon(
+                            if (state.preferences.primaryId == region.id) UiIcon.STAR_FILLED else UiIcon.STAR,
+                            stringResource(R.string.set_primary_named, region.name),
+                            tint = WeatherTheme.colors.text
+                        )
+                    }
+                    IconButton(onClick = { actions.deleteFavorite(region.id) }, modifier = Modifier.size(Dims.action)) {
+                        AppIcon(UiIcon.DELETE, stringResource(R.string.delete_named, region.name), tint = WeatherTheme.colors.destructive)
+                    }
                 }
             }
             FlatRule(strong = region.id == state.preferences.favorites.lastOrNull()?.id)

@@ -263,18 +263,30 @@ fun WeatherShell(
                                 )
                             }
                         }
-                        if (tab == WeatherTab.SETTINGS) Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
-                        IconButton(onClick = {
-                            details = "help"
-                        }, modifier = Modifier.size(Dims.field).offset(x = Dims.medium)) {
-                            AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                        if (tab == WeatherTab.SETTINGS) {
+                            Text(
+                                stringResource(R.string.settings),
+                                Modifier.padding(end = Dims.tiny),
+                                style = MaterialTheme.typography.titleLarge
+                            )
                         }
-                        IconButton(
-                            onClick = actions.refresh,
-                            enabled = state.preferences.selected != null && !loading,
-                            modifier = Modifier.size(Dims.field).offset(x = Dims.medium)
+                        Row(
+                            Modifier.offset(x = Dims.small),
+                            horizontalArrangement = Arrangement.spacedBy(Dims.tiny),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
+                            IconButton(onClick = {
+                                details = "help"
+                            }, modifier = Modifier.size(Dims.action)) {
+                                AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                            }
+                            IconButton(
+                                onClick = actions.refresh,
+                                enabled = state.preferences.selected != null && !loading,
+                                modifier = Modifier.size(Dims.action)
+                            ) {
+                                AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
+                            }
                         }
                     }
                 }
