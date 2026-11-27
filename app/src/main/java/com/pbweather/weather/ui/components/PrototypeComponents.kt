@@ -1,6 +1,7 @@
 package com.pbweather.weather.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
@@ -101,6 +103,7 @@ import com.pbweather.weather.ui.theme.WeatherTheme
             Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(Dims.radius),
             color = WeatherTheme.colors.surface,
+            shadowElevation = if (WeatherTheme.mode == ThemeMode.HIGH_CONTRAST) Dims.zero else Dims.cardElevation,
             border = BorderStroke(Dims.hairline, WeatherTheme.colors.border)
         ) {
             Column(
@@ -108,7 +111,12 @@ import com.pbweather.weather.ui.theme.WeatherTheme
                 verticalArrangement = Arrangement.spacedBy(Dims.medium),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AppIcon(UiIcon.EMPTY, null, Modifier.size(Dims.field))
+                Box(
+                    Modifier.size(Dims.navPillWidth).background(WeatherTheme.colors.tonal, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppIcon(UiIcon.EMPTY, null, Modifier.size(Dims.weatherSmall))
+                }
                 Text(
                     stringResource(R.string.design_no_saved_weather),
                     style = MaterialTheme.typography.titleLarge,
@@ -160,7 +168,7 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
         onClick,
         modifier.heightIn(min = Dims.field),
         enabled,
-        shape = RoundedCornerShape(Dims.pill),
+        shape = RoundedCornerShape(Dims.groupRadius),
         contentPadding = PaddingValues(horizontal = Dims.gutter, vertical = Dims.small),
         content = content
     )

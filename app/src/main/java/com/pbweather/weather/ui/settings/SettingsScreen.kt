@@ -357,10 +357,11 @@ fun SettingsScreen(
 
 @Composable private fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(Dims.badgeInset)) {
-        Text(title, Modifier.padding(start = Dims.gridGap), style = WeatherTheme.type.groupTitle, color = WeatherTheme.colors.secondary)
+        Text(title, Modifier.padding(start = Dims.tiny), style = WeatherTheme.type.groupTitle, color = WeatherTheme.colors.secondary)
         Surface(
             color = WeatherTheme.colors.surface,
             shape = RoundedCornerShape(Dims.radius),
+            shadowElevation = if (WeatherTheme.mode == ThemeMode.HIGH_CONTRAST) Dims.zero else Dims.cardElevation,
             border = BorderStroke(
                 if (WeatherTheme.mode ==
                     ThemeMode.HIGH_CONTRAST
@@ -461,7 +462,8 @@ private data class SettingChoice(
             if (!enabled) stateDescription = disabledReason
         },
         shape = RoundedCornerShape(Dims.groupRadius),
-        color = WeatherTheme.colors.tonal
+        color = WeatherTheme.colors.tonal,
+        border = BorderStroke(Dims.hairline, WeatherTheme.colors.border)
     ) {
         Column(Modifier.padding(Dims.segmentPad), verticalArrangement = Arrangement.spacedBy(Dims.segmentGap)) {
             val rows = if (grid) choices.chunked(2) else listOf(choices)

@@ -384,6 +384,13 @@ fun HomeScreen(
         Modifier.testTag("home-comparison").clickable(onClick = onClick),
         color = WeatherTheme.colors.surface,
         shape = RoundedCornerShape(Dims.radius),
+        shadowElevation = if (WeatherTheme.mode ==
+            com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST
+        ) {
+            Dims.zero
+        } else {
+            Dims.cardElevation
+        },
         border = androidx.compose.foundation.BorderStroke(
             if (WeatherTheme.mode == com.pbweather.weather.ui.theme.ThemeMode.HIGH_CONTRAST) Dims.strong else Dims.hairline,
             WeatherTheme.colors.border
