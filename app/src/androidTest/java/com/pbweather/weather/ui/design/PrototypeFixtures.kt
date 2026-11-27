@@ -27,6 +27,12 @@ import java.time.LocalDate
 object PrototypeFixtures {
     val now = Instant.parse("2026-11-24T05:20:00Z").toEpochMilli()
     val region = Region("prototype-jongno", "서울 종로구 청운효자동", 60, 127, 37.5635694, 126.9800083, "108", "서울", 1.8, usingCurrentLocation = true)
+    val favorites = listOf(
+        region,
+        Region("busan-haeundae", "부산 해운대구 우1동", 99, 75, 35.1600194444444, 129.165808333333, "159", "부산", 11.4),
+        Region("jeju-ido", "제주 제주시 이도2동", 53, 38, 33.4963111111111, 126.533208333333, "184", "제주", 2.4),
+        Region("gangneung-gyo", "강원 강릉시 교1동", 92, 131, 37.7491361111111, 128.878497222222, "105", "강릉", 2.0)
+    )
     private fun meta(kind: DataKind) = SourceMeta(
         if (kind == DataKind.AIR) Provider.AIRKOREA else Provider.KMA,
         kind,
@@ -35,6 +41,29 @@ object PrototypeFixtures {
         issuedAt = now - 1200000,
         observedAt = now - if (kind == DataKind.AIR) 4800000 else 1200000
     )
+    fun favoriteForecasts(): Map<String, ForecastState> {
+        val base = state().data.forecast
+        return favorites.mapIndexed { index, region ->
+            val temperature = listOf(7.4, 13.8, 14.4, 9.1)[index]
+            val hour = base.hourly.data!!.hours.first().copy(sky = if (index == 0) 3 else 1, precipitationType = if (index == 2) 1 else 0)
+            region.id to
+                base.copy(
+                    now = base.now.copy(
+                        data = base.now.data!!.copy(
+                            temperature = temperature,
+                            precipitationType = if (index ==
+                                2
+                            ) {
+                                1
+                            } else {
+                                0
+                            }
+                        )
+                    ),
+                    hourly = base.hourly.copy(data = ForecastData(hours = listOf(hour)))
+                )
+        }.toMap()
+    }
     fun state(): WeatherUiState {
         val first = now - 1200000
         val hourly = listOf(
@@ -622,7 +651,7 @@ object PrototypeFixtures {
             }
         )
         return WeatherUiState(
-            preferences = AppPreferences(region, listOf(region), region.id),
+            preferences = AppPreferences(region, favorites, region.id),
             data = WeatherData(
                 region.key,
                 ForecastState(

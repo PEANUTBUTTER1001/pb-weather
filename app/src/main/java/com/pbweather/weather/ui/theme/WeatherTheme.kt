@@ -50,6 +50,21 @@ data class WeatherColors(
         else -> border
     }
     val sunFill: Color get() = Color(0xFFF59E0B)
+    val destructive: Color get() = when (text) {
+        Color.White -> Color(0xFFFF6B6B)
+        Color(0xFFF1F5F9) -> Color(0xFFF87171)
+        else -> Color(0xFFB91C1C)
+    }
+    val sunIcon: Color get() = when (text) {
+        Color.White -> Color(0xFFFFE600)
+        Color(0xFFF1F5F9) -> Color(0xFFFBBF24)
+        else -> Color(0xFFD97706)
+    }
+    val moonIcon: Color get() = when (text) {
+        Color.White -> Color(0xFF7AD7FF)
+        Color(0xFFF1F5F9) -> Color(0xFFA5B4FC)
+        else -> Color(0xFF4F46E5)
+    }
     val tonalStrong: Color get() = when (tonal) {
         Color(0xFFE7EEF9) -> Color(0xFFDAE4F5)
         Color(0xFFEFEAE1) -> Color(0xFFE4DCCD)
@@ -108,6 +123,7 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 
 object Dims {
     val chip = 40.dp
+    val badgeInset = 6.dp
     val control = 34.dp
     val emptyPadding = 28.dp
     val skeletonTemperatureWidth = 136.dp
@@ -294,7 +310,14 @@ data class WeatherTypography(
     val location: TextStyle,
     val meta: TextStyle,
     val material: Typography
-)
+) {
+    val groupTitle: TextStyle get() = material.bodyLarge.copy(
+        fontSize = material.bodyLarge.fontSize * (12f / 13.2f),
+        lineHeight = material.bodyLarge.lineHeight * (12f / 13.2f),
+        fontWeight = FontWeight.SemiBold
+    )
+    val caption: TextStyle get() = meta.copy(fontSize = meta.fontSize * (10.2f / 11.4f), lineHeight = meta.lineHeight * (10.2f / 11.4f))
+}
 private val LocalWeatherType = staticCompositionLocalOf { weatherTypography(FontSize.NORMAL) }
 private val LocalWeatherMode = staticCompositionLocalOf { ThemeMode.LIGHT }
 private val LocalAppScale = staticCompositionLocalOf { 1f }

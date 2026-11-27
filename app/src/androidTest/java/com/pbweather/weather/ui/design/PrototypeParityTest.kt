@@ -32,6 +32,23 @@ import org.junit.Test
 class PrototypeParityTest {
     @get:Rule val compose = createComposeRule()
 
+    @Test fun favoriteMarkerVectorsContainVisiblePixels() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        for (resource in listOf(
+            com.pbweather.weather.R.drawable.design_icon_star,
+            com.pbweather.weather.R.drawable.design_icon_star_filled
+        )) {
+            val bitmap = Bitmap.createBitmap(32, 32, Bitmap.Config.ARGB_8888)
+            val drawable = context.getDrawable(resource)!!
+            drawable.setBounds(0, 0, 32, 32)
+            drawable.draw(android.graphics.Canvas(bitmap))
+            val pixels = IntArray(32 * 32)
+            bitmap.getPixels(pixels, 0, 32, 0, 0, 32, 32)
+            org.junit.Assert.assertTrue("Favorite marker is blank: $resource", pixels.any { it ushr 24 != 0 })
+            bitmap.recycle()
+        }
+    }
+
     @Test fun compactFieldKeepsItsLabelAndEditableSemanticsTogether() {
         val value = mutableStateOf("2026-11-14")
         compose.setContent {
@@ -103,7 +120,9 @@ class PrototypeParityTest {
                         palette.value,
                         WeatherActions(),
                         emptyFlow(),
-                        cacheBytes = 12400000
+                        regionForecasts = PrototypeFixtures.favoriteForecasts(),
+                        primaryForecast = fixture.data.forecast,
+                        cacheBytes = 13002342
                     )
                 }
             }
