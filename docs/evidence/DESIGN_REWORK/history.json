@@ -1,0 +1,36 @@
+{
+  "clientDate": "2026-11-26",
+  "unit": "history",
+  "branch": "fix/design-history",
+  "gateAttempts": 5,
+  "checks": "ktlintCheck lintDebug testDebugUnitTest assembleDebug connectedDebugAndroidTest PASS",
+  "results": {
+    "unit": {
+      "total": 31,
+      "skipped": 0,
+      "failures": 0
+    },
+    "android": {
+      "total": 30,
+      "skipped": 1,
+      "failures": 0
+    }
+  },
+  "scope": "Design implementation and regression; visual review separate from automatic checks",
+  "limits": [
+    "Location invocation held by user; S25 Ultra user-owned; release excluded",
+    "Winter WSD input specification unresolved",
+    "No claim of pixel identity from test success"
+  ],
+  "secretScan": "Changed text prefix scan and forbidden file path check; private files not read",
+  "completedClientDate": "2026-11-27",
+  "attempts": {
+    "1": "FAIL: unchanged catalog search measured 332ms against 300ms bound",
+    "2": "NOT_RUN Android: emulator-5554 exited before device selection",
+    "3": "Android 29 pass + 1 skip; lint failed unused BoxWithConstraints scope",
+    "4": "PASS full gates: 31 unit, 29 Android pass + 1 location skip",
+    "5": "PASS affected gates: 31 unit, 5 Android, 375dp/system font 200%"
+  },
+  "visualReview": "Comparison table, two date fields with native calendar, 210dp plot/axes/legend, daily row order and KV sheet restored; 200% stacked form and graph detail verified.",
+  "fixtureProvenance": "Numeric hourly/weekly/history arrays derived from immutable prototype functions. App requires 48 future hours, while prototype includes current hour; first daily forecast follows actual hero 9.8/1.6 rather than contradictory weekly 12/4. History observations remain one source for all comparisons. Browser OS scrollbar/chrome and platform glyph rasterization require normalized final comparison."
+}

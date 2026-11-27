@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -16,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextReplacement
 import androidx.test.platform.app.InstrumentationRegistry
 import com.pbweather.weather.ui.navigation.WeatherActions
@@ -116,7 +118,7 @@ class PrototypeParityTest {
                     palette.value = color
                 }
                 for ((label, file) in listOf("홈" to "home", "과거" to "history", "지역" to "locations", "설정" to "settings")) {
-                    compose.onNodeWithContentDescription("$label 탭 열기").performClick()
+                    compose.onNodeWithContentDescription("$label 탭 열기").performSemanticsAction(SemanticsActions.OnClick) { it() }
                     compose.mainClock.advanceTimeBy(500)
                     SystemClock.sleep(350)
                     compose.waitForIdle()

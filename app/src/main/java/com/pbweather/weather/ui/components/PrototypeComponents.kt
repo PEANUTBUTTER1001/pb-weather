@@ -212,7 +212,8 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
     modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String? = null,
-    isError: Boolean = false
+    isError: Boolean = false,
+    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(Dims.tiny)) {
         val colors = WeatherTheme.colors
@@ -231,16 +232,19 @@ fun PrimaryButton(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: B
                         color = colors.surface,
                         border = BorderStroke(Dims.hairline, if (isError) colors.error else colors.borderStrong)
                     ) {
-                        Box(
+                        Row(
                             Modifier.fillMaxWidth().heightIn(min = Dims.field).padding(horizontal = Dims.medium, vertical = Dims.small),
-                            contentAlignment = Alignment.CenterStart
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (value.isEmpty() &&
-                                placeholder != null
-                            ) {
-                                Text(placeholder, style = MaterialTheme.typography.bodyLarge, color = colors.tertiary)
+                            Box(Modifier.weight(1f)) {
+                                if (value.isEmpty() &&
+                                    placeholder != null
+                                ) {
+                                    Text(placeholder, style = MaterialTheme.typography.bodyLarge, color = colors.tertiary)
+                                }
+                                inner()
                             }
-                            inner()
+                            trailingIcon?.invoke()
                         }
                     }
                 }

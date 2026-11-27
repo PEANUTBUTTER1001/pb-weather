@@ -284,4 +284,20 @@
     <string name="design_low">최저</string>
     <string name="design_no_saved_weather">저장된 날씨 자료가 없습니다</string>
     <string name="design_no_saved_explanation">오프라인 상태이며 저장된 기록이 없습니다.\n연결 후 다시 시도해 주세요.</string>
+    <string name="design_delta">%1$s %2$s℃</string>
+    <string name="design_history_compare">어제와 비교</string>
+    <string name="design_compare_forecast">%1$s (예보)</string>
+    <string name="design_compare_observed">%1$s (관측)</string>
+    <string name="design_history_delta">%1$s · 어제보다 %2$s℃ %3$s</string>
+    <string name="design_delta_equal">%1$s · 어제와 비슷함</string>
+    <string name="design_chart_high">최고기온</string>
+    <string name="design_chart_low">최저기온</string>
+    <string name="design_chart_rain">일강수량(mm)</string>
+    <string name="design_chart_open_day">%1$s 그래프 지점 상세 열기</string>
+    <string name="design_calendar">%1$s 달력 열기</string>
+    <string name="design_high">최고</string>
+    <string name="design_low">최저</string>
+    <string name="design_history_station">%1$s 기상관측소 · 약 %2$skm</string>
+    <string name="design_history_window">%1$s ~ %2$s</string>
+    <string name="design_compare_note">오늘 최고·최저기온은 기상청 예보, 어제 수치는 관측소 일자료 기준입니다.\n오늘 일평균과 일강수량은 관측 종료 전까지 미확정으로 표시합니다.</string>
 </resources>

@@ -107,6 +107,7 @@ fun weatherColors(mode: ThemeMode, palette: Palette): WeatherColors {
 }
 
 object Dims {
+    val chip = 40.dp
     val control = 34.dp
     val emptyPadding = 28.dp
     val skeletonTemperatureWidth = 136.dp
@@ -142,6 +143,10 @@ object Dims {
     val topBar = 60.dp
     val navBar = 68.dp
     val hourly = 60.dp
+    val chartMinimumWidth = 300.dp
+    val chartBottom = 30.dp
+    val historyHighDot = 4.2.dp
+    val historyLowDot = 3.6.dp
     val chart = 210.dp
     val trend = 184.dp
     val spline = 44.dp

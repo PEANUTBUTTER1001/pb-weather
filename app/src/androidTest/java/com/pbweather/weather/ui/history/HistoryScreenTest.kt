@@ -3,6 +3,7 @@ package com.pbweather.weather.ui.history
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -20,6 +21,17 @@ import org.junit.Test
 
 class HistoryScreenTest {
     @get:Rule val compose = createComposeRule()
+
+    @Test fun chartPointOpensTheDailyObservationSheet() {
+        val state = com.pbweather.weather.ui.design.PrototypeFixtures.state()
+        compose.setContent { WeatherTheme { HistoryScreen(state, {}, {}, {}) } }
+        compose.onNodeWithContentDescription("2026-11-14 그래프 지점 상세 열기").performScrollTo().performClick()
+        val label = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext.getString(
+            com.pbweather.weather.R.string.average_wind
+        )
+        compose.onNodeWithText(label).assertIsDisplayed()
+        compose.onNodeWithContentDescription("닫기").performClick()
+    }
 
     @Test fun invalidRangeStaysNearInputAndOneWeekChoosesSevenKstDates() {
         val region = Region("test", "테스트 지역", 60, 127, 37.57, 126.98, "108", "서울", 1.0)
