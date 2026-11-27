@@ -1,61 +1,64 @@
 {
-  "clientDate": "2026-11-26",
+  "clientDate": "2026-11-27",
   "device": "emulator-5554 Pixel_9_Pro API35",
   "build": "debug",
   "method": "10 process cold starts via force-stop; ReportDrawnWhen waits for preferences and first nowcast data/error; cached valid nowcast confirmed before runs; OS file cache not cleared",
+  "optimization": "Lazy<WidgetSync> + background IO initialization in WeatherApp and WidgetSync",
+  "previousP90Ms": 4867,
   "samples": [
     {
       "sample": 1,
-      "fullyDrawnMs": 4429,
-      "firstDisplayMs": 2960
+      "fullyDrawnMs": 4236,
+      "firstDisplayMs": 2822
     },
     {
       "sample": 2,
-      "fullyDrawnMs": 4374,
-      "firstDisplayMs": 3022
+      "fullyDrawnMs": 4293,
+      "firstDisplayMs": 2873
     },
     {
       "sample": 3,
-      "fullyDrawnMs": 4848,
-      "firstDisplayMs": 3359
+      "fullyDrawnMs": 4140,
+      "firstDisplayMs": 2860
     },
     {
       "sample": 4,
-      "fullyDrawnMs": 4392,
-      "firstDisplayMs": 2893
+      "fullyDrawnMs": 4653,
+      "firstDisplayMs": 2969
     },
     {
       "sample": 5,
-      "fullyDrawnMs": 4867,
-      "firstDisplayMs": 3176
-    },
-    {
-      "sample": 6,
-      "fullyDrawnMs": 4092,
-      "firstDisplayMs": 2803
-    },
-    {
-      "sample": 7,
-      "fullyDrawnMs": 4596,
-      "firstDisplayMs": 3181
-    },
-    {
-      "sample": 8,
-      "fullyDrawnMs": 4548,
+      "fullyDrawnMs": 4741,
       "firstDisplayMs": 3184
     },
     {
+      "sample": 6,
+      "fullyDrawnMs": 4395,
+      "firstDisplayMs": 2959
+    },
+    {
+      "sample": 7,
+      "fullyDrawnMs": 4540,
+      "firstDisplayMs": 3198
+    },
+    {
+      "sample": 8,
+      "fullyDrawnMs": 4026,
+      "firstDisplayMs": 2688
+    },
+    {
       "sample": 9,
-      "fullyDrawnMs": 4938,
-      "firstDisplayMs": 3514
+      "fullyDrawnMs": 4130,
+      "firstDisplayMs": 2804
     },
     {
       "sample": 10,
-      "fullyDrawnMs": 4388,
-      "firstDisplayMs": 2950
+      "fullyDrawnMs": 4320,
+      "firstDisplayMs": 3066
     }
   ],
-  "p90Ms": 4867,
+  "p90Ms": 4653,
+  "firstDisplayP90Ms": 3184,
   "targetMs": 1000,
   "targetMet": false
 }

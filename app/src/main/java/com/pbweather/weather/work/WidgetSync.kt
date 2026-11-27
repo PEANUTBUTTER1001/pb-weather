@@ -6,6 +6,7 @@ import com.pbweather.weather.data.local.PreferencesRepository
 import com.pbweather.weather.data.repository.WidgetRepository
 import com.pbweather.weather.widget.WeatherWidget
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -23,8 +24,10 @@ class WidgetSync @Inject constructor(
     private val widgets: WidgetRepository
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val started = AtomicBoolean(false)
     fun start() {
-        WidgetScheduler.ensure(context)
+        if (!started.compareAndSet(false, true)) return
+        scope.launch { WidgetScheduler.ensure(context) }
         scope.launch {
             preferences.preferences.map { prefs -> prefs.favorites.firstOrNull { it.id == prefs.primaryId } }
                 .distinctUntilChanged().catch { }.collect { region ->
