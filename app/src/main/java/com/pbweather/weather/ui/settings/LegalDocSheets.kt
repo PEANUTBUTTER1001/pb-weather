@@ -32,11 +32,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
 import com.pbweather.weather.domain.ForecastState
 import com.pbweather.weather.domain.WeatherCondition
@@ -53,6 +51,7 @@ import com.pbweather.weather.ui.components.prototypeSheetModifier
 import com.pbweather.weather.ui.components.skyLabel
 import com.pbweather.weather.ui.components.temperature
 import com.pbweather.weather.ui.components.timeLabel
+import com.pbweather.weather.ui.components.windowHeightDp
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.WeatherTheme
 import com.pbweather.weather.ui.theme.modalScrim
@@ -78,12 +77,12 @@ fun LegalDocSheet(target: String, onClose: () -> Unit) {
         scrimColor = modalScrim(WeatherTheme.mode),
         shape = RoundedCornerShape(Dims.sheetRadius),
         dragHandle = null,
-        modifier = prototypeSheetModifier(),
+        modifier = Modifier.prototypeSheetModifier(),
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(
-                max = LocalConfiguration.current.screenHeightDp.dp * .88f
+            Modifier.prototypeSheetBorder().fillMaxWidth().heightIn(
+                max = windowHeightDp() * .88f
             ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
@@ -183,11 +182,11 @@ fun WidgetPreviewSheet(
         scrimColor = modalScrim(WeatherTheme.mode),
         shape = RoundedCornerShape(Dims.sheetRadius),
         dragHandle = null,
-        modifier = prototypeSheetModifier(),
+        modifier = Modifier.prototypeSheetModifier(),
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(max = LocalConfiguration.current.screenHeightDp.dp * .88f)
+            Modifier.prototypeSheetBorder().fillMaxWidth().heightIn(max = windowHeightDp() * .88f)
                 .verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {

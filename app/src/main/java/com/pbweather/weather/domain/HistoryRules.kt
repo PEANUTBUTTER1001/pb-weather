@@ -69,8 +69,8 @@ object HistorySummary {
             rows.count { it.minimum != null },
             rows.count { it.average != null },
             rain.size,
-            rows.filter { it.maximum != null }.maxByOrNull { it.maximum!! }?.let { it.date to it.maximum!! },
-            rows.filter { it.minimum != null }.minByOrNull { it.minimum!! }?.let { it.date to it.minimum!! },
+            rows.mapNotNull { row -> row.maximum?.let { row.date to it } }.maxByOrNull { it.second },
+            rows.mapNotNull { row -> row.minimum?.let { row.date to it } }.minByOrNull { it.second },
             rain.takeIf { it.isNotEmpty() }?.sum()
         )
     }

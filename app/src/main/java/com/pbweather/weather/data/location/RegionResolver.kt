@@ -75,7 +75,7 @@ class RegionResolver(
         }
         val grid = if (current) KmaGridConverter.convert(latitude, longitude) else null
         return Region(
-            id = if (current) "current_${grid!!.nx}_${grid.ny}" else row.code,
+            id = grid?.let { "current_${it.nx}_${it.ny}" } ?: row.code,
             name = row.name,
             nx = grid?.nx ?: row.nx,
             ny = grid?.ny ?: row.ny,

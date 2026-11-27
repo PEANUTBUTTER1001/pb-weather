@@ -34,14 +34,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.pbweather.weather.R
 import com.pbweather.weather.core.time.ReleaseTimeCalculator
 import com.pbweather.weather.domain.DailyObservation
@@ -65,6 +63,8 @@ import com.pbweather.weather.ui.components.number
 import com.pbweather.weather.ui.components.prototypeSheetBorder
 import com.pbweather.weather.ui.components.prototypeSheetModifier
 import com.pbweather.weather.ui.components.temperature
+import com.pbweather.weather.ui.components.windowHeightDp
+import com.pbweather.weather.ui.components.windowWidthDp
 import com.pbweather.weather.ui.navigation.WeatherUiState
 import com.pbweather.weather.ui.theme.Dims
 import com.pbweather.weather.ui.theme.WeatherTheme
@@ -155,7 +155,7 @@ fun HistoryScreen(state: WeatherUiState, onRange: (DateRange) -> Unit, onRefresh
                             rain(yesterday?.precipitation)
                         )
                     Box {
-                        if (LocalConfiguration.current.screenWidthDp <= 320 ||
+                        if (windowWidthDp() <= Dims.heroThreshold ||
                             LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f
                         ) {
                             Column {
@@ -298,7 +298,7 @@ fun HistoryScreen(state: WeatherUiState, onRange: (DateRange) -> Unit, onRefresh
                         }
                     }
                     val stacked =
-                        LocalConfiguration.current.screenWidthDp <= 320 || LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f
+                        windowWidthDp() <= Dims.heroThreshold || LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f
                     if (stacked) {
                         Column(verticalArrangement = Arrangement.spacedBy(Dims.small)) {
                             DateInput(
@@ -572,14 +572,14 @@ private fun HistoryDaySheet(date: String, day: DailyObservation?, state: Weather
         onDismissRequest = onClose,
         containerColor = WeatherTheme.colors.surface,
         scrimColor = modalScrim(WeatherTheme.mode),
-        modifier = prototypeSheetModifier(),
+        modifier = Modifier.prototypeSheetModifier(),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(Dims.sheetRadius),
         dragHandle = null,
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
-            prototypeSheetBorder().fillMaxWidth().heightIn(
-                max = LocalConfiguration.current.screenHeightDp.dp * .88f
+            Modifier.prototypeSheetBorder().fillMaxWidth().heightIn(
+                max = windowHeightDp() * .88f
             ).verticalScroll(rememberScrollState()).padding(Dims.sheet),
             verticalArrangement = Arrangement.spacedBy(Dims.medium)
         ) {
@@ -608,7 +608,7 @@ private fun HistoryDaySheet(date: String, day: DailyObservation?, state: Weather
                                 ?: stringResource(R.string.history_missing)
                             )
                 ),
-                LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || LocalConfiguration.current.screenWidthDp <= 320
+                LocalDensity.current.fontScale * WeatherTheme.fontScale >= 1.8f || windowWidthDp() <= Dims.heroThreshold
             )
             SourceInfo(day?.meta, state.preferences.selected?.asosStationName, state.data.history)
             PrimaryButton(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.confirm)) }

@@ -1,6 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">땅버날씨</string>
-    <string name="initializing">날씨 자료를 준비합니다.</string>
     <string name="location_permission_title">대략적 위치로 날씨 찾기</string>
     <string name="location_permission_body">내 주변의 날씨와 가까운 관측소를 찾는 데 대략적 위치를 사용합니다. 원본 좌표는 저장하거나 외부로 전송하지 않습니다. 위치 허용 없이 지역 검색도 가능합니다.</string>
     <string name="location_permission_request">위치 허용하기</string>
@@ -17,24 +16,18 @@
     <string name="search_region">지역 검색</string>
     <string name="search_hint">시·군·구·읍면동 입력 (2글자 이상)</string>
     <string name="offline_search">오프라인 검색</string>
-    <string name="search_minimum">2~30글자로 지역을 검색하세요.</string>
     <string name="search_empty">검색 결과가 없습니다.</string>
     <string name="clear">지우기</string>
-    <string name="use_location">현재 위치 찾기</string>
     <string name="locating">위치를 확인하는 중입니다.</string>
-    <string name="choose_without_location">위치 허용 없이 지역 검색으로 날씨를 확인할 수 있습니다.</string>
     <string name="current_location">현재 위치</string>
     <string name="manual_location">직접 선택한 지역</string>
     <string name="favorite_location">저장한 지역</string>
     <string name="primary_location">대표 지역</string>
     <string name="favorites">즐겨찾기</string>
-    <string name="favorite_count">%1$d / 10 · 별표는 위젯 대표</string>
     <string name="add">추가</string>
     <string name="added">저장됨</string>
     <string name="delete">삭제</string>
-    <string name="set_primary">대표 지정하기</string>
     <string name="primary_badge">대표</string>
-    <string name="selected_badge">표시 중</string>
     <string name="undo">되돌리기</string>
     <string name="favorite_limit">즐겨찾기는 최대 10개까지 저장할 수 있습니다.</string>
     <string name="favorite_deleted">즐겨찾기를 삭제했습니다.</string>
@@ -42,10 +35,8 @@
     <string name="missing">—</string>
     <string name="not_provided">미제공</string>
     <string name="loading">자료를 불러오는 중입니다.</string>
-    <string name="empty_weather">지역을 선택해 날씨를 확인하세요.</string>
     <string name="cached_offline">오프라인 · 마지막 저장 자료를 표시합니다.</string>
     <string name="stale">오래됨</string>
-    <string name="refreshing">갱신 중</string>
     <string name="error_offline">인터넷에 연결되지 않았습니다.</string>
     <string name="error_timeout">응답 시간이 초과되었습니다.</string>
     <string name="error_no_data">아직 자료가 제공되지 않았습니다.</string>
@@ -55,7 +46,6 @@
     <string name="error_invalid">응답 자료를 확인할 수 없습니다.</string>
     <string name="error_unknown">자료를 가져오지 못했습니다.</string>
     <string name="temperature">%1$s°</string>
-    <string name="temperature_c">%1$s℃</string>
     <string name="percent">%1$s%%</string>
     <string name="wind_value">%1$s m/s</string>
     <string name="rain_value">%1$s mm</string>
@@ -101,11 +91,9 @@
     <string name="air_trend">최근 추이 ›</string>
     <string name="air_trend_title">최근 측정 추이</string>
     <string name="air_unconfirmed">최근 최대 24개 실제 관측 · 1시간 농도·등급 · 확정 전 자료</string>
-    <string name="air_station">%1$s 측정소 · 약 %2$s km (공개 기준점 기준)</string>
     <string name="air_missing_flag">측정 자료 없음 · %1$s</string>
     <string name="yesterday_compare">어제와 비교 · 최근 10일</string>
     <string name="comparison_high">오늘 최고기온은 어제보다 %1$s℃ %2$s</string>
-    <string name="comparison_low">최저 %1$s℃</string>
     <string name="higher">높음</string>
     <string name="lower">낮음</string>
     <string name="similar">비슷</string>
@@ -117,9 +105,7 @@
     <string name="summary_rain"> · 예상 강수량 %1$s</string>
     <string name="short_tag">초단기</string>
     <string name="hour_details">시간별 예보 상세</string>
-    <string name="day_details">일자별 예보 상세</string>
     <string name="weekly_title">주간 예보 (오늘 ~ +10일)</string>
-    <string name="today">오늘</string>
     <string name="minimum">최저기온</string>
     <string name="maximum">최고기온</string>
     <string name="morning">오전</string>
@@ -142,13 +128,10 @@
     <string name="location_unavailable">위치 자료를 얻지 못했습니다. 지역 검색을 이용하세요.</string>
     <string name="location_outside">현재 위치가 국내 날씨 제공 범위 밖입니다. 지역 검색을 이용하세요.</string>
     <string name="open_settings">설정에서 허용</string>
-    <string name="open_system_settings">앱 설정 열기</string>
     <string name="help_text">지역을 선택하면 기상청·에어코리아 자료를 확인할 수 있습니다. 자료 시각과 앱 수신 시각은 서로 다릅니다. 오류나 오프라인에서는 마지막 성공 자료가 남습니다. 오래됨 표시를 확인하세요.</string>
     <string name="details_missing">선택한 자료를 현재 캐시에서 확인할 수 없습니다.</string>
     <string name="previous_hours">앞 시간으로 이동</string>
     <string name="next_hours">다음 시간으로 이동</string>
-    <string name="more">상세 열기</string>
-    <string name="amount_qualitative">정성값 코드 %1$s (확정 강수량 아님)</string>
     <string name="rain_weak">약한 비 (정성값)</string>
     <string name="rain_moderate">비 (정성값)</string>
     <string name="rain_strong">강한 비 (정성값)</string>
@@ -170,17 +153,12 @@
     <string name="average_humidity">평균습도</string>
     <string name="unconfirmed">미확정</string>
     <string name="comparison_kind">구분</string>
-    <string name="today_forecast">오늘 예보</string>
-    <string name="yesterday_observation">어제 관측</string>
     <string name="history_compare_pair">오늘 %1$s · 어제 %2$s</string>
     <string name="history_station">%1$s 관측소 · 지역 기준 약 %2$s km</string>
-    <string name="history_comparison_note">오늘 최고·최저는 예보, 어제는 ASOS 관측입니다.
-오늘 평균·일강수는 확정 전이며 시간 실황으로 대신하지 않습니다.</string>
     <string name="history_trend">최근 10일 날씨 추이</string>
     <string name="one_week">1주</string>
     <string name="ten_days">10일</string>
     <string name="custom_range">직접 선택</string>
-    <string name="history_window">조회 가능: %1$s ~ %2$s · YYYY-MM-DD</string>
     <string name="start_date">시작일</string>
     <string name="end_date">종료일</string>
     <string name="range_format">날짜를 YYYY-MM-DD 형식으로 입력하세요.</string>
@@ -193,17 +171,13 @@
     <string name="history_rain_total">유효 누적 강수 %1$s · 결측 %2$d일 제외</string>
     <string name="history_open_day">%1$s 관측 상세</string>
     <string name="history_chart_description">%1$s부터 %2$s까지 최고·최저기온 선과 강수 막대. 결측은 연결하지 않습니다. 각 날짜 목록에서 수치를 확인하세요.</string>
-    <string name="history_legend">최고기온 선 · 최저기온 선 · 강수량 막대 (각 축은 독립 비례)</string>
-    <string name="history_delta">오늘 예보 − 어제 관측 · 최고 %1$s℃ · 최저 %2$s℃</string>
     <string name="wind_unit">%1$s m/s</string>
     <string name="favorites_empty">검색 결과의 추가 버튼으로 즐겨찾기를 저장하세요.</string>
-    <string name="displaying">표시 중</string>
     <string name="set_primary_named">%1$s 대표 지정</string>
     <string name="delete_named">%1$s 삭제</string>
     <string name="region_cached_weather_missing">저장된 날씨 없음 · 선택하여 조회</string>
     <string name="widget_no_primary">대표 지역이 지정되지 않았습니다</string>
     <string name="widget_choose_primary">대표 지역 선택 ›</string>
-    <string name="widget_extremes">최고 %1$s° · 최저 %2$s°</string>
     <string name="design_widget_summary">%1$s · 최고 %2$s° · 최저 %3$s°</string>
     <string name="widget_frequency">약 1시간마다 갱신 · 절전 시 지연 가능</string>
     <string name="widget_delayed">갱신 지연 · 마지막 성공 자료 유지</string>
@@ -253,7 +227,7 @@
     <string name="open_source_licenses">오픈소스 라이선스</string>
     <string name="usage_guide">이용 안내</string>
     <string name="document_confirm">확인</string>
-    <string name="document_effective_date">시행일: 2026-11-25</string>
+    <string name="document_effective_date" tools:ignore="TypographyDashes">시행일: 2026-11-25</string>
     <string name="privacy_overview_title">한눈에 보기</string>
     <string name="privacy_overview">로그인·광고·분석·크래시 수집 SDK 없이 기상청과 에어코리아의 공개 자료를 조회합니다. 앱은 원본 기기 좌표를 저장·로그·외부 전송하지 않습니다.</string>
     <string name="privacy_storage_title">보관 정보</string>
@@ -277,14 +251,10 @@
     <string name="license_square_body">Square, Inc. / Block, Inc. 및 기여자. HTTPS API 통신. https://square.github.io/retrofit/ · https://square.github.io/okhttp/</string>
     <string name="license_google_services">Google Play services · SDK 이용 약관</string>
     <string name="license_google_body">Google LLC. 기기 위치 서비스 연결. 오픈소스 Apache 라이선스와 별도인 Android Software Development Kit License 적용. https://developer.android.com/studio/terms.html</string>
-    <string name="widget_preview">홈 위젯 미리보기</string>
     <string name="preview_last_success">마지막 성공 %1$s</string>
-    <string name="change_primary">대표 지역 변경</string>
     <string name="settings_location">위치</string>
     <string name="apparent_wind_units">%1$s m/s · %2$s km/h</string>
     <string name="air_actual_period">실제 %1$d개 · %2$s ~ %3$s · µg/m³</string>
-    <string name="air_grade_basis">등급 기준: %1$s · 시간 기준 혼용 없음</string>
-    <string name="air_original_time">기관 원문 시각: %1$s</string>
     <string name="design_delta">%1$s %2$s℃</string>
     <string name="design_high">최고</string>
     <string name="design_low">최저</string>
