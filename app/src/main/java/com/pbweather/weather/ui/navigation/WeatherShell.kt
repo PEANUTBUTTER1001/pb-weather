@@ -212,7 +212,13 @@ fun WeatherShell(
     Scaffold(
         containerColor = WeatherTheme.colors.ground,
         topBar = {
-            val background = if (tab == WeatherTab.HOME && state.preferences.selected != null) {
+            val background = if (tab == WeatherTab.HOME && state.preferences.selected != null &&
+                (
+                    !state.data.forecast.now.isOffline || state.data.forecast.now.data != null ||
+                        !state.data.forecast.hourly.data?.hours.isNullOrEmpty() ||
+                        !state.data.forecast.weekly.data.isNullOrEmpty()
+                    )
+            ) {
                 heroColor(mode, palette, currentSky(state))
             } else {
                 WeatherTheme.colors.ground
@@ -222,9 +228,7 @@ fun WeatherShell(
                     Modifier.fillMaxWidth().heightIn(min = Dims.topBar).padding(horizontal = Dims.gutter),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (tab == WeatherTab.SETTINGS) {
-                        Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
-                    } else {
+                    run {
                         Row(
                             Modifier.weight(1f).clickable {
                                 userNavigated = true
@@ -256,19 +260,27 @@ fun WeatherShell(
                                 )
                             }
                         }
+                        if (tab == WeatherTab.SETTINGS) Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge)
                         IconButton(onClick = {
                             details = "help"
-                        }, modifier = Modifier.offset(x = Dims.section)) { AppIcon(UiIcon.HELP, stringResource(R.string.help)) }
+                        }, modifier = Modifier.size(Dims.field).offset(x = Dims.medium)) {
+                            AppIcon(UiIcon.HELP, stringResource(R.string.help))
+                        }
                         IconButton(
                             onClick = actions.refresh,
                             enabled = state.preferences.selected != null && !loading,
-                            modifier = Modifier.offset(x = Dims.section)
+                            modifier = Modifier.size(Dims.field).offset(x = Dims.medium)
                         ) {
                             AppIcon(UiIcon.REFRESH, stringResource(R.string.refresh))
                         }
                     }
                 }
-                if (loading && state.preferences.selected != null) {
+                if (loading && state.preferences.selected != null &&
+                    (
+                        state.data.forecast.now.data != null || !state.data.forecast.hourly.data?.hours.isNullOrEmpty() ||
+                            !state.data.forecast.weekly.data.isNullOrEmpty()
+                        )
+                ) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                 } else if (tab != WeatherTab.HOME) {
                     Rule()
@@ -370,7 +382,8 @@ fun WeatherShell(
                         } else {
                             HomeScreen(
                                 state, mode, palette, homeList, hoursList, selectedHour.takeIf { it != 0L },
-                                { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh
+                                { selectedHour = it }, { details = it }, { tab = WeatherTab.HISTORY }, actions.refresh,
+                                onSelectRegion = { tab = WeatherTab.LOCATIONS }
                             )
                         }
                         WeatherTab.LOCATIONS -> LocationsScreen(state, query, results, regionForecasts, actions, pick, {

@@ -140,11 +140,16 @@ fun dateLabel(date: String): String = runCatching {
         resource.isStale -> stringResource(R.string.stale)
         else -> return
     }
-    Surface(color = WeatherTheme.colors.tonal, shape = RoundedCornerShape(Dims.small)) {
-        Column(Modifier.fillMaxWidth().padding(Dims.medium)) {
-            Text(text, color = if (resource.error != null) WeatherTheme.colors.error else WeatherTheme.colors.secondary)
+    val tokens = com.pbweather.weather.ui.theme.statusColors(WeatherTheme.mode, resource.error != null && !resource.isOffline)
+    Surface(color = tokens.background, shape = RoundedCornerShape(Dims.groupRadius), border = BorderStroke(Dims.hairline, tokens.border)) {
+        Row(
+            Modifier.fillMaxWidth().padding(Dims.medium),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dims.small)
+        ) {
+            Text(text, Modifier.weight(1f), color = tokens.foreground, style = MaterialTheme.typography.bodySmall)
             if (onRetry != null && resource.error != DomainError.QUOTA && !resource.isRefreshing) {
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.retry)) }
+                CompactOutlinedButton(onClick = onRetry) { Text(stringResource(R.string.retry)) }
             }
         }
     }

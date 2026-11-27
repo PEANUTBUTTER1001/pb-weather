@@ -103,11 +103,23 @@ fun HomeScreen(
     onHour: (Long) -> Unit,
     onDetails: (String) -> Unit,
     onHistory: () -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onSelectRegion: () -> Unit = {}
 ) {
+    val current = state.data.forecast.now
+    val hasHomeData = current.data != null || !state.data.forecast.hourly.data?.hours.isNullOrEmpty() ||
+        !state.data.forecast.weekly.data.isNullOrEmpty() || !state.data.air.data?.readings.isNullOrEmpty()
+    if (!hasHomeData && current.isRefreshing) {
+        com.pbweather.weather.ui.components.HomeLoadingSkeleton()
+        return
+    }
+    if (!hasHomeData && current.isOffline) {
+        com.pbweather.weather.ui.components.EmptyWeather(onRetry, onSelectRegion)
+        return
+    }
     LazyColumn(state = list, modifier = Modifier.focusRestorer().focusGroup(), verticalArrangement = Arrangement.spacedBy(Dims.gutter)) {
         val resource = state.data.forecast.now
-        if (resource.error != null || resource.isOffline || resource.data == null) {
+        if (resource.error != null || resource.isOffline || resource.isStale || resource.data == null) {
             item(key = "status") {
                 Box(Modifier.padding(horizontal = Dims.gutter)) { StatusBlock(resource, onRetry) }
             }
